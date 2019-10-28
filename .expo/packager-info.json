@@ -1,9 +1,10 @@
 {
   "devToolsPort": 19002,
-  "expoServerPort": null,
-  "packagerPort": null,
-  "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null
+  "expoServerPort": 19000,
+  "packagerPort": 19001,
+  "packagerPid": 59788,
+  "expoServerNgrokUrl": "https://ss-42h.anonymous.sight-study.exp.direct",
+  "packagerNgrokUrl": "https://packager.ss-42h.anonymous.sight-study.exp.direct",
+  "ngrokPid": 59814,
+  "webpackServerPort": 19006
 }
