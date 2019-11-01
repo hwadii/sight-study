@@ -1,3 +1,5 @@
 node_modules
 .vscode/
-.expo/*
+.expo/
+.expo-source/
+android/
