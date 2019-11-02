@@ -1,15 +1,49 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import SignIn from "./src/SignIn";
+import SignUp from "./src/SignUp";
+import { createAppContainer } from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
 
-export default class App extends React.Component {
+const Routes = {
+  SignIn,
+  SignUp
+};
+
+const MainNavigator = createStackNavigator(
+  {
+    ...Routes,
+    SignIn: {
+      screen: SignIn,
+    },
+  },
+  {
+    // headerMode: 'none',
+    initialRouteName: 'SignIn',
+    defaultNavigationOptions: {
+      title: "Sight Study",
+      headerBackTitle: "Retour",
+      headerRight: () => (
+        <Text style={styles.helpText}>Aide 💡</Text>
+      )
+    }
+  }
+);
+
+
+const Navigation = createAppContainer(MainNavigator);
+
+class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>Open up App.js to start working on your app!</Text>
+        <Navigation />
       </View>
-    );
+    )
   }
 }
+
+export default App;
 
 const styles = StyleSheet.create({
   container: {
