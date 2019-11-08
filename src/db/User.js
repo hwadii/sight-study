@@ -1,11 +1,11 @@
-import SQLite from "expo-sqlite"
+import * as SQLite from "expo-sqlite"
 
 const db = SQLite.openDatabase("sigthstudy.db");
 
 function initDB() {
   db.transaction(tx => {
     tx.executeSql(
-      "create table if not exists user (id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, nom VARCHAR(25), prenom VARCHAR(25), pin VARCHAR(255), type INT );"
+      "create table if not exists user (id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, nom VARCHAR(25), prenom VARCHAR(25), pin VARCHAR(255), type INT , derniere_connexion DATE);"
     );
   });
   db.transaction(tx => {
@@ -36,20 +36,24 @@ function connexion(id, pin){
               if (rows._length > 0){
                 dbpassword = rows._array[0].pin;
               }
-              else{
-                return 0
-              }
+              else throw new Error("L'utilisateur n'existe pas")
             }
         );        
     }
   );
   sha1pin = SHA1(pin);
-  if (sha1pin.equals(dbpassword)){
-    return 1;
+  if (sha1pin !== dbpassword){
+    throw new Error("Mauvais mot de passe")
   }
-  else{
-    return 0;
-  }
+
+  date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+  db.transaction(
+    tx => {
+        tx.executeSql("update user set derniere_connexion=? where id=?", [date, id]);
+      }
+    );
+  return true;
+
 }
 
 function getType(id){
@@ -59,6 +63,7 @@ function getType(id){
               if (rows._length > 0){
                 return rows._array[0].type;
               }
+              throw new Error("L'utilisateur n'existe pas")
             }
         );        
     }
@@ -68,7 +73,7 @@ function getType(id){
 function getUsers(){
   db.transaction(
     tx => {
-        tx.executeSql("select id, nom, prenom from user;", [], (_, { rows }) => {
+        tx.executeSql("select id, nom, prenom, dernier_connexion from user;", [], (_, { rows }) => {
               return rows;
             }
         );        
@@ -78,9 +83,10 @@ function getUsers(){
 
 function addUser(nom, prenom, pin, type){
   mdp = SHA1(pin)
+  date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   db.transaction(
     tx => {
-        tx.executeSql("insert into user (name, prenom, pin, type) values (?, ?, ?, ?);", [nom, prenom, mdp, type]);
+        tx.executeSql("insert into user (name, prenom, pin, type, date) values (?, ?, ?, ?, ?);", [nom, prenom, mdp, type, date]);
       }
     );
 }
