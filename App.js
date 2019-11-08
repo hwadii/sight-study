@@ -2,12 +2,14 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import SignIn from "./src/SignIn";
 import SignUp from "./src/SignUp";
+import Test from "./src/Test";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
 const Routes = {
   SignIn,
-  SignUp
+  SignUp,
+  Test
 };
 
 const MainNavigator = createStackNavigator(
@@ -19,7 +21,7 @@ const MainNavigator = createStackNavigator(
   },
   {
     // headerMode: 'none',
-    initialRouteName: 'SignIn',
+    initialRouteName: 'Test',
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour",
