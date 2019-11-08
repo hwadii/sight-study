@@ -3,13 +3,15 @@ import { StyleSheet, Text, View } from "react-native";
 import SignIn from "./src/SignIn";
 import SignUp from "./src/SignUp";
 import Score from "./src/Score";
+import Test from "./src/Test";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
 const Routes = {
   SignIn,
   SignUp,
-  Score
+  Score,
+  Test
 };
 
 const MainNavigator = createStackNavigator(
@@ -21,7 +23,7 @@ const MainNavigator = createStackNavigator(
   },
   {
     // headerMode: 'none',
-    initialRouteName: 'SignIn',
+    initialRouteName: 'Test',
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour",
