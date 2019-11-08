@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import {AsyncStorage, StyleSheet, TouchableHighlight, Text, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 
 const DATA = [
@@ -34,6 +34,8 @@ const DATA = [
   "Adele"
 ];
 
+
+
 export default class SignIn extends React.Component {
   render() {
     return (
@@ -48,6 +50,15 @@ export default class SignIn extends React.Component {
               Inscrivez-vous !
             </Text>
           </Text>
+          <Text style={styles.noAccountText}>
+            test:{" "}
+            <Text
+              onPress={() => this.props.navigation.navigate("Score")}
+              style={{ fontWeight: "bold", color: "#007BFF" }}
+            >
+              Score !
+            </Text>
+          </Text>
         </View>
         <View style={styles.usersList}>
           <FlatList
@@ -56,7 +67,9 @@ export default class SignIn extends React.Component {
               <User
                 title={`${item} Last name`}
                 lastConnected={new Date().toLocaleDateString()}
+                props={this.props.navigation}
               />
+
             )}
             keyExtractor={item => Math.random().toString()}
           />
@@ -66,12 +79,14 @@ export default class SignIn extends React.Component {
   }
 }
 
-function User({ title, lastConnected }) {
+function User({ title, lastConnected , props }) {
   return (
-    <View style={styles.userBox}>
-      <Text style={styles.userText}>{title}</Text>
-      <Text>Dernière connexion: {lastConnected}</Text>
-    </View>
+    <TouchableHighlight onPress={() =>{AsyncStorage.setItem('id', title),props.navigate("Score",{id:title})}}>
+      <View style={styles.userBox}>
+        <Text style={styles.userText}>{title}</Text>
+        <Text>Dernière connexion: {lastConnected}</Text>
+      </View>
+    </TouchableHighlight>
   );
 }
 

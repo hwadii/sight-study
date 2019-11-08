@@ -2,12 +2,14 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import SignIn from "./src/SignIn";
 import SignUp from "./src/SignUp";
+import Score from "./src/Score";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
 const Routes = {
   SignIn,
-  SignUp
+  SignUp,
+  Score
 };
 
 const MainNavigator = createStackNavigator(
