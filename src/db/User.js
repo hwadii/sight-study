@@ -1,3 +1,5 @@
+import SQLite from "expo-sqlite"
+
 const db = SQLite.openDatabase("sigthstudy.db");
 
 function initDB() {
