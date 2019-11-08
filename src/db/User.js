@@ -5,12 +5,12 @@ const db = SQLite.openDatabase("sigthstudy.db");
 function initDB() {
   db.transaction(tx => {
     tx.executeSql(
-      "create table if not exists user (id INT PRIMARY KEY NOT NULL AUTO_INCREMENT, nom VARCHAR(25), prenom VARCHAR(25), pin VARCHAR(255), type INT , derniere_connexion DATE);"
+      "create table if not exists user (id INTEGER PRIMARY KEY, nom VARCHAR(25), prenom VARCHAR(25), pin VARCHAR(255), type INTEGER , derniere_connexion DATE);"
     );
   });
   db.transaction(tx => {
     tx.executeSql(
-      "create table if not exists score (id_user INT, id_exo INT, date DATE, score INT );"
+      "create table if not exists score (id_user INTEGER, id_exo INTEGER, date DATE, score INTEGER );"
     );
   });
 }
@@ -73,21 +73,31 @@ function getType(id){
 function getUsers(){
   db.transaction(
     tx => {
-        tx.executeSql("select id, nom, prenom, dernier_connexion from user;", [], (_, { rows }) => {
+        tx.executeSql("select id, nom, prenom, derniere_connexion from user;", [], (_, { rows }) => {
+              console.log(rows)
               return rows;
-            }
+            }, console.error
         );        
     }
   );
 }
 
 function addUser(nom, prenom, pin, type){
+  var id
+  db.transaction(
+    tx => {
+        tx.executeSql("select id from user;", [], (_, { rows }) => {
+              id = rows.length
+            }, console.error
+        );        
+    }
+  );
   mdp = SHA1(pin)
   date = new Date().toISOString().slice(0, 19).replace('T', ' ');
   db.transaction(
     tx => {
-        tx.executeSql("insert into user (name, prenom, pin, type, date) values (?, ?, ?, ?, ?);", [nom, prenom, mdp, type, date]);
-      }
+        tx.executeSql("insert into user (id, nom, prenom, pin, type, derniere_connexion) values (?, ?, ?, ?, ?, ?);", [id, nom, prenom, mdp, type, date]);
+      }, console.error
     );
 }
 
