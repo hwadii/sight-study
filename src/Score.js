@@ -74,7 +74,7 @@ export default class Score extends React.Component {
     });
   }
   render() {
-    if (this.state.isLoading) {
+    if (this.state.isLoading || this.state.s_o_g.length==0 || this.state.s_o_d.length==0) {
       console.log("load");
       return (
         <View>
