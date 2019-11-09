@@ -15,13 +15,120 @@ async function getid() {
   }
 
 }
+const data = [
+  {
+    id: "Aaren Last name",
+    date: "24/4/2018",
+    score_oeil_droit: 50,
+    score_oeil_gauche: 5,
+  },
+  {
+    id: "Aaren Last name",
+    date: "22/4/2018",
+    score_oeil_droit: 1,
+    score_oeil_gauche: 10,
+  },
+  {
+    id: "Aarika Last name",
+    date: "20/2/2019",
+    score_oeil_droit: 8,
+    score_oeil_gauche: 27,
+  },
+  {
+    id: "Aarika Last name",
+    date: "10/8/2019",
+    score_oeil_droit: 3,
+    score_oeil_gauche: 17,
+  },
+  {
+    date: "20/5/2019",
+    score_oeil_droit: 44,
+    score_oeil_gauche: 32,
+  },
+  {
+    date: "10/10/2019",
+    score_oeil_droit: 21,
+    score_oeil_gauche: 22,
+  }
+]
+
+
+async function getdates(){
+  try {
+    dates= []
+    s_o_d =[]
+    s_o_g = []
+    let userId = await AsyncStorage.getItem('id');
+    if (userId !== "") {
+      console.log(userId)
+      data.forEach(e => {
+        if (e.id === userId) {
+          dates.push(e.date)
+        }
+      })
+      console.log(dates)
+      return (dates)
+    }
+  } catch (error) {
+    // Error retrieving data
+    console.log(error.message);
+  }
+}
+
+async function getoeildroit(){
+  try {
+    dates= []
+    s_o_d =[]
+    s_o_g = []
+    let userId = await AsyncStorage.getItem('id');
+    if (userId !== "") {
+      console.log(userId)
+      data.forEach(e => {
+        if (e.id === userId) {
+          s_o_d.push(e.score_oeil_droit)
+        }
+      })
+      console.log(s_o_d)
+      return (s_o_d)
+    }
+  } catch (error) {
+    // Error retrieving data
+    console.log(error.message);
+  }
+}
+
+async function getoeilgauche(){
+  try {
+    dates= []
+    s_o_d =[]
+    s_o_g = []
+    let userId = await AsyncStorage.getItem('id');
+    if (userId !== "") {
+      console.log(userId)
+      data.forEach(e => {
+        if (e.id === userId) {
+          s_o_g.push(e.score_oeil_gauche)
+        }
+      })
+      console.log(s_o_g)
+      return (s_o_g)
+    }
+  } catch (error) {
+    // Error retrieving data
+    console.log(error.message);
+  }
+}
+
 
 export default class Score extends React.Component {
   constructor(props) {
     super(props)
   }
   state = {
-    id: ""
+    id: "",
+    dates:[],
+    s_o_d:[],
+    s_o_g:[]
   }
   componentDidMount() {
     getid().then(id => {
@@ -29,67 +136,36 @@ export default class Score extends React.Component {
         id
       })
     });
+    getdates().then(dates =>{
+      this.setState({
+        dates
+      })
+    });
+    getoeildroit().then(s_o_d =>{
+      this.setState({
+        s_o_d
+      })
+    });
+    getoeilgauche().then(s_o_g =>{
+      this.setState({
+        s_o_g
+      })
+    });
   }
   render() {
     const { navigation } = this.props;
-    const dates = [0]
-    const s_o_d = [0]
-    const s_o_g = [0]
-    const getId = async () => {
-      try {
-        let userId = await AsyncStorage.getItem('id');
-        if (userId !== "") {
-          console.log(userId)
-          data.forEach(e => {
-            if (e.id === userId) {
-              dates.push(e.date)
-              s_o_d.push(e.score_oeil_droit)
-              s_o_g.push(e.score_oeil_gauche)
-            }
-          })
-        }
-      } catch (error) {
-        // Error retrieving data
-        console.log(error.message);
-      }
+    console.log("trest")
+    console.log(this.state.dates)
+    console.log(this.state.s_o_d)
+    console.log(this.state.s_o_g)
+    if(this.state.s_o_g.length==0 || this.state.s_o_d.length==0){
+      console.log("load")
+      return (
+        <View >
+        <Text>Pas de Scores disponible </Text>
+        </View>
+      )
     }
-    const data = [
-      {
-        id: "Aaren Last name",
-        date: "24/4/2018",
-        score_oeil_droit: 50,
-        score_oeil_gauche: 5,
-      },
-      {
-        id: "Aaren Last name",
-        date: "22/4/2018",
-        score_oeil_droit: 1,
-        score_oeil_gauche: 10,
-      },
-      {
-        id: "Aarika Last name",
-        date: "20/2/2019",
-        score_oeil_droit: 8,
-        score_oeil_gauche: 27,
-      },
-      {
-        id: "Aarika Last name",
-        date: "10/8/2019",
-        score_oeil_droit: 3,
-        score_oeil_gauche: 17,
-      },
-      {
-        date: "20/5/2019",
-        score_oeil_droit: 44,
-        score_oeil_gauche: 32,
-      },
-      {
-        date: "10/10/2019",
-        score_oeil_droit: 21,
-        score_oeil_gauche: 22,
-      }
-    ]
-    getId()
     return (
       <View >
         <Text>id : {this.state.id}</Text>
@@ -98,9 +174,9 @@ export default class Score extends React.Component {
         </Text>
         <LineChart
           data={{
-            labels: dates,
+            labels: this.state.dates,
             datasets: [{
-              data: s_o_g
+              data: this.state.s_o_g
             }
             ]
           }}
@@ -128,9 +204,9 @@ export default class Score extends React.Component {
         </Text>
         <LineChart
           data={{
-            labels: dates,
+            labels: this.state.dates,
             datasets: [{
-              data: s_o_d
+              data:  this.state.s_o_d
             }
             ]
           }}
