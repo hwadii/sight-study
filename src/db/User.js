@@ -16,19 +16,24 @@ function initDB() {
   });
 }
 
-function getUser(nom, prenom) {
-  db.transaction(tx => {
-    tx.executeSql(
-      "select id from user where nom=? and prenom=?;",
-      [nom, prenom],
-      (_, { rows }) => {
-        if (rows._length > 0) {
-          return rows._array[0].id;
+function getUser(nom, prenom, callback) {
+  db.transaction(
+    tx => {
+      tx.executeSql(
+        "select id from user where nom=? and prenom=?;",
+        [nom, prenom],
+        (_, { rows }) => {
+          if (rows.length > 0) {
+            // console.log(rows._array[0].id)
+            callback(rows._array[0].id);
+          }
+          // throw new Error("L'utilisateur n'existe pas");
         }
-        throw new Error("L'utilisateur n'existe pas");
-      }
-    );
-  });
+      );
+    },
+    console.error,
+    console.log
+  );
 }
 
 function connexion(id, pin) {
@@ -68,14 +73,13 @@ function getType(id) {
   });
 }
 
-function getUsers() {
+function getUsers(callback) {
   db.transaction(tx => {
     tx.executeSql(
       "select id, nom, prenom, derniere_connexion from user;",
       [],
       (_, { rows }) => {
-        console.log(rows);
-        return rows;
+        callback(rows._array);
       },
       console.error
     );
@@ -108,9 +112,13 @@ function addUser(nom, prenom, pin, type) {
 }
 
 function removeUser(id) {
-  db.transaction(tx => {
-    tx.executeSql("delete from user wher id=?;", [id]);
-  });
+  db.transaction(
+    tx => {
+      tx.executeSql("delete from user where id=?;", [id]);
+    },
+    console.error,
+    console.log
+  );
 }
 
 function addScore(id, exo, score) {
