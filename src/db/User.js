@@ -6,7 +6,7 @@ const db = SQLite.openDatabase("sigthstudy.db");
 function initDB() {
   db.transaction(tx => {
     tx.executeSql(
-      "create table if not exists user (id INTEGER PRIMARY KEY, nom VARCHAR(25), prenom VARCHAR(25), pin VARCHAR(255), type INTEGER , derniere_connexion DATE);"
+      "create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(25), prenom VARCHAR(25), duplicata INTEGER, pin VARCHAR(255), type INTEGER , derniere_connexion DATE);"
     );
   });
   db.transaction(tx => {
@@ -16,18 +16,29 @@ function initDB() {
   });
 }
 
-function getUser(nom, prenom, callback) {
+function dropDB() {
+  db.transaction(tx => {
+    tx.executeSql(
+      "drop table user"
+    );
+  });
+  db.transaction(tx => {
+    tx.executeSql(
+      "drop table score"
+    );
+  });    
+}
+
+function getUser(nom, prenom, duplicata, callback) {
   db.transaction(
     tx => {
       tx.executeSql(
-        "select id from user where nom=? and prenom=?;",
-        [nom, prenom],
+        "select id from user where nom=? and prenom=? and duplicata=?;",
+        [nom, prenom, duplicata],
         (_, { rows }) => {
           if (rows.length > 0) {
-            // console.log(rows._array[0].id)
             callback(rows._array[0].id);
           }
-          // throw new Error("L'utilisateur n'existe pas");
         }
       );
     },
@@ -36,47 +47,59 @@ function getUser(nom, prenom, callback) {
   );
 }
 
-function connexion(id, pin) {
+function connexion(id, pin, callback) {
   db.transaction(tx => {
     tx.executeSql("select pin from user where id=?;", [id], (_, { rows }) => {
-      if (rows._length > 0) {
+      if (rows.length > 0) {
         dbpassword = rows._array[0].pin;
-      } else throw new Error("L'utilisateur n'existe pas");
+        connexion_onSuccess(id, pin, dbpassword, callback)
+      }
     });
-  });
-  sha1pin = util.SHA1(pin);
-  if (sha1pin !== dbpassword) {
-    throw new Error("Mauvais mot de passe");
-  }
-
-  date = new Date()
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
-  db.transaction(tx => {
-    tx.executeSql("update user set derniere_connexion=? where id=?", [
-      date,
-      id
-    ]);
-  });
-  return true;
+  },
+  console.error,
+  console.log
+  );
 }
 
-function getType(id) {
+function connexion_onSuccess(id, pin, dbpassword, callback){
+  sha1pin = util.SHA1(String(pin));
+  if (sha1pin == dbpassword) {
+    date = new Date()
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ");
+    db.transaction(tx => {
+      tx.executeSql("update user set derniere_connexion=? where id=?", [
+        date,
+        id
+      ]);
+    },
+    console.error,
+    console.log
+    );
+    callback(true)   
+  }else{
+    callback(false)
+  }
+}
+
+function getType(id, callback) {
   db.transaction(tx => {
     tx.executeSql("select type from user where id=?;", [id], (_, { rows }) => {
-      if (rows._length > 0) {
-        return rows._array[0].type;
+      if (rows.length > 0) {
+        callback(rows._array[0].type);
       }
-      throw new Error("L'utilisateur n'existe pas");
     });
-  });
+  },
+  console.error,
+  console.log
+  );
 }
 
 function getUsers(callback) {
   db.transaction(tx => {
     tx.executeSql(
-      "select id, nom, prenom, derniere_connexion from user;",
+      "select id, nom, prenom, duplicata, derniere_connexion from user;",
       [],
       (_, { rows }) => {
         callback(rows._array);
@@ -86,32 +109,43 @@ function getUsers(callback) {
   });
 }
 
-function addUser(nom, prenom, pin, type) {
-  var id;
+var duplicata
+function addUser(nom, prenom, pin, type, callback) {
   db.transaction(tx => {
-    tx.executeSql(
-      "select id from user;",
-      [],
+    tx.executeSql("select duplicata from user where nom=? and prenom=?;", 
+      [nom, prenom],
       (_, { rows }) => {
-        id = rows.length;
-      },
-      console.error
-    );
-  });
-  mdp = util.SHA1(pin);
+        duplicata = parseInt(rows.length);
+    });
+  },
+  console.error,
+  console.log
+  );
+  addUser_onSuccess(nom, prenom, pin, type, callback)
+
+}
+
+function addUser_onSuccess(nom, prenom, pin, type, callback){
+  mdp = util.SHA1(String(pin));
+
   date = new Date()
     .toISOString()
     .slice(0, 19)
     .replace("T", " ");
+  
   db.transaction(tx => {
     tx.executeSql(
-      "insert into user (id, nom, prenom, pin, type, derniere_connexion) values (?, ?, ?, ?, ?, ?);",
-      [id, nom, prenom, mdp, type, date]
+      "insert into user (nom, prenom, duplicata, pin, type, derniere_connexion) values (?,?,?,?,?,?);",
+      [nom, prenom, duplicata, mdp, type, date]
     );
-  }, console.error);
+  },
+  console.error,
+  console.log
+  );
+  callback(true)   
 }
 
-function removeUser(id) {
+function removeUser(id, callback) {
   db.transaction(
     tx => {
       tx.executeSql("delete from user where id=?;", [id]);
@@ -119,9 +153,10 @@ function removeUser(id) {
     console.error,
     console.log
   );
+  callback(true)
 }
 
-function addScore(id, exo, score) {
+function addScore(id, exo, score, callback) {
   date = new Date()
     .toISOString()
     .slice(0, 19)
@@ -131,35 +166,46 @@ function addScore(id, exo, score) {
       "insert into score (id_user, id_exo, date, score) values (?,?,?,?);",
       [id, exo, date, score]
     );
-  });
+  },
+  console.error,
+  console.log
+  );
+  callback(true)
 }
 
-function getScore(user, exo) {
+function getScore(user, exo, callback) {
   db.transaction(tx => {
     tx.executeSql(
       "select date, score from score where id_user=? and id_exo=?;",
       [user, exo],
       (_, { rows }) => {
-        return rows;
+        callback(rows._array);
       }
     );
-  });
+  },
+  console.error,
+  console.log
+  );
 }
 
-function getExos(user) {
+function getExos(user, callback) {
   db.transaction(tx => {
     tx.executeSql(
       "select id_exo from score where id_user=?;",
       [user],
       (_, { rows }) => {
-        return rows;
+        callback(rows._array);
       }
     );
-  });
+  },
+  console.error,
+  console.log
+  );
 }
 
 export {
   initDB,
+  dropDB,
   getUser,
   connexion,
   getType,
