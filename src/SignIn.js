@@ -42,7 +42,7 @@ export default class SignIn extends React.Component {
       <View style={styles.container}>
         <View style={styles.noAccount}>
           <Text style={styles.noAccountText}>
-            Pas de compte ?{" "}
+            Pas de compte ?
             <Text
               onPress={() => this.props.navigation.navigate("SignUp")}
               style={{ fontWeight: "bold", color: "#007BFF" }}
@@ -51,7 +51,7 @@ export default class SignIn extends React.Component {
             </Text>
           </Text>
           <Text style={styles.noAccountText}>
-            test:{" "}
+            test:
             <Text
               onPress={() => this.props.navigation.navigate("Score")}
               style={{ fontWeight: "bold", color: "#007BFF" }}

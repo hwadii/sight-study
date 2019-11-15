@@ -18,22 +18,19 @@ const MainNavigator = createStackNavigator(
   {
     ...Routes,
     SignIn: {
-      screen: SignIn,
-    },
+      screen: SignIn
+    }
   },
   {
     // headerMode: 'none',
-    initialRouteName: 'Test',
+    initialRouteName: "Test",
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour",
-      headerRight: () => (
-        <Text style={styles.helpText}>Aide 💡</Text>
-      )
+      headerRight: () => <Text style={styles.helpText}>Aide 💡</Text>
     }
   }
 );
-
 
 const Navigation = createAppContainer(MainNavigator);
 
@@ -43,7 +40,7 @@ class App extends React.Component {
       <View style={styles.container}>
         <Navigation />
       </View>
-    )
+    );
   }
 }
 
@@ -51,9 +48,9 @@ export default App;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   helpText: {
     fontSize: 16
   }
-})
+});

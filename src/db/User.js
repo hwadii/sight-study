@@ -18,15 +18,11 @@ function initDB() {
 
 function dropDB() {
   db.transaction(tx => {
-    tx.executeSql(
-      "drop table user"
-    );
+    tx.executeSql("drop table user");
   });
   db.transaction(tx => {
-    tx.executeSql(
-      "drop table score"
-    );
-  });    
+    tx.executeSql("drop table score");
+  });
 }
 
 function getUser(nom, prenom, duplicata, callback) {
@@ -35,7 +31,7 @@ function getUser(nom, prenom, duplicata, callback) {
       tx.executeSql(
         "select id from user where nom=? and prenom=? and duplicata=?;",
         [nom, prenom, duplicata],
-        (_, { rows }) => {
+        (_, {rows}) => {
           if (rows.length > 0) {
             callback(rows._array[0].id);
           }
@@ -48,51 +44,54 @@ function getUser(nom, prenom, duplicata, callback) {
 }
 
 function connexion(id, pin, callback) {
-  db.transaction(tx => {
-    tx.executeSql("select pin from user where id=?;", [id], (_, { rows }) => {
-      if (rows.length > 0) {
-        dbpassword = rows._array[0].pin;
-        connexion_onSuccess(id, pin, dbpassword, callback)
-      }
-    });
-  },
-  console.error,
-  console.log
-  );
-}
-
-function connexion_onSuccess(id, pin, dbpassword, callback){
-  sha1pin = util.SHA1(String(pin));
-  if (sha1pin == dbpassword) {
-    date = new Date()
-      .toISOString()
-      .slice(0, 19)
-      .replace("T", " ");
-    db.transaction(tx => {
-      tx.executeSql("update user set derniere_connexion=? where id=?", [
-        date,
-        id
-      ]);
+  db.transaction(
+    tx => {
+      tx.executeSql("select pin from user where id=?;", [id], (_, {rows}) => {
+        if (rows.length > 0) {
+          const dbpassword = rows._array[0].pin;
+          connexion_onSuccess(id, pin, dbpassword, callback);
+        }
+      });
     },
     console.error,
     console.log
+  );
+}
+
+function connexion_onSuccess(id, pin, dbpassword, callback) {
+  const sha1pin = util.SHA1(String(pin));
+  if (sha1pin == dbpassword) {
+    const date = new Date()
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ");
+    db.transaction(
+      tx => {
+        tx.executeSql(
+          "update user set derniere_connexion=? where id=?",
+          [date, id],
+          callback(true)
+        );
+      },
+      console.error,
+      console.log
     );
-    callback(true)   
-  }else{
-    callback(false)
+  } else {
+    callback(false);
   }
 }
 
 function getType(id, callback) {
-  db.transaction(tx => {
-    tx.executeSql("select type from user where id=?;", [id], (_, { rows }) => {
-      if (rows.length > 0) {
-        callback(rows._array[0].type);
-      }
-    });
-  },
-  console.error,
-  console.log
+  db.transaction(
+    tx => {
+      tx.executeSql("select type from user where id=?;", [id], (_, {rows}) => {
+        if (rows.length > 0) {
+          callback(rows._array[0].type);
+        }
+      });
+    },
+    console.error,
+    console.log
   );
 }
 
@@ -101,7 +100,8 @@ function getUsers(callback) {
     tx.executeSql(
       "select id, nom, prenom, duplicata, derniere_connexion from user;",
       [],
-      (_, { rows }) => {
+      (_, {rows}) => {
+        console.log(rows._array);
         callback(rows._array);
       },
       console.error
@@ -109,97 +109,105 @@ function getUsers(callback) {
   });
 }
 
-var duplicata
 function addUser(nom, prenom, pin, type, callback) {
-  db.transaction(tx => {
-    tx.executeSql("select duplicata from user where nom=? and prenom=?;", 
-      [nom, prenom],
-      (_, { rows }) => {
-        duplicata = parseInt(rows.length);
-    });
-  },
-  console.error,
-  console.log
+  db.transaction(
+    tx => {
+      tx.executeSql(
+        "select duplicata from user where nom=? and prenom=?;",
+        [nom, prenom],
+        (_, {rows}) => {
+          const duplicata = parseInt(rows.length);
+          addUser_onSuccess(nom, prenom, pin, type, duplicata, callback);
+        }
+      );
+    },
+    console.error,
+    console.log
   );
-  addUser_onSuccess(nom, prenom, pin, type, callback)
-
 }
 
-function addUser_onSuccess(nom, prenom, pin, type, callback){
-  mdp = util.SHA1(String(pin));
-
-  date = new Date()
+function addUser_onSuccess(nom, prenom, pin, type, duplicata, callback) {
+  const mdp = util.SHA1(String(pin));
+  const date = new Date()
     .toISOString()
     .slice(0, 19)
     .replace("T", " ");
-  
-  db.transaction(tx => {
-    tx.executeSql(
-      "insert into user (nom, prenom, duplicata, pin, type, derniere_connexion) values (?,?,?,?,?,?);",
-      [nom, prenom, duplicata, mdp, type, date]
-    );
-  },
-  console.error,
-  console.log
+
+  db.transaction(
+    tx => {
+      tx.executeSql(
+        "insert into user (nom, prenom, duplicata, pin, type, derniere_connexion) values (?,?,?,?,?,?);",
+        [nom, prenom, duplicata, mdp, type, date],
+        () => callback(`${prenom} ${nom}`)
+      );
+    },
+    console.error,
+    console.log
   );
-  callback(true)   
 }
 
 function removeUser(id, callback) {
   db.transaction(
     tx => {
-      tx.executeSql("delete from user where id=?;", [id]);
+      tx.executeSql(
+        "delete from user where id=?;",
+        [id],
+        callback(true),
+        callback(false)
+      );
     },
     console.error,
     console.log
   );
-  callback(true)
 }
 
 function addScore(id, exo, score, callback) {
-  date = new Date()
+  const date = new Date()
     .toISOString()
     .slice(0, 19)
     .replace("T", " ");
-  db.transaction(tx => {
-    tx.executeSql(
-      "insert into score (id_user, id_exo, date, score) values (?,?,?,?);",
-      [id, exo, date, score]
-    );
-  },
-  console.error,
-  console.log
+  db.transaction(
+    tx => {
+      tx.executeSql(
+        "insert into score (id_user, id_exo, date, score) values (?,?,?,?);",
+        [id, exo, date, score]
+      );
+    },
+    console.error,
+    console.log
   );
-  callback(true)
+  callback(true);
 }
 
 function getScore(user, exo, callback) {
-  db.transaction(tx => {
-    tx.executeSql(
-      "select date, score from score where id_user=? and id_exo=?;",
-      [user, exo],
-      (_, { rows }) => {
-        callback(rows._array);
-      }
-    );
-  },
-  console.error,
-  console.log
+  db.transaction(
+    tx => {
+      tx.executeSql(
+        "select date, score from score where id_user=? and id_exo=?;",
+        [user, exo],
+        (_, {rows}) => {
+          callback(rows._array);
+        }
+      );
+    },
+    console.error,
+    console.log
   );
 }
 
 function getExos(user, callback) {
-  db.transaction(tx => {
-    tx.executeSql(
-      "select id_exo from score where id_user=?;",
-      [user],
-      (_, { rows }) => {
-        callback(rows._array);
-      }
-    );
-  },
-  console.error,
-  console.log
+  db.transaction(
+    tx => {
+      tx.executeSql(
+        "select id_exo from score where id_user=?;",
+        [user],
+        (_, {rows}) => {
+          callback(rows._array);
+        }
+      );
+    },
+    console.error,
+    console.log
   );
 }
 
@@ -214,5 +222,5 @@ export {
   removeUser,
   addScore,
   getScore,
-  getExos
+  getExos,
 };
