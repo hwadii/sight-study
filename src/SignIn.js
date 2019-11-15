@@ -1,5 +1,11 @@
 import React from "react";
-import {AsyncStorage, StyleSheet, TouchableHighlight, Text, View } from "react-native";
+import {
+  AsyncStorage,
+  StyleSheet,
+  TouchableHighlight,
+  Text,
+  View
+} from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 
 const DATA = [
@@ -33,8 +39,6 @@ const DATA = [
   "Adelaide",
   "Adele"
 ];
-
-
 
 export default class SignIn extends React.Component {
   render() {
@@ -78,7 +82,6 @@ export default class SignIn extends React.Component {
                 lastConnected={new Date().toLocaleDateString()}
                 props={this.props.navigation}
               />
-
             )}
             keyExtractor={item => Math.random().toString()}
           />
@@ -88,9 +91,15 @@ export default class SignIn extends React.Component {
   }
 }
 
-function User({ title, lastConnected , props }) {
+function User({ title, lastConnected, props }) {
   return (
-    <TouchableHighlight onPress={() =>{AsyncStorage.setItem('id', title),props.navigate("Score",{id:title})}}>
+    <TouchableHighlight
+      onPress={() => {
+        AsyncStorage.setItem("id", title);
+        props.navigate("Menu");
+        // props.navigate("Score", { id: title });
+      }}
+    >
       <View style={styles.userBox}>
         <Text style={styles.userText}>{title}</Text>
         <Text>Dernière connexion: {lastConnected}</Text>
@@ -110,21 +119,21 @@ const styles = StyleSheet.create({
     padding: 5
   },
   noAccountText: {
-    fontSize: 20,
+    fontSize: 20
   },
   userBox: {
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "#fff",
     // borderBottomWidth: 0.5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 10,
     padding: 18,
     paddingTop: 26,
-    paddingBottom: 26,
+    paddingBottom: 26
   },
   userText: {
     fontSize: 18,

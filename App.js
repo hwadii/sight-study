@@ -4,7 +4,11 @@ import SignIn from "./src/SignIn";
 import SignUp from "./src/SignUp";
 import Score from "./src/Score";
 import Test from "./src/Test";
+<<<<<<< HEAD
 import TestScreen from "./src/TestScreen";
+=======
+import Menu from "./src/Menu";
+>>>>>>> 4c5e3414d4908cb6ffab544dbeacc39c3c3b5ec7
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
@@ -12,8 +16,12 @@ const Routes = {
   SignIn,
   SignUp,
   Score,
+<<<<<<< HEAD
   Test,
   TestScreen
+=======
+  Menu
+>>>>>>> 4c5e3414d4908cb6ffab544dbeacc39c3c3b5ec7
 };
 
 const MainNavigator = createStackNavigator(
@@ -25,7 +33,7 @@ const MainNavigator = createStackNavigator(
   },
   {
     // headerMode: 'none',
-    initialRouteName: "Test",
+    initialRouteName: 'SignIn',
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour",
