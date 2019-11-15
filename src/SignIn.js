@@ -96,7 +96,7 @@ function User({ title, lastConnected, props }) {
     <TouchableHighlight
       onPress={() => {
         AsyncStorage.setItem("id", title);
-        props.navigate("Menu");
+        props.navigate("Score");
         // props.navigate("Score", { id: title });
       }}
     >

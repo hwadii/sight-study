@@ -8,7 +8,6 @@ export default class TestScreen extends Component {
 
     constructor(props){
     }
-    
 
     render() {
         return (

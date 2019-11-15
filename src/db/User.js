@@ -1,7 +1,7 @@
 import * as SQLite from "expo-sqlite";
 import util from "../util/util";
 
-// const db = SQLite.openDatabase("sigthstudy.db");
+const db = SQLite.openDatabase("sigthstudy.db");
 
 function initDB() {
   db.transaction(tx => {

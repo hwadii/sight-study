@@ -50,8 +50,8 @@ function Cards({ navigate }) {
 const styles = StyleSheet.create({
   cards: {
     display: "flex",
-    marginHorizontal: "1rem",
-    marginVertical: "1rem",
+    marginHorizontal: 1,
+    marginVertical: 1,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "column"

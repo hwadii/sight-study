@@ -1,6 +1,7 @@
 import React from "react";
 import { AsyncStorage, Dimensions, StyleSheet, Text, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
+import * as User from "./db/User";
 
 async function getid() {
   try {
@@ -64,18 +65,37 @@ export default class Score extends React.Component {
   componentDidMount() {
     getid().then(id => {
       const dataForCurrentId = data.filter(d => d.id === id);
+      id_t="1"
+      User.getScore(id_t,score=>{
+        let date_t =[]
+        let sog_t = []
+        let sod_t = []
+        score.forEach(element => {
+          date_t.push(element["date"])
+          sog_t.push(element["oeil_gauche"])
+          sod_t.push(element["oeil_droit"])
+        });
+        this.setState({
+          dates : date_t,
+          s_o_d : sod_t,
+          s_o_g : sog_t
+        })
+        })
+      
+      console.log("apres" +this.state.score)
       this.setState({
         id,
-        dates: dataForCurrentId.map(d => d.date),
+        /*dates: dataForCurrentId.map(d => d.date),
         s_o_d: dataForCurrentId.map(d => d.score_oeil_droit),
-        s_o_g: dataForCurrentId.map(d => d.score_oeil_gauche),
+        s_o_g: dataForCurrentId.map(d => d.score_oeil_gauche),*/
         isLoading: false
       });
     });
   }
   render() {
-    if (this.state.isLoading || this.state.s_o_g.length==0 || this.state.s_o_d.length==0) {
+    if (this.state.isLoading || this.state.s_o_g.length==0 || this.state.s_o_d.length==0 ) {
       console.log("load");
+      //console.log(this.state.score)
       return (
         <View>
           <Text>Pas de Scores disponible</Text>
