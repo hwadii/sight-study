@@ -4,6 +4,7 @@ import SignIn from "./src/SignIn";
 import SignUp from "./src/SignUp";
 import Score from "./src/Score";
 import Test from "./src/Test";
+import Menu from "./src/Menu";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
@@ -11,29 +12,26 @@ const Routes = {
   SignIn,
   SignUp,
   Score,
-  Test
+  Menu
 };
 
 const MainNavigator = createStackNavigator(
   {
     ...Routes,
     SignIn: {
-      screen: SignIn,
-    },
+      screen: SignIn
+    }
   },
   {
     // headerMode: 'none',
-    initialRouteName: 'Test',
+    initialRouteName: 'SignIn',
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour",
-      headerRight: () => (
-        <Text style={styles.helpText}>Aide 💡</Text>
-      )
+      headerRight: () => <Text style={styles.helpText}>Aide 💡</Text>
     }
   }
 );
-
 
 const Navigation = createAppContainer(MainNavigator);
 
@@ -43,7 +41,7 @@ class App extends React.Component {
       <View style={styles.container}>
         <Navigation />
       </View>
-    )
+    );
   }
 }
 
@@ -51,9 +49,9 @@ export default App;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   helpText: {
     fontSize: 16
   }
-})
+});

@@ -15,15 +15,11 @@ class Test extends React.Component {
 
   componentDidMount() {
     User.initDB();
+    // User.dropDB();
     // User.removeUser(2);
-    // User.addUser("Sylvain", "Huss", "1234", 0);
-    // User.getUsers();
-    // this.setState({
-    //   id: User.getUser("Hajji", "Wadii"),
-    //   users: User.getUsers()
-    // });
-    // User.getUser("Hajji", "Wadii", id => this.setState({ id }));
-    User.getUsers(users => this.setState({ users }));
+    // User.addUser("Sylvain", "Huss", "1234", 0, user => this.setState({ user }));
+    // User.addUser("Wadii", "Hajji", "1234", 0, user => console.log(user));
+    // User.addUser("Adam", "Colas", "1234", 0, user => console.log(user));
   }
   render() {
     const { id, users } = this.state;
