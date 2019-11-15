@@ -101,7 +101,6 @@ function getUsers(callback) {
       "select id, nom, prenom, duplicata, derniere_connexion from user;",
       [],
       (_, {rows}) => {
-        console.log(rows._array);
         callback(rows._array);
       },
       console.error

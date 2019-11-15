@@ -13,42 +13,6 @@ async function getid() {
     console.log(error);
   }
 }
-const data = [
-  {
-    id: "Aaren Last name",
-    date: "24/4/2018",
-    score_oeil_droit: 50,
-    score_oeil_gauche: 5
-  },
-  {
-    id: "Aaren Last name",
-    date: "22/4/2018",
-    score_oeil_droit: 1,
-    score_oeil_gauche: 10
-  },
-  {
-    id: "Aarika Last name",
-    date: "20/2/2019",
-    score_oeil_droit: 8,
-    score_oeil_gauche: 27
-  },
-  {
-    id: "Aarika Last name",
-    date: "10/8/2019",
-    score_oeil_droit: 3,
-    score_oeil_gauche: 17
-  },
-  {
-    date: "20/5/2019",
-    score_oeil_droit: 44,
-    score_oeil_gauche: 32
-  },
-  {
-    date: "10/10/2019",
-    score_oeil_droit: 21,
-    score_oeil_gauche: 22
-  }
-];
 
 export default class Score extends React.Component {
   constructor(props) {
@@ -64,9 +28,7 @@ export default class Score extends React.Component {
 
   componentDidMount() {
     getid().then(id => {
-      const dataForCurrentId = data.filter(d => d.id === id);
-      id_t="1"
-      User.getScore(id_t,score=>{
+      User.getScore(id,score=>{
         let date_t =[]
         let sog_t = []
         let sod_t = []

@@ -7,6 +7,7 @@ import {
   View
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
+import * as User from "./db/User";
 
 const DATA = [
   "Aaren",
@@ -41,7 +42,49 @@ const DATA = [
 ];
 
 export default class SignIn extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      users: []
+    };
+  }
+
+
+  componentDidMount() {
+    User.getUsers(users => {
+      let users_t = []
+      users.forEach(element => {
+        users_t.push({
+          id: element["id"],
+          nom: element["nom"],
+          prenom: element["prenom"],
+          derniere_connexion: element["derniere_connexion"]
+        })
+      });
+      this.setState({ users: users_t })
+      console.log(this.state.users)
+    })
+  }
+
   render() {
+    if (this.state.users.length == 0) {
+      return (
+        <View style={styles.container}>
+          <View style={styles.noAccount}>
+            <Text style={styles.noAccountText}>
+              Pas de compte ?
+            <Text
+                onPress={() => this.props.navigation.navigate("SignUp")}
+                style={{ fontWeight: "bold", color: "#007BFF" }}
+              >
+                Inscrivez-vous !
+            </Text>
+            </Text>
+          </View>
+        </View>
+      )
+    }
     return (
       <View style={styles.container}>
         <View style={styles.noAccount}>
@@ -75,12 +118,13 @@ export default class SignIn extends React.Component {
         </View>
         <View style={styles.usersList}>
           <FlatList
-            data={DATA}
+            data={this.state.users}
             renderItem={({ item }) => (
-              <User
-                title={`${item} Last name`}
-                lastConnected={new Date().toLocaleDateString()}
+              <User_view
+                title={`${item["prenom"]} ${item["nom"]}`}
+                lastConnected={item["derniere_connexion"]}
                 props={this.props.navigation}
+                id={item["id"]}
               />
             )}
             keyExtractor={item => Math.random().toString()}
@@ -91,13 +135,14 @@ export default class SignIn extends React.Component {
   }
 }
 
-function User({ title, lastConnected, props }) {
+function User_view({ title, lastConnected, props, id }) {
+  console.log(id)
   return (
     <TouchableHighlight
       onPress={() => {
-        AsyncStorage.setItem("id", title);
+        AsyncStorage.setItem("id", String(id));
         props.navigate("Score");
-        // props.navigate("Score", { id: title });
+
       }}
     >
       <View style={styles.userBox}>

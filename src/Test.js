@@ -19,12 +19,12 @@ class Test extends React.Component {
     // User.dropDB();
     // User.removeUser(1);
     // User.addUser("Adam", "Colas", "1234", 0, user => this.setState({ user }));
-    // User.addUser("Wadii", "Hajji", "1234", 0, user => console.log(user));
+     User.addUser("Wadii", "Hajji", "1234", 0, user => console.log(user));
     // User.addUser("Adam", "Colas", "1234", 0, user => console.log(user));
-    User.getUsers(users => this.setState({ users }))
+    //User.getUsers(users => this.setState({ users }))
     // User.addScore("1",30,30,(exo)=>console.log(exo))
     //User.getExos("1",(exo)=>console.log(exo))
-    User.getScore("1",(exo)=>console.log(exo))
+    //User.getScore("1",(exo)=>console.log(exo))
     
   }
   render() {
