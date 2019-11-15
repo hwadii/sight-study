@@ -59,6 +59,15 @@ export default class SignIn extends React.Component {
               Score !
             </Text>
           </Text>
+          <Text style={styles.noAccountText}>
+            test:
+            <Text
+              onPress={() => this.props.navigation.navigate("TestScreen")}
+              style={{ fontWeight: "bold", color: "#007BFF" }}
+            >
+              Screen!
+            </Text>
+          </Text>
         </View>
         <View style={styles.usersList}>
           <FlatList

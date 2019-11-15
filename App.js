@@ -4,6 +4,7 @@ import SignIn from "./src/SignIn";
 import SignUp from "./src/SignUp";
 import Score from "./src/Score";
 import Test from "./src/Test";
+import TestScreen from "./src/TestScreen";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
@@ -11,7 +12,8 @@ const Routes = {
   SignIn,
   SignUp,
   Score,
-  Test
+  Test,
+  TestScreen
 };
 
 const MainNavigator = createStackNavigator(

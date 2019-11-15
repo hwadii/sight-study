@@ -11,7 +11,7 @@ function initDB() {
   });
   db.transaction(tx => {
     tx.executeSql(
-      "create table if not exists score (id_user INTEGER, id_exo INTEGER, date DATE, score INTEGER );"
+      "create table if not exists score (id_user INTEGER, date DATE, oeil_gauche INTEGER, oeil_droit INTEGER, Primary Key(`id_user`,`date`) );"
     );
   });
 }
@@ -161,7 +161,7 @@ function removeUser(id, callback) {
   );
 }
 
-function addScore(id, exo, score, callback) {
+function addScore(id, oeil_gauche, oeil_droit, callback) {
   const date = new Date()
     .toISOString()
     .slice(0, 19)
@@ -169,8 +169,8 @@ function addScore(id, exo, score, callback) {
   db.transaction(
     tx => {
       tx.executeSql(
-        "insert into score (id_user, id_exo, date, score) values (?,?,?,?);",
-        [id, exo, date, score]
+        "insert into score (id_user, date, oeil_gauche, oeil_droit) values (?,?,?,?);",
+        [id, date, oeil_gauche, oeil_droit]
       );
     },
     console.error,
@@ -179,12 +179,12 @@ function addScore(id, exo, score, callback) {
   callback(true);
 }
 
-function getScore(user, exo, callback) {
+function getScore(user, callback) {
   db.transaction(
     tx => {
       tx.executeSql(
-        "select date, score from score where id_user=? and id_exo=?;",
-        [user, exo],
+        "select date, oeil_gauche, oeil_droit from score where id_user=? ",
+        [user],
         (_, {rows}) => {
           callback(rows._array);
         }
@@ -199,7 +199,7 @@ function getExos(user, callback) {
   db.transaction(
     tx => {
       tx.executeSql(
-        "select id_exo from score where id_user=?;",
+        "select id_user, date from score where id_user=?;",
         [user],
         (_, {rows}) => {
           callback(rows._array);
