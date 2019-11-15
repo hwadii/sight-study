@@ -63,7 +63,6 @@ export default class SignIn extends React.Component {
         })
       });
       this.setState({ users: users_t })
-      console.log(this.state.users)
     })
   }
 
@@ -136,7 +135,6 @@ export default class SignIn extends React.Component {
 }
 
 function User_view({ title, lastConnected, props, id }) {
-  console.log(id)
   return (
     <TouchableHighlight
       onPress={() => {

@@ -3,13 +3,39 @@ import { StyleSheet, Text, View, Button, Dimensions } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { Platform } from "@unimodules/core";
+import * as User from "./db/User";
 
 export default class SignIn extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      prenom :"",
+      nom:""
+    }
+    this.handle_change_prenom=this.handle_change_prenom.bind(this)
+    this.handle_change_nom = this.handle_change_nom.bind(this)
+    this.handle_add_user =this.handle_add_user.bind(this)
+  }
+
+  handle_change_prenom(e){
+    const prenom = e.nativeEvent.text
+    this.setState({prenom})
+  }
+
+  handle_add_user(){
+    User.addUser(this.state.nom,this.state.prenom,"1234",0,console.log("ok"))
+  }
+
+  handle_change_nom(e){
+    const nom = e.nativeEvent.text
+    this.setState({nom})
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.header}>Nouvel utilisateur</Text>
-        <Form navigate={this.props.navigation.navigate} />
+        <Form navigate={this.props.navigation.navigate} handle_prenom={this.handle_change_prenom} handle_nom={this.handle_change_nom} handle_add_user={this.handle_add_user} />
       </View>
     );
   }
@@ -24,6 +50,7 @@ function Form(props) {
         maxLength={20}
         autoCorrect={false}
         placeholder="Entrez votre prénom"
+        onChange = {props.handle_prenom}
       />
       <Text style={styles.inputsLabels}>Nom</Text>
       <TextInput
@@ -31,25 +58,30 @@ function Form(props) {
         maxLength={20}
         autoCorrect={false}
         placeholder="Entrez votre nom"
+        onChange = {props.handle_nom}
       />
       {Platform.OS === "web" ? (
         <Button
           title="CONFIRMER"
-          onPress={() =>
+          onPress={() =>{
             props.navigate("SignUp", {
               firstName: "Wadii",
               lastName: "Hajji"
             })
           }
+          }
         />
       ) : (
         <TouchableOpacity
           style={styles.confirmButton}
-          onPress={() =>
-            props.navigate("SignUp", {
+          onPress={() =>{
+            props.handle_add_user()
+            User.getUsers(users => console.log(users))
+            props.navigate("SignIn", {
               firstName: "Wadii",
               lastName: "Hajji"
             })
+          }
           }
         >
           <Text style={styles.confirmButtonText}>CONFIRMER</Text>
