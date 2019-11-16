@@ -1,8 +1,6 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
-
-// TODO: Add SVG Icons for cards.
 
 export default class Card extends React.Component {
   constructor(props) {
@@ -10,23 +8,27 @@ export default class Card extends React.Component {
   }
 
   render() {
-    const { title, description, route, navigate } = this.props;
+    const { title, description, route, navigate, image } = this.props;
     return (
       <View style={styles.card}>
         <TouchableHighlight
           underlayColor="#fff"
           onPress={() => navigate(route)}
         >
-          <Content title={title} description={description} />
+          <Content title={title} description={description} image={image} />
         </TouchableHighlight>
       </View>
     );
   }
 }
 
-function Content({ title, description }) {
+function Content({ title, description, image }) {
   return (
     <View style={styles.content}>
+      <Image
+        style={{ width: 192, height: 192, alignSelf: "center" }}
+        source={image}
+      />
       <Text style={styles.header}>{title}</Text>
       <Text style={styles.description}>{description}</Text>
     </View>
@@ -38,8 +40,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     marginVertical: 10,
-    height: 200,
-    width: "80%"
+    // height: 200,
+    width: "90%"
   },
   header: {
     fontSize: 22,
@@ -51,11 +53,13 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "center",
     backgroundColor: "#f5f5f5",
-    borderRadius: 5
+    borderRadius: 5,
+    paddingVertical: 20
   },
   description: {
     fontSize: 16,
+    paddingHorizontal: 30,
     textAlign: "center",
-    color: "#979797",
+    color: "#979797"
   }
 });
