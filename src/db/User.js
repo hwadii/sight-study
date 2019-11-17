@@ -1,7 +1,7 @@
 import * as SQLite from "expo-sqlite";
 import util from "../util/util";
 
-// const db = SQLite.openDatabase("sigthstudy.db");
+const db = SQLite.openDatabase("sigthstudy.db");
 
 function initDB() {
   db.transaction(tx => {
@@ -41,6 +41,62 @@ function getUser(nom, prenom, duplicata, callback) {
     console.error,
     console.log
   );
+}
+
+function getUsersLike(recherche, callback) {
+  recherche = String(recherche)
+  if (recherche.length>0){
+    if (recherche.includes(" ")){
+      var recherche1 = recherche.split(' ')[0]
+      var recherche2 = recherche.split(' ')[1]
+      console.log(recherche1 + 'a')
+      console.log(recherche2 + 'a')
+      db.transaction(
+        tx => {
+          tx.executeSql(
+            "select id, nom, prenom, duplicata, derniere_connexion from user where (nom=? and prenom like ?) or (nom like ? and prenom=?);",
+            [recherche1, recherche2 + '%', recherche2 + '%', recherche1],
+            (_, {rows}) => {
+              callback(rows._array);
+            }
+          );
+        },
+        console.error,
+        console.log
+      );
+
+    }else{
+      db.transaction(
+        tx => {
+          tx.executeSql(
+            "select id, nom, prenom, duplicata, derniere_connexion from user where nom like ? or prenom like ?;",
+            [recherche + '%', recherche + '%'],
+            (_, {rows}) => {
+              callback(rows._array);
+            }
+          );
+        },
+        console.error,
+        console.log
+      );
+
+    }
+  }
+  else{
+    db.transaction(
+      tx => {
+        tx.executeSql(
+          "select id, nom, prenom, duplicata, derniere_connexion from user;",
+          [],
+          (_, {rows}) => {
+            callback(rows._array);
+          }
+        );
+      },
+      console.error,
+      console.log
+    );
+  }
 }
 
 function connexion(id, pin, callback) {
@@ -116,8 +172,8 @@ function addUser(nom, prenom, pin, type, callback) {
         "select duplicata from user where nom=? and prenom=?;",
         [nom, prenom],
         (_, {rows}) => {
-          const duplicata = parseInt(rows.length);
-          addUser_onSuccess(nom, prenom, pin, type, duplicata, callback);
+          duplicata = parseInt(rows.length);
+          addUser_onSuccess(nom, prenom, duplicata, pin, type, callback);
         }
       );
     },
@@ -126,13 +182,14 @@ function addUser(nom, prenom, pin, type, callback) {
   );
 }
 
-function addUser_onSuccess(nom, prenom, pin, type, duplicata, callback) {
+function addUser_onSuccess(nom, prenom, duplicata, pin, type, callback) {
   const mdp = util.SHA1(String(pin));
   const date = new Date()
     .toISOString()
     .slice(0, 19)
     .replace("T", " ");
-
+  console.log(nom)
+  console.log(duplicata)
   db.transaction(
     tx => {
       tx.executeSql(
@@ -161,7 +218,7 @@ function removeUser(id, callback) {
   );
 }
 
-function addScore(id, oeil_gauche, oeil_droit, callback) {
+function addScore(id_user, oeil_gauche, oeil_droit, callback) {
   const date = new Date()
     .toISOString()
     .slice(0, 19)
@@ -170,7 +227,7 @@ function addScore(id, oeil_gauche, oeil_droit, callback) {
     tx => {
       tx.executeSql(
         "insert into score (id_user, date, oeil_gauche, oeil_droit) values (?,?,?,?);",
-        [id, date, oeil_gauche, oeil_droit]
+        [id_user, date, oeil_gauche, oeil_droit]
       );
     },
     console.error,
@@ -183,7 +240,7 @@ function getScore(user, callback) {
   db.transaction(
     tx => {
       tx.executeSql(
-        "select date, oeil_gauche, oeil_droit from score where id_user=? ",
+        "select date, oeil_gauche, oeil_droit from score where id_user=? order by date ASC",
         [user],
         (_, {rows}) => {
           callback(rows._array);
@@ -195,26 +252,12 @@ function getScore(user, callback) {
   );
 }
 
-function getExos(user, callback) {
-  db.transaction(
-    tx => {
-      tx.executeSql(
-        "select id_user, date from score where id_user=?;",
-        [user],
-        (_, {rows}) => {
-          callback(rows._array);
-        }
-      );
-    },
-    console.error,
-    console.log
-  );
-}
 
 export {
   initDB,
   dropDB,
   getUser,
+  getUsersLike,
   connexion,
   getType,
   getUsers,
@@ -222,5 +265,4 @@ export {
   removeUser,
   addScore,
   getScore,
-  getExos,
 };
