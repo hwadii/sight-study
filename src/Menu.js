@@ -11,7 +11,7 @@ const texts = [
     title: "Commencer le test 📝",
     description:
       "Vous allez devoir lire les lettres affichées à l’écran. Veuillez vous installez dans une pièce sombre et silencieuse.",
-    image: require("../assets/racing-flag.png") 
+    image: require("../assets/racing-flag.png")
   },
   {
     id: 2,
@@ -19,14 +19,14 @@ const texts = [
     title: "Suivez vos résultats 📈",
     description:
       "Vous pouvez suivre l’évolution de vos résultats au fil du temps ici.",
-    image: require("../assets/diagram.png") 
+    image: require("../assets/diagram.png")
   },
   {
     id: 3,
     route: "Settings",
     title: "Modifiez vos réglages ⚙️",
     description: "Changez vos paramètres.",
-    image: require("../assets/settings.png") 
+    image: require("../assets/settings.png")
   }
 ];
 

@@ -9,7 +9,8 @@ import {
 import { FlatList } from "react-native-gesture-handler";
 import * as User from "./db/User";
 
-// TODO: Allow connection only when user is added in the db
+// TODO: Add intermediate page for entering PIN.
+// TODO: Create Frequently used components.
 
 export default class SignIn extends React.Component {
   constructor(props) {
@@ -26,64 +27,70 @@ export default class SignIn extends React.Component {
   }
 
   render() {
-    if (this.state.users.length == 0) {
-      return (
-        <View style={styles.container}>
-          <View style={styles.noAccount}>
-            <Text style={styles.noAccountText}>
-              Pas de compte ?
-              <Text
-                onPress={() => this.props.navigation.navigate("SignUp")}
-                style={{ fontWeight: "bold", color: "#007BFF" }}
-              >
-                Inscrivez-vous !
-              </Text>
-            </Text>
-          </View>
-        </View>
-      );
-    }
+    const { users } = this.state;
+    const { navigation } = this.props;
     return (
       <View style={styles.container}>
-        <View style={styles.noAccount}>
-          <Text style={styles.noAccountText}>
-            Pas de compte ?
-            <Text
-              onPress={() => this.props.navigation.navigate("SignUp")}
-              style={{ fontWeight: "bold", color: "#007BFF" }}
-            >
-              Inscrivez-vous !
-            </Text>
-          </Text>
-          <Text onPress={() => this.props.navigation.navigate("Test")} style={{ fontWeight: "bold", color: "#007BFF" }}>
-            Lien vers Test.js
-          </Text>
-        </View>
-        <View style={styles.usersList}>
-          <FlatList
-            data={this.state.users}
-            renderItem={({ item }) => (
-              <UserElement
-                title={`${item["prenom"]} ${item["nom"]}`}
-                lastConnected={item["derniere_connexion"]}
-                props={this.props.navigation}
-                id={item["id"]}
-              />
-            )}
-            keyExtractor={item => Math.random().toString()}
-          />
-        </View>
+        <NoAccount navigate={navigation.navigate} />
+        {users.length > 0 && (
+          <UsersList users={users} navigate={navigation.navigate} />
+        )}
       </View>
     );
   }
 }
 
-function UserElement({ title, lastConnected, props, id }) {
+/**
+ * Displays a text to allow the user to go and create an account
+ * if he doesn't have one
+ */
+function NoAccount({ navigate }) {
+  return (
+    <View style={styles.noAccount}>
+      <Text style={styles.noAccountText}>
+        Pas de compte ?
+        <Text onPress={() => navigate("SignUp")} style={styles.link}>
+          Inscrivez-vous !
+        </Text>
+      </Text>
+      <Text onPress={() => navigate("Test")} style={styles.link}>
+        Lien vers Test.js
+      </Text>
+    </View>
+  );
+}
+
+/**
+ * List of users
+ */
+function UsersList({ users, navigate }) {
+  return (
+    <View style={styles.usersList}>
+      <FlatList
+        data={users}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({ item }) => (
+          <UserElement
+            id={item.id}
+            title={`${item.prenom} ${item.nom}`}
+            lastConnected={item.derniere_connexion}
+            navigate={navigate}
+          />
+        )}
+      />
+    </View>
+  );
+}
+
+/**
+ * A row of the users list
+ */
+function UserElement({ title, lastConnected, navigate, id }) {
   return (
     <TouchableHighlight
       onPress={() => {
         AsyncStorage.setItem("id", String(id));
-        props.navigate("Menu");
+        navigate("Menu");
       }}
     >
       <View style={styles.userBox}>
@@ -97,7 +104,6 @@ function UserElement({ title, lastConnected, props, id }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: "center",
     marginTop: 15
   },
   noAccount: {
@@ -111,7 +117,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "#fff",
-    // borderBottomWidth: 0.5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
@@ -124,9 +129,9 @@ const styles = StyleSheet.create({
   userText: {
     fontSize: 18,
     fontWeight: "bold"
-    // textAlign: "center"
   },
-  usersList: {
-    // alignItems: "center"
+  link: {
+    fontWeight: "bold",
+    color: "#007BFF"
   }
 });

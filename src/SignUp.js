@@ -1,8 +1,7 @@
 import React from "react";
-import { StyleSheet, Text, View, Button, Dimensions } from "react-native";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
-import { Platform } from "@unimodules/core";
 import * as User from "./db/User";
 
 export default class SignIn extends React.Component {
@@ -10,24 +9,25 @@ export default class SignIn extends React.Component {
     super(props);
     this.state = {
       prenom: "",
-      nom: ""
+      nom: "",
+      pin: ""
     };
-    this.handleChangePrenom = this.handleChangePrenom.bind(this);
-    this.handleChangeNom = this.handleChangeNom.bind(this);
+    this.handleChangeField = this.handleChangeField.bind(this);
     this.handleAddUser = this.handleAddUser.bind(this);
+    this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
   }
 
-  handleChangePrenom(e) {
-    this.setState({ prenom: e.nativeEvent.text });
+  componentDidMount() {
+    User.initDB();
+  }
+
+  handleChangeField(e, field) {
+    this.setState({ [field]: e.nativeEvent.text });
   }
 
   handleAddUser(callback) {
-    User.addUser(this.state.nom, this.state.prenom, "1234", 0, callback);
-  }
-
-  handleChangeNom(e) {
-    const nom = e.nativeEvent.text;
-    this.setState({ nom });
+    const { nom, prenom } = this.state;
+    User.addUser(nom, prenom, "1234", 0, callback);
   }
 
   render() {
@@ -36,8 +36,7 @@ export default class SignIn extends React.Component {
         <Text style={styles.header}>Nouvel utilisateur</Text>
         <Form
           navigate={this.props.navigation.navigate}
-          handleChangePrenom={this.handleChangePrenom}
-          handleChangeNom={this.handleChangeNom}
+          handleChange={this.handleChangeField}
           handleAddUser={this.handleAddUser}
         />
       </View>
@@ -45,55 +44,45 @@ export default class SignIn extends React.Component {
   }
 }
 
-function Form(props) {
-  const {
-    handleChangePrenom,
-    handleChangeNom,
-    handleAddUser,
-    navigate
-  } = props;
+function Form({ handleChange, handleAddUser, navigate }) {
   return (
     <View style={styles.form}>
-      <Text style={styles.inputsLabels}>Prénom</Text>
-      <TextInput
-        style={styles.inputs}
-        maxLength={20}
-        autoCorrect={false}
-        placeholder="Entrez votre prénom"
-        onChange={handleChangePrenom}
+      <Field label="Prénom" handler={e => handleChange(e, "prenom")} />
+      <Field label="Nom" handler={e => handleChange(e, "nom")} />
+      <Field
+        label="PIN"
+        handler={e => handleChange(e, "pin")}
+        maxLength={4}
+        keyboardType="numeric"
       />
-      <Text style={styles.inputsLabels}>Nom</Text>
-      <TextInput
-        style={styles.inputs}
-        maxLength={20}
-        autoCorrect={false}
-        placeholder="Entrez votre nom"
-        onChange={handleChangeNom}
-      />
-      {Platform.OS === "web" ? (
-        <Button
-          title="CONFIRMER"
-          onPress={() => {
-            props.navigate("SignUp", {
-              firstName: "Wadii",
-              lastName: "Hajji"
-            });
-          }}
-        />
-      ) : (
-        <TouchableOpacity
-          style={styles.confirmButton}
-          onPress={() => {
-            props.handleAddUser(() =>
-              props.navigate("SignIn")
-            );
+      <TouchableOpacity
+        style={styles.confirmButton}
+        onPress={() => {
+          handleAddUser(() => {
+            navigate("SignIn");
             User.getUsers(users => console.log(users));
-          }}
-        >
-          <Text style={styles.confirmButtonText}>CONFIRMER</Text>
-        </TouchableOpacity>
-      )}
+          });
+        }}
+      >
+        <Text style={styles.confirmButtonText}>CONFIRMER</Text>
+      </TouchableOpacity>
     </View>
+  );
+}
+
+function Field({ label, handler, maxLength = 20, keyboardType = "default" }) {
+  return (
+    <>
+      <Text style={styles.inputsLabels}>{label}</Text>
+      <TextInput
+        style={styles.inputs}
+        maxLength={maxLength}
+        keyboardType={keyboardType}
+        autoCorrect={false}
+        placeholder={`Entrez votre ${label.toLowerCase()}`}
+        onChange={handler}
+      />
+    </>
   );
 }
 
