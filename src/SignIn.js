@@ -83,7 +83,7 @@ function UserElement({ title, lastConnected, props, id }) {
     <TouchableHighlight
       onPress={() => {
         AsyncStorage.setItem("id", String(id));
-        props.navigate("Score");
+        props.navigate("Menu");
       }}
     >
       <View style={styles.userBox}>
