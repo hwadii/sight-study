@@ -1,19 +1,26 @@
-import React, { Component } from 'react';
-import { StyleSheet, Text, View, Image, TouchableHighlight, PixelRatio, Dimensions, Button } from 'react-native';
-import { AsyncStorage } from 'react-native';
+import React, { Component } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableHighlight,
+  PixelRatio,
+  Dimensions,
+  Button
+} from "react-native";
+import { AsyncStorage } from "react-native";
 
-var letters=['N','C','K','Z','O','R','H','S','D','V'];
+var letters = ["N", "C", "K", "Z", "O", "R", "H", "S", "D", "V"];
 
 export default class TestScreen extends Component {
-    render() {
-        return (
-            <View >
-                <Text>
-                    Test Screen
-                </Text>
-            </View>
-        );
-    }
+  constructor(props) {}
 
+  render() {
+    return (
+      <View>
+        <Text>Test Screen</Text>
+      </View>
+    );
+  }
 }
-

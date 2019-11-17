@@ -1,6 +1,7 @@
 import React from "react";
 import { AsyncStorage, Dimensions, StyleSheet, Text, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
+import * as User from "./db/User";
 
 async function getid() {
   try {
@@ -12,42 +13,6 @@ async function getid() {
     console.log(error);
   }
 }
-const data = [
-  {
-    id: "Aaren Last name",
-    date: "24/4/2018",
-    score_oeil_droit: 50,
-    score_oeil_gauche: 5
-  },
-  {
-    id: "Aaren Last name",
-    date: "22/4/2018",
-    score_oeil_droit: 1,
-    score_oeil_gauche: 10
-  },
-  {
-    id: "Aarika Last name",
-    date: "20/2/2019",
-    score_oeil_droit: 8,
-    score_oeil_gauche: 27
-  },
-  {
-    id: "Aarika Last name",
-    date: "10/8/2019",
-    score_oeil_droit: 3,
-    score_oeil_gauche: 17
-  },
-  {
-    date: "20/5/2019",
-    score_oeil_droit: 44,
-    score_oeil_gauche: 32
-  },
-  {
-    date: "10/10/2019",
-    score_oeil_droit: 21,
-    score_oeil_gauche: 22
-  }
-];
 
 export default class Score extends React.Component {
   constructor(props) {
@@ -63,19 +28,40 @@ export default class Score extends React.Component {
 
   componentDidMount() {
     getid().then(id => {
-      const dataForCurrentId = data.filter(d => d.id === id);
+      User.getScore(id, score => {
+        let date_t = [];
+        let sog_t = [];
+        let sod_t = [];
+        score.forEach(element => {
+          date_t.push(element["date"]);
+          sog_t.push(element["oeil_gauche"]);
+          sod_t.push(element["oeil_droit"]);
+        });
+        this.setState({
+          dates: date_t,
+          s_o_d: sod_t,
+          s_o_g: sog_t
+        });
+      });
+
+      console.log("apres" + this.state.score);
       this.setState({
         id,
-        dates: dataForCurrentId.map(d => d.date),
+        /*dates: dataForCurrentId.map(d => d.date),
         s_o_d: dataForCurrentId.map(d => d.score_oeil_droit),
-        s_o_g: dataForCurrentId.map(d => d.score_oeil_gauche),
+        s_o_g: dataForCurrentId.map(d => d.score_oeil_gauche),*/
         isLoading: false
       });
     });
   }
   render() {
-    if (this.state.isLoading || this.state.s_o_g.length==0 || this.state.s_o_d.length==0) {
+    if (
+      this.state.isLoading ||
+      this.state.s_o_g.length == 0 ||
+      this.state.s_o_d.length == 0
+    ) {
       console.log("load");
+      //console.log(this.state.score)
       return (
         <View>
           <Text>Pas de Scores disponible</Text>

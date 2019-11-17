@@ -3,19 +3,55 @@ import { StyleSheet, Text, View, Button, Dimensions } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { Platform } from "@unimodules/core";
+import * as User from "./db/User";
 
 export default class SignIn extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      prenom: "",
+      nom: ""
+    };
+    this.handleChangePrenom = this.handleChangePrenom.bind(this);
+    this.handleChangeNom = this.handleChangeNom.bind(this);
+    this.handleAddUser = this.handleAddUser.bind(this);
+  }
+
+  handleChangePrenom(e) {
+    this.setState({ prenom: e.nativeEvent.text });
+  }
+
+  handleAddUser(callback) {
+    User.addUser(this.state.nom, this.state.prenom, "1234", 0, callback);
+  }
+
+  handleChangeNom(e) {
+    const nom = e.nativeEvent.text;
+    this.setState({ nom });
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.header}>Nouvel utilisateur</Text>
-        <Form navigate={this.props.navigation.navigate} />
+        <Form
+          navigate={this.props.navigation.navigate}
+          handleChangePrenom={this.handleChangePrenom}
+          handleChangeNom={this.handleChangeNom}
+          handleAddUser={this.handleAddUser}
+        />
       </View>
     );
   }
 }
 
 function Form(props) {
+  const {
+    handleChangePrenom,
+    handleChangeNom,
+    handleAddUser,
+    navigate
+  } = props;
   return (
     <View style={styles.form}>
       <Text style={styles.inputsLabels}>Prénom</Text>
@@ -24,6 +60,7 @@ function Form(props) {
         maxLength={20}
         autoCorrect={false}
         placeholder="Entrez votre prénom"
+        onChange={handleChangePrenom}
       />
       <Text style={styles.inputsLabels}>Nom</Text>
       <TextInput
@@ -31,26 +68,27 @@ function Form(props) {
         maxLength={20}
         autoCorrect={false}
         placeholder="Entrez votre nom"
+        onChange={handleChangeNom}
       />
       {Platform.OS === "web" ? (
         <Button
           title="CONFIRMER"
-          onPress={() =>
+          onPress={() => {
             props.navigate("SignUp", {
               firstName: "Wadii",
               lastName: "Hajji"
-            })
-          }
+            });
+          }}
         />
       ) : (
         <TouchableOpacity
           style={styles.confirmButton}
-          onPress={() =>
-            props.navigate("SignUp", {
-              firstName: "Wadii",
-              lastName: "Hajji"
-            })
-          }
+          onPress={() => {
+            props.handleAddUser(() =>
+              props.navigate("SignIn")
+            );
+            User.getUsers(users => console.log(users));
+          }}
         >
           <Text style={styles.confirmButtonText}>CONFIRMER</Text>
         </TouchableOpacity>
