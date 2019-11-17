@@ -1,6 +1,8 @@
 import React from "react";
 import Card from "./Card";
-import { ScrollView, StyleSheet, View, Image } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+
+// TODO: Change Settings Icon for higher res image.
 
 const texts = [
   {
