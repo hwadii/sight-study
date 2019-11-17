@@ -7,97 +7,90 @@ import {
   View
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
+import * as User from "./db/User";
 
-const DATA = [
-  "Aaren",
-  "Aarika",
-  "Abagael",
-  "Abagail",
-  "Abbe",
-  "Abbey",
-  "Abbi",
-  "Abbie",
-  "Abby",
-  "Abbye",
-  "Abigael",
-  "Abigail",
-  "Abigale",
-  "Abra",
-  "Ada",
-  "Adah",
-  "Adaline",
-  "Adan",
-  "Adara",
-  "Adda",
-  "Addi",
-  "Addia",
-  "Addie",
-  "Addy",
-  "Adel",
-  "Adela",
-  "Adelaida",
-  "Adelaide",
-  "Adele"
-];
+// TODO: Add intermediate page for entering PIN.
+// TODO: Create Frequently used components.
 
 export default class SignIn extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      users: []
+    };
+  }
+
+  componentDidMount() {
+    User.getUsers(users => {
+      this.setState({ users });
+    });
+  }
+
   render() {
+    const { users } = this.state;
+    const { navigation } = this.props;
     return (
       <View style={styles.container}>
-        <View style={styles.noAccount}>
-          <Text style={styles.noAccountText}>
-            Pas de compte ?
-            <Text
-              onPress={() => this.props.navigation.navigate("SignUp")}
-              style={{ fontWeight: "bold", color: "#007BFF" }}
-            >
-              Inscrivez-vous !
-            </Text>
-          </Text>
-          <Text style={styles.noAccountText}>
-            test:
-            <Text
-              onPress={() => this.props.navigation.navigate("Score")}
-              style={{ fontWeight: "bold", color: "#007BFF" }}
-            >
-              Score !
-            </Text>
-          </Text>
-          <Text style={styles.noAccountText}>
-            test:
-            <Text
-              onPress={() => this.props.navigation.navigate("TestScreen")}
-              style={{ fontWeight: "bold", color: "#007BFF" }}
-            >
-              Screen!
-            </Text>
-          </Text>
-        </View>
-        <View style={styles.usersList}>
-          <FlatList
-            data={DATA}
-            renderItem={({ item }) => (
-              <User
-                title={`${item} Last name`}
-                lastConnected={new Date().toLocaleDateString()}
-                props={this.props.navigation}
-              />
-            )}
-            keyExtractor={item => Math.random().toString()}
-          />
-        </View>
+        <NoAccount navigate={navigation.navigate} />
+        {users.length > 0 && (
+          <UsersList users={users} navigate={navigation.navigate} />
+        )}
       </View>
     );
   }
 }
 
-function User({ title, lastConnected, props }) {
+/**
+ * Displays a text to allow the user to go and create an account
+ * if he doesn't have one
+ */
+function NoAccount({ navigate }) {
+  return (
+    <View style={styles.noAccount}>
+      <Text style={styles.noAccountText}>
+        Pas de compte ?
+        <Text onPress={() => navigate("SignUp")} style={styles.link}>
+          Inscrivez-vous !
+        </Text>
+      </Text>
+      <Text onPress={() => navigate("Test")} style={styles.link}>
+        Lien vers Test.js
+      </Text>
+    </View>
+  );
+}
+
+/**
+ * List of users
+ */
+function UsersList({ users, navigate }) {
+  return (
+    <View style={styles.usersList}>
+      <FlatList
+        data={users}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({ item }) => (
+          <UserElement
+            id={item.id}
+            title={`${item.prenom} ${item.nom}`}
+            lastConnected={item.derniere_connexion}
+            navigate={navigate}
+          />
+        )}
+      />
+    </View>
+  );
+}
+
+/**
+ * A row of the users list
+ */
+function UserElement({ title, lastConnected, navigate, id }) {
   return (
     <TouchableHighlight
       onPress={() => {
-        AsyncStorage.setItem("id", title);
-        props.navigate("Menu");
-        // props.navigate("Score", { id: title });
+        AsyncStorage.setItem("id", String(id));
+        navigate("Menu");
       }}
     >
       <View style={styles.userBox}>
@@ -111,7 +104,6 @@ function User({ title, lastConnected, props }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: "center",
     marginTop: 15
   },
   noAccount: {
@@ -125,7 +117,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "#fff",
-    // borderBottomWidth: 0.5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
@@ -138,9 +129,9 @@ const styles = StyleSheet.create({
   userText: {
     fontSize: 18,
     fontWeight: "bold"
-    // textAlign: "center"
   },
-  usersList: {
-    // alignItems: "center"
+  link: {
+    fontWeight: "bold",
+    color: "#007BFF"
   }
 });

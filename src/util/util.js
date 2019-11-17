@@ -1,4 +1,17 @@
 /**
+ * Get user id from AsyncStorage.
+ **/
+async function getId(as) {
+  try {
+    const value = await as.getItem("id");
+    if (value !== null) {
+      return value;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+/**
  * Secure Hash Algorithm (SHA1)
  * http://www.webtoolkit.info/
  **/
@@ -156,4 +169,4 @@ function SHA1(msg) {
   return temp.toLowerCase();
 }
 
-export default { SHA1 }
+export default { SHA1, getId }

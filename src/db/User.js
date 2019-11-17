@@ -157,7 +157,6 @@ function getUsers(callback) {
       "select id, nom, prenom, duplicata, derniere_connexion from user;",
       [],
       (_, {rows}) => {
-        console.log(rows._array);
         callback(rows._array);
       },
       console.error
@@ -195,7 +194,7 @@ function addUser_onSuccess(nom, prenom, duplicata, pin, type, callback) {
       tx.executeSql(
         "insert into user (nom, prenom, duplicata, pin, type, derniere_connexion) values (?,?,?,?,?,?);",
         [nom, prenom, duplicata, mdp, type, date],
-        () => callback(`${prenom} ${nom}`)
+        callback
       );
     },
     console.error,
