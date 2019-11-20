@@ -3,6 +3,8 @@ import util from "../util/util";
 
 const db = SQLite.openDatabase("sigthstudy.db");
 
+// TODO: enlever le code pin
+
 function initDB() {
   db.transaction(tx => {
     tx.executeSql(
