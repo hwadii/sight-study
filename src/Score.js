@@ -29,7 +29,7 @@ export default class Score extends React.Component {
     setTimeout(() => {
       this.setState({ isLoading: false });
     }, 0);
-    util.getId(AsyncStorage).then(id => {
+    util.getId().then(id => {
       User.getScore(id, score => {
         // this.setState({
         //   id,
