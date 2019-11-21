@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  AsyncStorage,
   StyleSheet,
   TouchableHighlight,
   Text,
@@ -8,9 +7,12 @@ import {
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import * as User from "../service/db/User";
+import { setId, setUserName } from "./util/util";
 
-// TODO: Add intermediate page for entering PIN.
-// TODO: Create Frequently used components.
+// TODO: Create Frequently used components?
+// TODO: Look into issue when many names.
+// TODO: Sort names by last connected.
+// TODO: Add search bar here.
 
 export default class SignIn extends React.Component {
   constructor(props) {
@@ -18,11 +20,10 @@ export default class SignIn extends React.Component {
     this.state = {
       users: []
     };
-  }
-
-  componentDidMount() {
-    User.getUsers(users => {
-      this.setState({ users });
+    this.props.navigation.addListener("willFocus", () => {
+      User.getUsers(users => {
+        this.setState({ users });
+      });
     });
   }
 
@@ -48,13 +49,10 @@ function NoAccount({ navigate }) {
   return (
     <View style={styles.noAccount}>
       <Text style={styles.noAccountText}>
-        Pas de compte ?
+        Pas de compte ?{" "}
         <Text onPress={() => navigate("SignUp")} style={styles.link}>
           Inscrivez-vous !
         </Text>
-      </Text>
-      <Text onPress={() => navigate("Test")} style={styles.link}>
-        Lien vers Test.js
       </Text>
     </View>
   );
@@ -72,7 +70,7 @@ function UsersList({ users, navigate }) {
         renderItem={({ item }) => (
           <UserElement
             id={item.id}
-            title={`${item.prenom} ${item.nom}`}
+            user={{ prenom: item.prenom, nom: item.nom }}
             lastConnected={item.derniere_connexion}
             navigate={navigate}
           />
@@ -85,16 +83,17 @@ function UsersList({ users, navigate }) {
 /**
  * A row of the users list
  */
-function UserElement({ title, lastConnected, navigate, id }) {
+function UserElement({ user, lastConnected, navigate, id }) {
   return (
     <TouchableHighlight
-      onPress={() => {
-        AsyncStorage.setItem("id", String(id));
+      onPress={async () => {
+        await setId(id);
+        await setUserName(user);
         navigate("Menu");
       }}
     >
       <View style={styles.userBox}>
-        <Text style={styles.userText}>{title}</Text>
+        <Text style={styles.userText}>{user.prenom} {user.nom}</Text>
         <Text>Dernière connexion: {lastConnected}</Text>
       </View>
     </TouchableHighlight>

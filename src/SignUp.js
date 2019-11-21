@@ -25,9 +25,12 @@ export default class SignIn extends React.Component {
     this.setState({ [field]: e.nativeEvent.text });
   }
 
-  handleAddUser(callback) {
+  handleAddUser() {
+    const { navigate } = this.props.navigation;
     const { nom, prenom } = this.state;
-    User.addUser(nom, prenom, "1234", 0, callback);
+    User.addUser(nom, prenom, "1234", 0, () => {
+      navigate("SignIn");
+    });
   }
 
   render() {
@@ -44,25 +47,14 @@ export default class SignIn extends React.Component {
   }
 }
 
-function Form({ handleChange, handleAddUser, navigate }) {
+function Form({ handleChange, handleAddUser }) {
   return (
     <View style={styles.form}>
       <Field label="Prénom" handler={e => handleChange(e, "prenom")} />
       <Field label="Nom" handler={e => handleChange(e, "nom")} />
-      <Field
-        label="PIN"
-        handler={e => handleChange(e, "pin")}
-        maxLength={4}
-        keyboardType="numeric"
-      />
       <TouchableOpacity
         style={styles.confirmButton}
-        onPress={() => {
-          handleAddUser(() => {
-            navigate("SignIn");
-            User.getUsers(users => console.log(users));
-          });
-        }}
+        onPress={() => handleAddUser()}
       >
         <Text style={styles.confirmButtonText}>CONFIRMER</Text>
       </TouchableOpacity>
@@ -70,14 +62,13 @@ function Form({ handleChange, handleAddUser, navigate }) {
   );
 }
 
-function Field({ label, handler, maxLength = 20, keyboardType = "default" }) {
+function Field({ label, handler }) {
   return (
     <>
       <Text style={styles.inputsLabels}>{label}</Text>
       <TextInput
         style={styles.inputs}
-        maxLength={maxLength}
-        keyboardType={keyboardType}
+        maxLength={20}
         autoCorrect={false}
         placeholder={`Entrez votre ${label.toLowerCase()}`}
         onChange={handler}

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import * as User from "../service/db/User";
-import util from "./util/util";
+import { getId } from "./util/util";
 
 // TODO: Breakup this component into a lot more.
 
@@ -29,8 +29,9 @@ export default class Score extends React.Component {
     setTimeout(() => {
       this.setState({ isLoading: false });
     }, 0);
-    util.getId().then(id => {
+    getId().then(id => {
       User.getScore(id, score => {
+        this.setState({ id });
         // this.setState({
         //   id,
         //   dates: score.map(d => d.date),
