@@ -8,7 +8,7 @@ import {
   ActivityIndicator
 } from "react-native";
 import { LineChart } from "react-native-chart-kit";
-import * as User from "./db/User";
+import * as User from "../service/db/User";
 import util from "./util/util";
 
 // TODO: Breakup this component into a lot more.

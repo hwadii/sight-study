@@ -1,5 +1,5 @@
 import * as SQLite from "expo-sqlite";
-import util from "../util/util";
+import util from "../../src/util/util";
 
 const db = SQLite.openDatabase("sigthstudy.db");
 

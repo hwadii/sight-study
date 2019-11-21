@@ -31,7 +31,7 @@ const MainNavigator = createStackNavigator(
   },
   {
     // headerMode: 'none',
-    initialRouteName: "SignIn",
+    initialRouteName: "Test",
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour",

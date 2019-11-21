@@ -7,7 +7,7 @@ import {
   View
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import * as User from "./db/User";
+import * as User from "../service/db/User";
 
 // TODO: Add intermediate page for entering PIN.
 // TODO: Create Frequently used components.

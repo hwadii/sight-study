@@ -8,7 +8,7 @@ export default class extends React.Component {
   }
 
   sendMail(){
-    fetch('http://192.168.43.195:3000/mail').then(response => console.log(response))
+    fetch('http://192.168.43.195:3000/test').then(response => console.log(response))
   }
 
   componentDidMount() {

@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
-import * as User from "./db/User";
+import * as User from "../service/db/User";
 
 export default class SignIn extends React.Component {
   constructor(props) {
