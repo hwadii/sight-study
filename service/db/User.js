@@ -1,14 +1,11 @@
 import * as SQLite from "expo-sqlite";
-import util from "../../src/util/util";
 
 const db = SQLite.openDatabase("sigthstudy.db");
-
-// TODO: enlever le code pin
 
 function initDB() {
   db.transaction(tx => {
     tx.executeSql(
-      "create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(25), prenom VARCHAR(25), duplicata INTEGER, pin VARCHAR(255), type INTEGER , derniere_connexion DATE);"
+      "create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(25), prenom VARCHAR(25), duplicata INTEGER, type INTEGER , derniere_connexion DATE);"
     );
   });
   db.transaction(tx => {
@@ -36,6 +33,24 @@ function getUser(nom, prenom, duplicata, callback) {
         (_, {rows}) => {
           if (rows.length > 0) {
             callback(rows._array[0].id);
+          }
+        }
+      );
+    },
+    console.error,
+    console.log
+  );
+}
+
+function getUserById(id, callback) {
+  db.transaction(
+    tx => {
+      tx.executeSql(
+        "select * from user where id=?;",
+        [id],
+        (_, {rows}) => {
+          if (rows.length > 0) {
+            callback(rows._array);
           }
         }
       );
@@ -101,44 +116,6 @@ function getUsersLike(recherche, callback) {
   }
 }
 
-function connexion(id, pin, callback) {
-  db.transaction(
-    tx => {
-      tx.executeSql("select pin from user where id=?;", [id], (_, {rows}) => {
-        if (rows.length > 0) {
-          const dbpassword = rows._array[0].pin;
-          connexion_onSuccess(id, pin, dbpassword, callback);
-        }
-      });
-    },
-    console.error,
-    console.log
-  );
-}
-
-function connexion_onSuccess(id, pin, dbpassword, callback) {
-  const sha1pin = util.SHA1(String(pin));
-  if (sha1pin == dbpassword) {
-    const date = new Date()
-      .toISOString()
-      .slice(0, 19)
-      .replace("T", " ");
-    db.transaction(
-      tx => {
-        tx.executeSql(
-          "update user set derniere_connexion=? where id=?",
-          [date, id],
-          callback(true)
-        );
-      },
-      console.error,
-      console.log
-    );
-  } else {
-    callback(false);
-  }
-}
-
 function getType(id, callback) {
   db.transaction(
     tx => {
@@ -183,8 +160,7 @@ function addUser(nom, prenom, pin, type, callback) {
   );
 }
 
-function addUser_onSuccess(nom, prenom, duplicata, pin, type, callback) {
-  const mdp = util.SHA1(String(pin));
+function addUser_onSuccess(nom, prenom, duplicata, type, callback) {
   const date = new Date()
     .toISOString()
     .slice(0, 19)
@@ -194,8 +170,8 @@ function addUser_onSuccess(nom, prenom, duplicata, pin, type, callback) {
   db.transaction(
     tx => {
       tx.executeSql(
-        "insert into user (nom, prenom, duplicata, pin, type, derniere_connexion) values (?,?,?,?,?,?);",
-        [nom, prenom, duplicata, mdp, type, date],
+        "insert into user (nom, prenom, duplicata, type, derniere_connexion) values (?,?,?,?,?,?);",
+        [nom, prenom, duplicata, type, date],
         callback
       );
     },
@@ -258,8 +234,8 @@ export {
   initDB,
   dropDB,
   getUser,
+  getUserById,
   getUsersLike,
-  connexion,
   getType,
   getUsers,
   addUser,
