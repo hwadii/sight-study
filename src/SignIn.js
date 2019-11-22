@@ -41,16 +41,11 @@ export default class SignIn extends React.Component {
     return (
       <View style={styles.container}>
         <NoAccount navigate={navigation.navigate} />
-        <TextInput
-          style={{ marginHorizontal: 10, ...commonStyles.inputs }}
-          placeholder="Rechercher un patient"
-          onChange={this.handleSearch}
+        <UsersList
+          handleSearch={this.handleSearch}
+          users={users}
+          navigate={navigation.navigate}
         />
-        {users.length > 0 ? (
-          <UsersList users={users} navigate={navigation.navigate} />
-        ) : (
-          <Text style={{ fontSize: 18 }}>Pas de résultats.</Text>
-        )}
       </View>
     );
   }
@@ -74,14 +69,28 @@ function NoAccount({ navigate }) {
 }
 
 /**
+ * Search user in the list
+ */
+function SearchBar({ handleSearch }) {
+  return (
+    <TextInput
+      style={{ marginHorizontal: 10, ...commonStyles.inputs }}
+      placeholder="Rechercher un patient"
+      onChange={handleSearch}
+    />
+  );
+}
+
+/**
  * List of users
  */
-function UsersList({ users, navigate }) {
+function UsersList({ users, navigate, handleSearch }) {
   return (
     <View style={styles.usersList}>
       <FlatList
         data={users}
         keyExtractor={item => item.id.toString()}
+        ListHeaderComponent={<SearchBar handleSearch={handleSearch} />}
         renderItem={({ item }) => (
           <UserElement
             id={item.id}
