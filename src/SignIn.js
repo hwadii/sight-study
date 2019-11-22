@@ -1,16 +1,19 @@
 import React from "react";
 import {
-  AsyncStorage,
   StyleSheet,
+  TextInput,
   TouchableHighlight,
+  FlatList,
   Text,
   View
 } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
 import * as User from "../service/db/User";
+import { setId, setUserName } from "./util/util";
+import { styles as commonStyles } from "./styles/common";
 
-// TODO: Add intermediate page for entering PIN.
-// TODO: Create Frequently used components.
+// TODO: Create Frequently used components?
+// TODO: Look into issue when many names.
+// TODO: Sort names by last connected.
 
 export default class SignIn extends React.Component {
   constructor(props) {
@@ -18,10 +21,16 @@ export default class SignIn extends React.Component {
     this.state = {
       users: []
     };
+    this.props.navigation.addListener("willFocus", () => {
+      User.getUsers(users => {
+        this.setState({ users });
+      });
+    });
+    this.handleSearch = this.handleSearch.bind(this);
   }
 
-  componentDidMount() {
-    User.getUsers(users => {
+  handleSearch(e) {
+    User.getUsersLike(e.nativeEvent.text, users => {
       this.setState({ users });
     });
   }
@@ -32,9 +41,11 @@ export default class SignIn extends React.Component {
     return (
       <View style={styles.container}>
         <NoAccount navigate={navigation.navigate} />
-        {users.length > 0 && (
-          <UsersList users={users} navigate={navigation.navigate} />
-        )}
+        <UsersList
+          handleSearch={this.handleSearch}
+          users={users}
+          navigate={navigation.navigate}
+        />
       </View>
     );
   }
@@ -48,31 +59,42 @@ function NoAccount({ navigate }) {
   return (
     <View style={styles.noAccount}>
       <Text style={styles.noAccountText}>
-        Pas de compte ?
+        Pas de compte ?{" "}
         <Text onPress={() => navigate("SignUp")} style={styles.link}>
           Inscrivez-vous !
         </Text>
-      </Text>
-      <Text onPress={() => navigate("Test")} style={styles.link}>
-        Lien vers Test.js
       </Text>
     </View>
   );
 }
 
 /**
+ * Search user in the list
+ */
+function SearchBar({ handleSearch }) {
+  return (
+    <TextInput
+      style={{ marginHorizontal: 10, ...commonStyles.inputs }}
+      placeholder="Rechercher un patient"
+      onChange={handleSearch}
+    />
+  );
+}
+
+/**
  * List of users
  */
-function UsersList({ users, navigate }) {
+function UsersList({ users, navigate, handleSearch }) {
   return (
     <View style={styles.usersList}>
       <FlatList
         data={users}
         keyExtractor={item => item.id.toString()}
+        ListHeaderComponent={<SearchBar handleSearch={handleSearch} />}
         renderItem={({ item }) => (
           <UserElement
             id={item.id}
-            title={`${item.prenom} ${item.nom}`}
+            user={{ prenom: item.prenom, nom: item.nom }}
             lastConnected={item.derniere_connexion}
             navigate={navigate}
           />
@@ -85,16 +107,19 @@ function UsersList({ users, navigate }) {
 /**
  * A row of the users list
  */
-function UserElement({ title, lastConnected, navigate, id }) {
+function UserElement({ user, lastConnected, navigate, id }) {
   return (
     <TouchableHighlight
-      onPress={() => {
-        AsyncStorage.setItem("id", String(id));
+      onPress={async () => {
+        await setId(id.toString());
+        await setUserName(user);
         navigate("Menu");
       }}
     >
       <View style={styles.userBox}>
-        <Text style={styles.userText}>{title}</Text>
+        <Text style={styles.userText}>
+          {user.prenom} {user.nom}
+        </Text>
         <Text>Dernière connexion: {lastConnected}</Text>
       </View>
     </TouchableHighlight>
@@ -104,7 +129,8 @@ function UserElement({ title, lastConnected, navigate, id }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 15
+    marginTop: 15,
+    marginBottom: 35
   },
   noAccount: {
     alignItems: "flex-end",

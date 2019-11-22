@@ -1,14 +1,12 @@
 import React from "react";
-import { View, Text, TouchableOpacity, AsyncStorage } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { styles as commonStyles } from "./styles/common";
-import util from "./util/util";
-
-// TODO: create common styles
+import { setUserType } from "./util/util";
 
 export default class Selection extends React.Component {
   handleUser(type) {
-    util.setUserType(type, () => {
-      this.props.navigation.navigate("SignUp");
+    setUserType(type, () => {
+      this.props.navigation.navigate("SignIn");
     });
   }
 

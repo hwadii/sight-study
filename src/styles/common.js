@@ -27,5 +27,19 @@ export const styles = StyleSheet.create({
     paddingVertical: 5,
     fontWeight: "bold",
     textAlign: "center"
-  }
+  },
+  inputs: {
+    borderTopWidth: 1,
+    borderColor: "#CCCCCC",
+    borderBottomWidth: 1,
+    height: 50,
+    fontSize: 25,
+    paddingLeft: 5,
+    paddingRight: 5,
+    marginBottom: 6
+  },
+  inputsLabels: {
+    fontSize: 18,
+    marginTop: 7
+  },
 });

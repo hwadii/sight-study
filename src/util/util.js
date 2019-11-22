@@ -1,4 +1,41 @@
-import { AsyncStorage } from "react-native"
+import { AsyncStorage } from "react-native";
+
+/**
+ * Set current user name
+ */
+async function setUserName({ prenom: firstName, nom: lastName }) {
+  try {
+    await AsyncStorage.setItem("firstName", firstName);
+    await AsyncStorage.setItem("lastName", lastName);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+/**
+ * Get user's first name
+ */
+async function getFirstName() {
+  try {
+    const firstName = await AsyncStorage.getItem("firstName");
+    return firstName;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+/**
+ * Get user's last name
+ */
+async function getLastName() {
+  try {
+    const lastName = await AsyncStorage.getItem("lastName");
+    return lastName;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 /**
  * Set current user type in Async Storage
  */
@@ -23,6 +60,17 @@ async function getUserType() {
 }
 
 /**
+ * Set user id in AsyncStorage
+ */
+async function setId(id) {
+  try {
+    await AsyncStorage.setItem("id", id);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+/**
  * Get user id from AsyncStorage.
  */
 async function getId() {
@@ -36,4 +84,12 @@ async function getId() {
   }
 }
 
-export default { getId, setUserType, getUserType }
+export {
+  getId,
+  setId,
+  setUserType,
+  getUserType,
+  setUserName,
+  getFirstName,
+  getLastName
+};

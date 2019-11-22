@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
+import { scale } from "react-native-size-matters";
 
 export default class Card extends React.Component {
   constructor(props) {
@@ -26,7 +27,7 @@ function Content({ title, description, image }) {
   return (
     <View style={styles.content}>
       <Image
-        style={{ width: 192, height: 192, alignSelf: "center" }}
+        style={{ width: scale(80), height: scale(80), alignSelf: "center" }}
         source={image}
       />
       <Text style={styles.header}>{title}</Text>
@@ -39,9 +40,7 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     justifyContent: "center",
-    marginVertical: 10,
-    // height: 200,
-    width: "90%"
+    marginHorizontal: 5
   },
   header: {
     fontSize: 22,

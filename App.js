@@ -12,7 +12,6 @@ import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
 // TODO: Use Context.Provider to track user preferences. 
-// TODO: Switch to landscape.
 
 const Routes = {
   SignIn,
@@ -31,7 +30,7 @@ const MainNavigator = createStackNavigator(
   },
   {
     // headerMode: 'none',
-    initialRouteName: "Test",
+    initialRouteName: "SignIn",
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour",

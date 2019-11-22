@@ -30,7 +30,7 @@ function getUser(nom, prenom, duplicata, callback) {
       tx.executeSql(
         "select id from user where nom=? and prenom=? and duplicata=?;",
         [nom, prenom, duplicata],
-        (_, {rows}) => {
+        (_, { rows }) => {
           if (rows.length > 0) {
             callback(rows._array[0].id);
           }
@@ -61,19 +61,16 @@ function getUserById(id, callback) {
 }
 
 function getUsersLike(recherche, callback) {
-  recherche = String(recherche)
-  if (recherche.length>0){
-    if (recherche.includes(" ")){
-      var recherche1 = recherche.split(' ')[0]
-      var recherche2 = recherche.split(' ')[1]
-      console.log(recherche1 + 'a')
-      console.log(recherche2 + 'a')
+  if (recherche.length > 0) {
+    if (recherche.includes(" ")) {
+      const recherche1 = recherche.split(" ")[0];
+      const recherche2 = recherche.split(" ")[1];
       db.transaction(
         tx => {
           tx.executeSql(
             "select id, nom, prenom, duplicata, derniere_connexion from user where (nom=? and prenom like ?) or (nom like ? and prenom=?);",
-            [recherche1, recherche2 + '%', recherche2 + '%', recherche1],
-            (_, {rows}) => {
+            [recherche1, recherche2 + "%", recherche2 + "%", recherche1],
+            (_, { rows }) => {
               callback(rows._array);
             }
           );
@@ -81,14 +78,13 @@ function getUsersLike(recherche, callback) {
         console.error,
         console.log
       );
-
-    }else{
+    } else {
       db.transaction(
         tx => {
           tx.executeSql(
             "select id, nom, prenom, duplicata, derniere_connexion from user where nom like ? or prenom like ?;",
-            [recherche + '%', recherche + '%'],
-            (_, {rows}) => {
+            [recherche + "%", recherche + "%"],
+            (_, { rows }) => {
               callback(rows._array);
             }
           );
@@ -96,16 +92,14 @@ function getUsersLike(recherche, callback) {
         console.error,
         console.log
       );
-
     }
-  }
-  else{
+  } else {
     db.transaction(
       tx => {
         tx.executeSql(
           "select id, nom, prenom, duplicata, derniere_connexion from user;",
           [],
-          (_, {rows}) => {
+          (_, { rows }) => {
             callback(rows._array);
           }
         );
@@ -119,11 +113,15 @@ function getUsersLike(recherche, callback) {
 function getType(id, callback) {
   db.transaction(
     tx => {
-      tx.executeSql("select type from user where id=?;", [id], (_, {rows}) => {
-        if (rows.length > 0) {
-          callback(rows._array[0].type);
+      tx.executeSql(
+        "select type from user where id=?;",
+        [id],
+        (_, { rows }) => {
+          if (rows.length > 0) {
+            callback(rows._array[0].type);
+          }
         }
-      });
+      );
     },
     console.error,
     console.log
@@ -135,7 +133,7 @@ function getUsers(callback) {
     tx.executeSql(
       "select id, nom, prenom, duplicata, derniere_connexion from user;",
       [],
-      (_, {rows}) => {
+      (_, { rows }) => {
         callback(rows._array);
       },
       console.error
@@ -149,7 +147,7 @@ function addUser(nom, prenom, pin, type, callback) {
       tx.executeSql(
         "select duplicata from user where nom=? and prenom=?;",
         [nom, prenom],
-        (_, {rows}) => {
+        (_, { rows }) => {
           duplicata = parseInt(rows.length);
           addUser_onSuccess(nom, prenom, duplicata, pin, type, callback);
         }
@@ -176,7 +174,7 @@ function addUser_onSuccess(nom, prenom, duplicata, type, callback) {
       );
     },
     console.error,
-    console.log
+    callback
   );
 }
 
@@ -196,10 +194,7 @@ function removeUser(id, callback) {
 }
 
 function addScore(id_user, oeil_gauche, oeil_droit, callback) {
-  const date = new Date()
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
+  const date = new Date().toLocaleDateString("fr-FR");
   db.transaction(
     tx => {
       tx.executeSql(
@@ -219,7 +214,7 @@ function getScore(user, callback) {
       tx.executeSql(
         "select date, oeil_gauche, oeil_droit from score where id_user=? order by date ASC",
         [user],
-        (_, {rows}) => {
+        (_, { rows }) => {
           callback(rows._array);
         }
       );
@@ -228,7 +223,6 @@ function getScore(user, callback) {
     console.log
   );
 }
-
 
 export {
   initDB,
@@ -241,5 +235,5 @@ export {
   addUser,
   removeUser,
   addScore,
-  getScore,
+  getScore
 };
