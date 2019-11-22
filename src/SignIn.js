@@ -129,7 +129,8 @@ function UserElement({ user, lastConnected, navigate, id }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 15
+    marginTop: 15,
+    marginBottom: 35
   },
   noAccount: {
     alignItems: "flex-end",
