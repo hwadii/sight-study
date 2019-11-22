@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import * as User from "../service/db/User";
+import { styles as commonStyles } from "./styles/common";
 
 export default class SignIn extends React.Component {
   constructor(props) {
@@ -65,9 +66,9 @@ function Form({ handleChange, handleAddUser }) {
 function Field({ label, handler }) {
   return (
     <>
-      <Text style={styles.inputsLabels}>{label}</Text>
+      <Text style={commonStyles.inputsLabels}>{label}</Text>
       <TextInput
-        style={styles.inputs}
+        style={commonStyles.inputs}
         maxLength={20}
         autoCorrect={false}
         placeholder={`Entrez votre ${label.toLowerCase()}`}
@@ -86,20 +87,6 @@ const styles = StyleSheet.create({
   form: {
     width: scale(320),
     maxWidth: Dimensions.get("window").width
-  },
-  inputs: {
-    borderTopWidth: 1,
-    borderColor: "#CCCCCC",
-    borderBottomWidth: 1,
-    height: 50,
-    fontSize: 25,
-    paddingLeft: 5,
-    paddingRight: 5,
-    marginBottom: 6
-  },
-  inputsLabels: {
-    fontSize: 18,
-    marginTop: 7
   },
   header: {
     fontSize: 32,

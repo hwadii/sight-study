@@ -46,13 +46,10 @@ function getUser(nom, prenom, duplicata, callback) {
 }
 
 function getUsersLike(recherche, callback) {
-  recherche = String(recherche);
   if (recherche.length > 0) {
     if (recherche.includes(" ")) {
-      var recherche1 = recherche.split(" ")[0];
-      var recherche2 = recherche.split(" ")[1];
-      console.log(recherche1 + "a");
-      console.log(recherche2 + "a");
+      const recherche1 = recherche.split(" ")[0];
+      const recherche2 = recherche.split(" ")[1];
       db.transaction(
         tx => {
           tx.executeSql(

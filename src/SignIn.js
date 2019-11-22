@@ -1,18 +1,19 @@
 import React from "react";
 import {
   StyleSheet,
+  TextInput,
   TouchableHighlight,
+  FlatList,
   Text,
   View
 } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
 import * as User from "../service/db/User";
 import { setId, setUserName } from "./util/util";
+import { styles as commonStyles } from "./styles/common";
 
 // TODO: Create Frequently used components?
 // TODO: Look into issue when many names.
 // TODO: Sort names by last connected.
-// TODO: Add search bar here.
 
 export default class SignIn extends React.Component {
   constructor(props) {
@@ -25,6 +26,13 @@ export default class SignIn extends React.Component {
         this.setState({ users });
       });
     });
+    this.handleSearch = this.handleSearch.bind(this);
+  }
+
+  handleSearch(e) {
+    User.getUsersLike(e.nativeEvent.text, users => {
+      this.setState({ users });
+    });
   }
 
   render() {
@@ -33,8 +41,15 @@ export default class SignIn extends React.Component {
     return (
       <View style={styles.container}>
         <NoAccount navigate={navigation.navigate} />
-        {users.length > 0 && (
+        <TextInput
+          style={{ marginHorizontal: 10, ...commonStyles.inputs }}
+          placeholder="Rechercher un patient"
+          onChange={this.handleSearch}
+        />
+        {users.length > 0 ? (
           <UsersList users={users} navigate={navigation.navigate} />
+        ) : (
+          <Text style={{ fontSize: 18 }}>Pas de résultats.</Text>
         )}
       </View>
     );
@@ -87,13 +102,15 @@ function UserElement({ user, lastConnected, navigate, id }) {
   return (
     <TouchableHighlight
       onPress={async () => {
-        await setId(id);
+        await setId(id.toString());
         await setUserName(user);
         navigate("Menu");
       }}
     >
       <View style={styles.userBox}>
-        <Text style={styles.userText}>{user.prenom} {user.nom}</Text>
+        <Text style={styles.userText}>
+          {user.prenom} {user.nom}
+        </Text>
         <Text>Dernière connexion: {lastConnected}</Text>
       </View>
     </TouchableHighlight>
