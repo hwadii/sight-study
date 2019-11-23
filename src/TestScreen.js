@@ -14,8 +14,6 @@ import { AsyncStorage } from "react-native";
 var letters = ["N", "C", "K", "Z", "O", "R", "H", "S", "D", "V"];
 
 export default class TestScreen extends Component {
-  constructor(props) {}
-
   render() {
     return (
       <View>
