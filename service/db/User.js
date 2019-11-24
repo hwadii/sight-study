@@ -141,15 +141,15 @@ function getUsers(callback) {
   });
 }
 
-function addUser(nom, prenom, pin, type, callback) {
+function addUser(nom, prenom, type, callback) {
   db.transaction(
     tx => {
       tx.executeSql(
         "select duplicata from user where nom=? and prenom=?;",
         [nom, prenom],
         (_, { rows }) => {
-          duplicata = parseInt(rows.length);
-          addUser_onSuccess(nom, prenom, duplicata, pin, type, callback);
+          const duplicata = parseInt(rows.length);
+          addUser_onSuccess(nom, prenom, duplicata, type, callback);
         }
       );
     },
@@ -159,18 +159,12 @@ function addUser(nom, prenom, pin, type, callback) {
 }
 
 function addUser_onSuccess(nom, prenom, duplicata, type, callback) {
-  const date = new Date()
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
-  console.log(nom)
-  console.log(duplicata)
+  const date = new Date().toLocaleDateString("fr-FR");
   db.transaction(
     tx => {
       tx.executeSql(
-        "insert into user (nom, prenom, duplicata, type, derniere_connexion) values (?,?,?,?,?,?);",
-        [nom, prenom, duplicata, type, date],
-        callback
+        "insert into user (nom, prenom, duplicata, type, derniere_connexion) values (?,?,?,?,?);",
+        [nom, prenom, duplicata, type, date]
       );
     },
     console.error,

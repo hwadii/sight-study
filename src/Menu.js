@@ -20,13 +20,6 @@ const texts = [
     description:
       "Vous pouvez suivre l’évolution de vos résultats au fil du temps ici.",
     image: require("../assets/diagram.png")
-  },
-  {
-    id: 3,
-    route: "Settings",
-    title: "Modifiez vos réglages ⚙️",
-    description: "Changez vos paramètres.",
-    image: require("../assets/settings.png")
   }
 ];
 
@@ -59,9 +52,7 @@ export default class Menu extends React.Component {
           </Text>
         </View>
         <View style={styles.cards}>
-          <Cards
-            navigate={navigate}
-          />
+          <Cards navigate={navigate} />
         </View>
       </View>
     );
