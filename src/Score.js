@@ -26,7 +26,7 @@ export default class Score extends React.Component {
   }
 
   componentDidMount() {
-    util.getId(AsyncStorage).then(id => {
+    getId(AsyncStorage).then(id => {
       User.getScore(id, score => {
          this.setState({
            id,

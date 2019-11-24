@@ -29,7 +29,7 @@ export default class SignIn extends React.Component {
   handleAddUser() {
     const { navigate } = this.props.navigation;
     const { nom, prenom } = this.state;
-    User.addUser(nom, prenom, "1234", 0, () => {
+    User.addUser(nom, prenom, 0, () => {
       navigate("SignIn");
     });
   }
