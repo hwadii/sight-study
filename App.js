@@ -6,8 +6,12 @@ import Score from "./src/Score";
 import Test from "./src/Test";
 import TestScreen from "./src/TestScreen";
 import Menu from "./src/Menu";
+import Settings from "./src/Settings"
+import Selection from "./src/Selection"
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
+
+// TODO: Use Context.Provider to track user preferences. 
 
 const Routes = {
   SignIn,
@@ -15,19 +19,18 @@ const Routes = {
   Score,
   Test,
   TestScreen,
-  Menu
+  Menu,
+  Settings,
+  Selection
 };
 
 const MainNavigator = createStackNavigator(
   {
     ...Routes,
-    SignIn: {
-      screen: SignIn
-    }
   },
   {
     // headerMode: 'none',
-    initialRouteName: 'SignIn',
+    initialRouteName: "SignIn",
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour",

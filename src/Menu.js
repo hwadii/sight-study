@@ -1,8 +1,8 @@
 import React from "react";
 import Card from "./Card";
-import { ScrollView, StyleSheet, View } from "react-native";
-
-// TODO: Change Settings Icon for higher res image.
+import { Text, StyleSheet, View } from "react-native";
+import { styles as commonStyles } from "./styles/common";
+import { getId, getFirstName } from "./util/util";
 
 const texts = [
   {
@@ -33,16 +33,37 @@ const texts = [
 export default class Menu extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      firstName: ""
+    };
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
   }
 
+  async componentDidMount() {
+    const firstName = await getFirstName();
+    this.setState({ firstName });
+  }
+
   render() {
+    const { firstName } = this.state;
+    const { navigate } = this.props.navigation;
     return (
-      <ScrollView style={styles.cards}>
-        <View style={styles.container}>
-          <Cards navigate={this.props.navigation.navigate} />
+      <View style={styles.container}>
+        <View style={styles.greetings}>
+          <Text style={{ ...commonStyles.headers, fontWeight: "normal" }}>
+            Bonjour,{" "}
+            <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>
+              {firstName}
+            </Text>{" "}
+            !
+          </Text>
         </View>
-      </ScrollView>
+        <View style={styles.cards}>
+          <Cards
+            navigate={navigate}
+          />
+        </View>
+      </View>
     );
   }
 }
@@ -63,9 +84,15 @@ function Cards({ navigate }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: "column"
+  },
+  greetings: {
     alignItems: "center"
   },
   cards: {
-    width: "100%"
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    margin: 10
   }
 });

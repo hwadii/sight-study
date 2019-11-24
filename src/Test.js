@@ -1,58 +1,41 @@
-import React from "react";
-import * as User from "./db/User";
-import { StyleSheet, Text, View} from "react-native";
-import util from "./util/util";
-import Score from "./Score";
-import { TextInput } from "react-native-gesture-handler";
+import React from 'react';
+import { Button, Text, View } from "react-native";
 
-class Test extends React.Component {
+export default class extends React.Component {
   constructor(props) {
-    super(props);
-    this.state = {
-      id: null,
-      user: "",
-      users: [],
-      scores : []
-    };
-    this.setInputState = this.setInputState.bind(this);
+	super(props);
+	this.state = { feedback: '', name: 'Name', email: 'email@example.com' };
   }
 
-  setInputState(e){
-    text = e.nativeEvent.text
-    User.getUsersLike(text, users => this.setState({users}))
+  sendMail(){
+    let data = {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body:JSON.stringify({
+        to:"sylvain.huss@gmail.com", 
+        nom:"huss", 
+        prenom:"sylvain",
+        score: 200
+      })}
+
+      fetch('http://192.168.43.195:3000/mail', data)
+      .then(response => console.log(response))
   }
 
   componentDidMount() {
-    // User.dropDB();
-    User.initDB();
-    // User.removeUser(1);
-    // User.addUser("Adam", "Colas", "1234", 0, user => console.log(user));
-    // User.addUser("Wadii", "Hajji", "1234", 0, user => console.log(user));
-    // User.addUser("Adam", "Colas", "1234", 0, user => console.log(user));
-    User.getUsers(users => console.log(users))
-    // User.addScore("1",50,50,res => console.log("score ajouté"))
-
-    // User.getScore("1", scores => this.setState({ scores }))
-    
+      this.setState({feedback: 'bonjour', name: 'sylvain', email: 'sylvain.huss@gmail.com'})
   }
+
   render() {
-    const { id, users } = this.state;
-    console.log(this.state);
     return (
       <View>
-        <TextInput style={{ height: 40, borderColor: 'gray', borderWidth: 1 }} onChange={this.setInputState} />
-
-        <Text>
-          <Text>{"Users : \n"}</Text>
-          {this.state.users.map(user => (
-            <Text key={user.id}>
-              {user.prenom} {user.nom} {user.duplicata > 0 && "(" + user.duplicata + ")"} {"\n"}
-            </Text>
-          ))}
-        </Text>
+        <Button onPress={() => this.sendMail()} title='Activer les lasers'>
+          
+        </Button>
       </View>
-    );
+    )
   }
 }
-
-export default Test;

@@ -8,8 +8,8 @@ import {
   ActivityIndicator
 } from "react-native";
 import { LineChart } from "react-native-chart-kit";
-import * as User from "./db/User";
-import util from "./util/util";
+import * as User from "../service/db/User";
+import { getId } from "./util/util";
 
 // TODO: Breakup this component into a lot more.
 
@@ -35,8 +35,23 @@ export default class Score extends React.Component {
            scoresOeilGauche: score.map(d => d.oeil_gauche),
            isLoading: false
          });
+    setTimeout(() => {
+      this.setState({ isLoading: false });
+    }, 0);
+    getId().then(id => {
+      User.getScore(id, score => {
+        this.setState({ id });
+        // this.setState({
+        //   id,
+        //   dates: score.map(d => d.date),
+        //   scoresOeilDroit: score.map(d => d.oeil_droit),
+        //   scoresOeilGauche: score.map(d => d.oeil_gauche),
+        //   isLoading: false
+        // });
       });
     });
+  }
+)})
   }
   render() {
     const { isLoading, dates } = this.state;
