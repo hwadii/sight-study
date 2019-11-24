@@ -18,31 +18,35 @@ export default class Score extends React.Component {
     super(props);
     this.state = {
       id: "",
-      dates: [1, 3, 4, 10, 20, 30],
-      scoresOeilDroit: [2, 3, 4, 5, 10],
-      scoresOeilGauche: [1, 10, 100, 1000],
+      dates: [],
+      scoresOeilDroit: [],
+      scoresOeilGauche: [],
       isLoading: true
     };
   }
 
   componentDidMount() {
-    setTimeout(() => {
-      this.setState({ isLoading: false });
-    }, 0);
     util.getId(AsyncStorage).then(id => {
       User.getScore(id, score => {
-        // this.setState({
-        //   id,
-        //   dates: score.map(d => d.date),
-        //   scoresOeilDroit: score.map(d => d.oeil_droit),
-        //   scoresOeilGauche: score.map(d => d.oeil_gauche),
-        //   isLoading: false
-        // });
+         this.setState({
+           id,
+           dates: score.map(d => d.date),
+           scoresOeilDroit: score.map(d => d.oeil_droit),
+           scoresOeilGauche: score.map(d => d.oeil_gauche),
+           isLoading: false
+         });
       });
     });
   }
   render() {
     const { isLoading, dates } = this.state;
+    if(isLoading || dates.length==0){
+      return(
+        <View>
+          <Text>pas de données</Text>
+        </View>
+      )
+    }
     return (
       <View style={{ flex: 1, height: "100%" }}>
         {isLoading ? (
@@ -60,9 +64,6 @@ export default class Score extends React.Component {
                   {
                     data: this.state.scoresOeilGauche
                   },
-                  {
-                    data: [1, 2, 3, 4, 10, 60, 70]
-                  }
                 ]
               }}
               width={Dimensions.get("window").width - 50} // from react-native
