@@ -6,12 +6,12 @@ import Score from "./src/Score";
 import Test from "./src/Test";
 import TestScreen from "./src/TestScreen";
 import Menu from "./src/Menu";
-import Settings from "./src/Settings"
-import Selection from "./src/Selection"
+import Settings from "./src/Settings";
+import Selection from "./src/Selection";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
-// TODO: Use Context.Provider to track user preferences. 
+// TODO: Use Context.Provider to track user preferences.
 
 const Routes = {
   SignIn,
@@ -26,7 +26,7 @@ const Routes = {
 
 const MainNavigator = createStackNavigator(
   {
-    ...Routes,
+    ...Routes
   },
   {
     // headerMode: 'none',
@@ -50,6 +50,27 @@ class App extends React.Component {
     );
   }
 }
+
+/**
+ * get random element from an array
+ */
+Array.prototype.random = function() {
+  const idx = Math.floor(Math.random() * this.length);
+  return this[idx];
+};
+
+/**
+ * check if letter is in array
+ * exemple: ["A", "Ah", "As"].lenientIncludes("a") => true
+ *          needs to accept "Ah" too (maybe?)
+ */
+Array.prototype.lenientIncludes = function(letter) {
+  return (
+    this.includes(letter) ||
+    this.includes(letter.toUpperCase()) ||
+    this.some(el => el[0] === letter)
+  );
+};
 
 export default App;
 
