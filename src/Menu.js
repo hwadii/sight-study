@@ -3,6 +3,7 @@ import Card from "./Card";
 import { Text, StyleSheet, View } from "react-native";
 import { styles as commonStyles } from "./styles/common";
 import { getId, getFirstName } from "./util/util";
+import * as User from "../service/db/User";
 
 const texts = [
   {

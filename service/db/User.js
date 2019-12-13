@@ -10,7 +10,7 @@ function initDB() {
   });
   db.transaction(tx => {
     tx.executeSql(
-      "create table if not exists score (id_user INTEGER, date DATE, oeil_gauche INTEGER, oeil_droit INTEGER, Primary Key(`id_user`,`date`) );"
+      "create table if not exists score (id_user INTEGER, date DATE, oeil_gauche INTEGER, oeil_droit INTEGER);"
     );
   });
 }
