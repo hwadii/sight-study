@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import * as User from "../service/db/User";
-import { styles as commonStyles } from "./styles/common";
+import { styles as common } from "./styles/common";
 
 export default class SignIn extends React.Component {
   constructor(props) {
@@ -11,13 +11,13 @@ export default class SignIn extends React.Component {
     this.state = {
       prenom: "",
       nom: "",
-      pin: ""
     };
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleAddUser = this.handleAddUser.bind(this);
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
   }
 
+  // FIXME: utile ?
   componentDidMount() {
     User.initDB();
   }
@@ -37,7 +37,7 @@ export default class SignIn extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.header}>Nouvel utilisateur</Text>
+        <Text style={styles.header}>Nouveau patient</Text>
         <Form
           navigate={this.props.navigation.navigate}
           handleChange={this.handleChangeField}
@@ -66,12 +66,12 @@ function Form({ handleChange, handleAddUser }) {
 function Field({ label, handler }) {
   return (
     <>
-      <Text style={commonStyles.inputsLabels}>{label}</Text>
+      <Text style={common.inputsLabels}>{label}</Text>
       <TextInput
-        style={commonStyles.inputs}
+        style={common.inputs}
         maxLength={20}
         autoCorrect={false}
-        placeholder={`Entrez votre ${label.toLowerCase()}`}
+        placeholder={`Entrez son ${label.toLowerCase()}`}
         onChange={handler}
       />
     </>

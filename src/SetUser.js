@@ -9,11 +9,12 @@ import {
 } from "react-native";
 import * as User from "../service/db/User";
 import { setId, setUserName } from "./util/util";
-import { styles as commonStyles } from "./styles/common";
+import { styles as common } from "./styles/common";
 
 // TODO: Create Frequently used components?
+// TODO: Modal when user has been changed?
+// TODO: Sort options?
 // TODO: Look into issue when many names.
-// TODO: Sort names by last connected.
 
 export default class SignIn extends React.Component {
   constructor(props) {
@@ -58,11 +59,8 @@ export default class SignIn extends React.Component {
 function NoAccount({ navigate }) {
   return (
     <View style={styles.noAccount}>
-      <Text style={styles.noAccountText}>
-        Pas de compte ?{" "}
-        <Text onPress={() => navigate("SignUp")} style={styles.link}>
-          Inscrivez-vous !
-        </Text>
+      <Text onPress={() => navigate("AddUser")} style={{...styles.noAccountText, ...styles.link}} >
+        Ajouter un patient
       </Text>
     </View>
   );
@@ -74,7 +72,7 @@ function NoAccount({ navigate }) {
 function SearchBar({ handleSearch }) {
   return (
     <TextInput
-      style={{ marginHorizontal: 10, ...commonStyles.inputs }}
+      style={{ marginHorizontal: 10, ...common.inputs }}
       placeholder="Rechercher un patient"
       onChange={handleSearch}
     />
@@ -113,7 +111,7 @@ function UserElement({ user, lastConnected, navigate, id }) {
       onPress={async () => {
         await setId(id.toString());
         await setUserName(user);
-        navigate("Menu");
+        navigate("MainMenu");
       }}
     >
       <View style={styles.userBox}>

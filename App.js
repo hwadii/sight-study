@@ -1,27 +1,25 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import SignIn from "./src/SignIn";
-import SignUp from "./src/SignUp";
+import SetUser from "./src/SetUser";
+import AddUser from "./src/AddUser";
 import Score from "./src/Score";
 import Test from "./src/Test";
 import TestScreen from "./src/TestScreen";
 import Menu from "./src/Menu";
 import Settings from "./src/Settings"
-import Selection from "./src/Selection"
+import MainMenu from "./src/MainMenu"
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
-// TODO: Use Context.Provider to track user preferences. 
-
 const Routes = {
-  SignIn,
-  SignUp,
+  SetUser,
+  AddUser,
   Score,
   Test,
   TestScreen,
   Menu,
   Settings,
-  Selection
+  MainMenu
 };
 
 const MainNavigator = createStackNavigator(
@@ -30,7 +28,7 @@ const MainNavigator = createStackNavigator(
   },
   {
     // headerMode: 'none',
-    initialRouteName: "Selection",
+    initialRouteName: "MainMenu",
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour",
