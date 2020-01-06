@@ -5,7 +5,7 @@ import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import * as User from "../service/db/User";
 import { styles as common } from "./styles/common";
 
-export default class SignIn extends React.Component {
+export default class AddUser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -30,7 +30,7 @@ export default class SignIn extends React.Component {
     const { navigate } = this.props.navigation;
     const { nom, prenom } = this.state;
     User.addUser(nom, prenom, 0, () => {
-      navigate("SignIn");
+      navigate("SetUser");
     });
   }
 

@@ -2,18 +2,18 @@ import React from "react";
 import {
   StyleSheet,
   TextInput,
-  TouchableHighlight,
   FlatList,
+  Button,
   Text,
-  View
+  View,
+  Alert
 } from "react-native";
 import * as User from "../service/db/User";
 import { setId, setUserName } from "./util/util";
-import { styles as common } from "./styles/common";
+import { styles as common, colors } from "./styles/common";
 
 // TODO: Create Frequently used components?
 // TODO: Modal when user has been changed?
-// TODO: Sort options?
 // TODO: Look into issue when many names.
 
 export default class SignIn extends React.Component {
@@ -28,12 +28,51 @@ export default class SignIn extends React.Component {
       });
     });
     this.handleSearch = this.handleSearch.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.handleSelect = this.handleSelect.bind(this);
   }
 
   handleSearch(e) {
     User.getUsersLike(e.nativeEvent.text, users => {
       this.setState({ users });
     });
+  }
+
+  async handleSelect(id, user) {
+    await setId(id.toString());
+    await setUserName(user);
+    Alert.alert(
+      "Configuration de la tablette",
+      `La tablette est configurée pour ${user.prenom} ${user.nom}.`,
+      [
+        {
+          text: "OK",
+          onPress: () => this.props.navigation.navigate("MainMenu")
+        }
+      ]
+    );
+  }
+
+  handleDelete(id, user) {
+    const { users: oldUsersList } = this.state;
+    Alert.alert(
+      "Configuration de la tablette",
+      `Le patient ${user.prenom} ${user.nom} va être supprimé.`,
+      [
+        {
+          text: "Annuler"
+        },
+        {
+          text: "OK",
+          onPress: () =>
+            User.removeUser(id, () => {
+              this.setState({
+                users: oldUsersList.filter(user => user.id !== id)
+              });
+            })
+        }
+      ]
+    );
   }
 
   render() {
@@ -43,7 +82,7 @@ export default class SignIn extends React.Component {
       <View style={styles.container}>
         <NoAccount navigate={navigation.navigate} />
         <UsersList
-          handleSearch={this.handleSearch}
+          handlers={[this.handleSearch, this.handleSelect, this.handleDelete]}
           users={users}
           navigate={navigation.navigate}
         />
@@ -59,9 +98,11 @@ export default class SignIn extends React.Component {
 function NoAccount({ navigate }) {
   return (
     <View style={styles.noAccount}>
-      <Text onPress={() => navigate("AddUser")} style={{...styles.noAccountText, ...styles.link}} >
-        Ajouter un patient
-      </Text>
+      <Button
+        title="Ajouter un patient"
+        onPress={() => navigate("AddUser")}
+        color={colors.SUCESS}
+      />
     </View>
   );
 }
@@ -82,7 +123,8 @@ function SearchBar({ handleSearch }) {
 /**
  * List of users
  */
-function UsersList({ users, navigate, handleSearch }) {
+function UsersList({ users, handlers }) {
+  const [handleSearch, handleSelect, handleDelete] = handlers;
   return (
     <View style={styles.usersList}>
       <FlatList
@@ -93,8 +135,8 @@ function UsersList({ users, navigate, handleSearch }) {
           <UserElement
             id={item.id}
             user={{ prenom: item.prenom, nom: item.nom }}
-            lastConnected={item.derniere_connexion}
-            navigate={navigate}
+            handleDelete={handleDelete}
+            handleSelect={handleSelect}
           />
         )}
       />
@@ -105,22 +147,22 @@ function UsersList({ users, navigate, handleSearch }) {
 /**
  * A row of the users list
  */
-function UserElement({ user, lastConnected, navigate, id }) {
+function UserElement({ user, id, handleDelete, handleSelect }) {
   return (
-    <TouchableHighlight
-      onPress={async () => {
-        await setId(id.toString());
-        await setUserName(user);
-        navigate("MainMenu");
-      }}
-    >
-      <View style={styles.userBox}>
-        <Text style={styles.userText}>
-          {user.prenom} {user.nom}
-        </Text>
-        <Text>Dernière connexion: {lastConnected}</Text>
+    <View style={styles.userBox}>
+      <Text style={styles.userText}>
+        {user.prenom} {user.nom}
+      </Text>
+      {/* <Text>Dernière connexion: {lastConnected}</Text> */}
+      <View style={styles.actions}>
+        <Button title="Choisir" onPress={() => handleSelect(id, user)} />
+        <Button
+          title="Supprimer"
+          color={colors.DANGER}
+          onPress={() => handleDelete(id, user)}
+        />
       </View>
-    </TouchableHighlight>
+    </View>
   );
 }
 
@@ -131,21 +173,20 @@ const styles = StyleSheet.create({
     marginBottom: 35
   },
   noAccount: {
-    alignItems: "flex-end",
+    alignItems: "center",
     padding: 5
   },
   noAccountText: {
     fontSize: 20
   },
+  actions: {
+    flexDirection: "row",
+    justifyContent: "space-around"
+  },
   userBox: {
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 10,
     padding: 18,
     paddingTop: 26,
     paddingBottom: 26

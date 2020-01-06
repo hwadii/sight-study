@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { styles as common } from "./styles/common";
 import { getFirstName, getLastName } from "./util/util";
 
-export default class Selection extends React.Component {
+export default class MainMenu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
