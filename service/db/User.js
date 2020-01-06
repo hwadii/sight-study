@@ -26,6 +26,11 @@ function dropDB() {
   });
 }
 
+function resetDB() {
+  dropDB();
+  initDB();
+}
+
 function getUser(nom, prenom, duplicata, callback) {
   db.transaction(
     tx => {
@@ -219,6 +224,7 @@ function getScore(user, callback) {
 export {
   initDB,
   dropDB,
+  resetDB,
   getUser,
   getUserById,
   getUsersLike,
