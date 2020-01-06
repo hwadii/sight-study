@@ -32,7 +32,7 @@ const MainNavigator = createStackNavigator(
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour",
-      headerRight: () => <Text style={styles.helpText}>Aide 💡</Text>
+      // headerRight: () => <Text style={styles.helpText}>Aide 💡</Text>
     }
   }
 );
