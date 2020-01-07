@@ -33,7 +33,7 @@ export default class TestScreen extends Component {
     console.log(this.state.lettre)
     var intervalId = setInterval(()=>{
       this.setState({counter:this.getRandomInt(10),lettre : this.state.lettre-1});
-      if(this.state.lettre==5){
+      if(this.state.lettre%2==0){
         this.setState({taille_ligne :(this.state.taille_ligne * (1/1.2599))})
       }
       if(this.state.lettre==0){
@@ -53,14 +53,14 @@ export default class TestScreen extends Component {
     if(this.state.lettre!=0)
     return (
       <View>
-        <Text style={{ color: 'black',textAlign:'center',fontFamily:"sans-serif-medium",fontWeight: "900" , fontSize: this.state.taille_ligne}}>
+        <Text style={{ color: 'black',textAlign:'center',fontWeight: "900" , fontSize: this.state.taille_ligne}}>
           {letters[this.state.counter]}
         </Text>
       </View>
     );
     else return(
       <View>
-        <Text style={{ color: 'black',textAlign:'center',fontFamily:"sans-serif-medium",fontWeight: "900" , fontSize: this.state.taille_ligne}}>
+        <Text style={{ color: 'black',textAlign:'center',fontWeight: "900" , fontSize: this.state.taille_ligne}}>
           FIN DU TEST
         </Text>
       </View>
