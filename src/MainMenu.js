@@ -2,9 +2,12 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles as common } from "./styles/common";
 import { getFirstName, getLastName } from "./util/util";
+import * as User from "../service/db/User";
 
 export default class MainMenu extends React.Component {
   constructor(props) {
+    //User.initDB()
+    //User.addUser("colas","adam",0,()=>console.log("ok"))
     super(props);
     this.state = {
       firstName: "",
