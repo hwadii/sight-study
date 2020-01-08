@@ -13,10 +13,10 @@ import { setId, setUserName } from "./util/util";
 import { styles as common, colors } from "./styles/common";
 
 // TODO: Create Frequently used components?
-// TODO: Modal when user has been changed?
 // TODO: Look into issue when many names.
+// TODO: Add segmented view
 
-export default class SignIn extends React.Component {
+export default class SetUser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,6 +38,7 @@ export default class SignIn extends React.Component {
     });
   }
 
+  // TODO: Add alert in util
   async handleSelect(id, user) {
     await setId(id.toString());
     await setUserName(user);
@@ -80,7 +81,18 @@ export default class SignIn extends React.Component {
     const { navigation } = this.props;
     return (
       <View style={styles.container}>
-        <NoAccount navigate={navigation.navigate} />
+        <View style={styles.noAccount}>
+          <Button
+            title="Ajouter un patient"
+            onPress={() => navigation.navigate("AddUser")}
+            color={colors.SUCESS}
+          />
+          <Button
+            title="Ajouter un médecin"
+            onPress={() => navigation.navigate("AddDoctor")}
+            color={colors.SUCESS}
+          />
+        </View>
         <UsersList
           handlers={[this.handleSearch, this.handleSelect, this.handleDelete]}
           users={users}
@@ -89,22 +101,6 @@ export default class SignIn extends React.Component {
       </View>
     );
   }
-}
-
-/**
- * Displays a text to allow the user to go and create an account
- * if he doesn't have one
- */
-function NoAccount({ navigate }) {
-  return (
-    <View style={styles.noAccount}>
-      <Button
-        title="Ajouter un patient"
-        onPress={() => navigate("AddUser")}
-        color={colors.SUCESS}
-      />
-    </View>
-  );
 }
 
 /**
@@ -150,9 +146,11 @@ function UsersList({ users, handlers }) {
 function UserElement({ user, id, handleDelete, handleSelect }) {
   return (
     <View style={styles.userBox}>
-      <Text style={styles.userText}>
-        {user.prenom} {user.nom}
-      </Text>
+      <View style={{ justifyContent: "center" }}>
+        <Text style={styles.userText}>
+          {user.prenom} {user.nom}
+        </Text>
+      </View>
       {/* <Text>Dernière connexion: {lastConnected}</Text> */}
       <View style={styles.actions}>
         <Button title="Choisir" onPress={() => handleSelect(id, user)} />
@@ -173,20 +171,20 @@ const styles = StyleSheet.create({
     marginBottom: 35
   },
   noAccount: {
-    alignItems: "center",
-    padding: 5
+    flexDirection: "row",
+    justifyContent: "center",
+    paddingBottom: 5
   },
   noAccountText: {
     fontSize: 20
   },
   actions: {
-    flexDirection: "row",
-    justifyContent: "space-around"
+    flexDirection: "row"
   },
   userBox: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "#fff",
     padding: 18,
     paddingTop: 26,
     paddingBottom: 26
@@ -194,9 +192,5 @@ const styles = StyleSheet.create({
   userText: {
     fontSize: 18,
     fontWeight: "bold"
-  },
-  link: {
-    fontWeight: "bold",
-    color: "#007BFF"
   }
 });

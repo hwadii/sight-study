@@ -22,16 +22,8 @@ export default class MainMenu extends React.Component {
   }
 
   handleAction(action) {
-    switch (action) {
-      case "REGLAGES":
-        this.props.navigation.navigate("SetUser");
-        break;
-      case "TEST":
-        this.props.navigation.navigate("Menu");
-        break;
-      default:
-        break;
-    }
+    if (action === "REGLAGES") this.props.navigation.navigate("SetUser");
+    if (action === "TEST") this.props.navigation.navigate("Menu");
   }
 
   render() {

@@ -37,29 +37,6 @@ async function getLastName() {
 }
 
 /**
- * Set current user type in Async Storage
- */
-async function setUserType(type, callback) {
-  try {
-    await AsyncStorage.setItem("userType", type, callback);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-/**
- * Get current user type from Async Storage
- */
-async function getUserType() {
-  try {
-    const userType = await AsyncStorage.getItem("userType");
-    return userType;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-/**
  * Set user id in AsyncStorage
  */
 async function setId(id) {
@@ -92,14 +69,29 @@ async function clear() {
   }
 }
 
+async function setDoctorEmail(email) {
+  try {
+    await AsyncStorage.setItem("doctor_email", email);
+  } catch {
+    console.log("Error setting email");
+  }
+}
+
+async function getDoctorEmail() {
+  try {
+    return await AsyncStorage.getItem("doctor_email");
+  } catch {
+    console.log("Error getting email");
+  }
+}
 
 export {
   getId,
   setId,
   clear,
-  setUserType,
-  getUserType,
   setUserName,
   getFirstName,
-  getLastName
+  getLastName,
+  setDoctorEmail,
+  getDoctorEmail
 };

@@ -3,41 +3,38 @@ import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import * as User from "../service/db/User";
+import { setDoctorEmail, getDoctorEmail } from "./util/util"
 import { styles as common } from "./styles/common";
 
-export default class AddUser extends React.Component {
+// TODO: Set doctor function in async storage
+
+export default class AddDoctor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      prenom: "",
-      nom: "",
+      email: ""
     };
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleAddUser = this.handleAddUser.bind(this);
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
   }
 
-  // FIXME: utile ?
-  componentDidMount() {
-    User.initDB();
-  }
-
   handleChangeField(e, field) {
     this.setState({ [field]: e.nativeEvent.text });
   }
 
-  handleAddUser() {
-    const { goBack } = this.props.navigation;
-    const { nom, prenom } = this.state;
-    User.addUser(nom, prenom, 0, () => {
-      goBack();
-    });
+  async handleAddUser() {
+    const { navigate } = this.props.navigation;
+    const { email } = this.state;
+    await setDoctorEmail(email);
+    navigate("SetUser");
+    console.log(email);
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.header}>Nouveau patient</Text>
+        <Text style={styles.header}>Nouveau médecin</Text>
         <Form
           navigate={this.props.navigation.navigate}
           handleChange={this.handleChangeField}
@@ -48,13 +45,10 @@ export default class AddUser extends React.Component {
   }
 }
 
-// TODO: Put this in frequently used components
-
 function Form({ handleChange, handleAddUser }) {
   return (
     <View style={styles.form}>
-      <Field label="Prénom" handler={e => handleChange(e, "prenom")} />
-      <Field label="Nom" handler={e => handleChange(e, "nom")} />
+      <Field label="Email" handler={e => handleChange(e, "email")} />
       <TouchableOpacity
         style={styles.confirmButton}
         onPress={() => handleAddUser()}

@@ -2,18 +2,20 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import SetUser from "./src/SetUser";
 import AddUser from "./src/AddUser";
+import AddDoctor from "./src/AddDoctor";
 import Score from "./src/Score";
 import Test from "./src/Test";
 import TestScreen from "./src/TestScreen";
 import Menu from "./src/Menu";
-import Settings from "./src/Settings"
-import MainMenu from "./src/MainMenu"
+import Settings from "./src/Settings";
+import MainMenu from "./src/MainMenu";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
 const Routes = {
   SetUser,
   AddUser,
+  AddDoctor,
   Score,
   Test,
   TestScreen,
@@ -24,14 +26,14 @@ const Routes = {
 
 const MainNavigator = createStackNavigator(
   {
-    ...Routes,
+    ...Routes
   },
   {
     // headerMode: 'none',
     initialRouteName: "MainMenu",
     defaultNavigationOptions: {
       title: "Sight Study",
-      headerBackTitle: "Retour",
+      headerBackTitle: "Retour"
       // headerRight: () => <Text style={styles.helpText}>Aide 💡</Text>
     }
   }
