@@ -200,6 +200,7 @@ dependencies {
   ])
   
   compile project(':react-native-voice')
+  compile project(':react-native-fs')
 }
 
 // This has to be down here for some reason

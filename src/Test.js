@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Text, View } from "react-native";
+import { CvScalar } from "react-native-opencv3";
 
 export default class extends React.Component {
   constructor(props) {
@@ -30,11 +31,13 @@ export default class extends React.Component {
   }
 
   render() {
+    const val = new CvScalar(100, 200, 100);
     return (
       <View>
         <Button onPress={() => this.sendMail()} title='Activer les lasers'>
           
         </Button>
+        <Text>{JSON.stringify(val)}</Text>
       </View>
     )
   }

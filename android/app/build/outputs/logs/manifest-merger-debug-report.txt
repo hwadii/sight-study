@@ -1,12 +1,13 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-362:12
-INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-362:12
-INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-362:12
-INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-362:12
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-367:12
+INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-367:12
+INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-367:12
+INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-367:12
 MERGED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:2:1-112:12
 MERGED from [org.webkit:android-jsc:r245459] /home/hwadii/.gradle/caches/transforms-1/files-1.1/android-jsc-r245459.aar/0e363b016b6db80b5f2fdc93a71ff09b/AndroidManifest.xml:2:1-11:12
 MERGED from [:react-native-voice] /home/hwadii/code/sight-study/node_modules/react-native-voice/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-16:12
+MERGED from [:react-native-fs] /home/hwadii/code/sight-study/node_modules/react-native-fs/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-13:12
 MERGED from [com.facebook.react:react-native:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/react-native-35.0.0.aar/06fadcec1c030d085b9c8e23c6b313e8/AndroidManifest.xml:2:1-13:12
 MERGED from [:unimodules-react-native-adapter] /home/hwadii/code/sight-study/node_modules/@unimodules/react-native-adapter/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-11:12
 MERGED from [:expo-app-loader-provider] /home/hwadii/code/sight-study/node_modules/expo-app-loader-provider/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-11:12
@@ -139,22 +140,22 @@ MERGED from [com.crashlytics.sdk.android:crashlytics-core:2.3.8] /home/hwadii/.g
 MERGED from [com.crashlytics.sdk.android:answers:1.3.6] /home/hwadii/.gradle/caches/transforms-1/files-1.1/answers-1.3.6.aar/1d579319edb9ce5578a5603759e37f83/AndroidManifest.xml:2:1-13:12
 MERGED from [io.fabric.sdk.android:fabric:1.3.10] /home/hwadii/.gradle/caches/transforms-1/files-1.1/fabric-1.3.10.aar/7f01f408e384bf9101138f81c362d6b8/AndroidManifest.xml:18:1-29:12
 MERGED from [com.crashlytics.sdk.android:beta:1.1.4] /home/hwadii/.gradle/caches/transforms-1/files-1.1/beta-1.1.4.aar/7dff11fe6c233e2dab180e680eacd589/AndroidManifest.xml:2:1-13:12
-INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-362:12
-INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-362:12
-INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-362:12
+INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-367:12
+INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-367:12
+INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-367:12
 	package
 		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:3:3-30
 		INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml
 		INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml
 	android:versionName
 		INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-362:12
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-367:12
 		INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml
 	xmlns:tools
 		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:5:3-49
 	android:versionCode
 		INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-362:12
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:2:1-367:12
 		INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml
 	xmlns:android
 		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:4:3-61
@@ -376,6 +377,8 @@ uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
 ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:38:3-79
 MERGED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:38:5-81
 MERGED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:38:5-81
+MERGED from [:react-native-fs] /home/hwadii/code/sight-study/node_modules/react-native-fs/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-81
+MERGED from [:react-native-fs] /home/hwadii/code/sight-study/node_modules/react-native-fs/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-81
 MERGED from [:expo-file-system] /home/hwadii/code/sight-study/node_modules/expo-file-system/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:5-81
 MERGED from [:expo-file-system] /home/hwadii/code/sight-study/node_modules/expo-file-system/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:5-81
 	android:name
@@ -404,8 +407,36 @@ ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xm
 		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:46:61-85
 	android:name
 		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:46:17-60
+uses-feature#android.hardware.camera
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:48:3-82
+MERGED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:43:5-45:36
+MERGED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:43:5-45:36
+	android:required
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:48:56-80
+	android:name
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:48:17-55
+uses-feature#android.hardware.camera.autofocus
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:49:3-92
+MERGED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:46:5-48:36
+MERGED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:46:5-48:36
+	android:required
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:49:66-90
+	android:name
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:49:17-65
+uses-feature#android.hardware.camera.front
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:50:3-88
+	android:required
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:50:62-86
+	android:name
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:50:17-61
+uses-feature#android.hardware.camera.front.autofocus
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:51:3-98
+	android:required
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:51:72-96
+	android:name
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:51:17-71
 application
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:48:3-360:17
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:53:3-365:17
 MERGED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:71:5-110:19
 MERGED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:71:5-110:19
 MERGED from [com.facebook.react:react-native:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/react-native-35.0.0.aar/06fadcec1c030d085b9c8e23c6b313e8/AndroidManifest.xml:11:5-20
@@ -529,407 +560,407 @@ MERGED from [com.crashlytics.sdk.android:beta:1.1.4] /home/hwadii/.gradle/caches
 	android:supportsRtl
 		ADDED from [com.facebook.android:facebook-android-sdk:5.0.1] /home/hwadii/.gradle/caches/transforms-1/files-1.1/facebook-android-sdk-5.0.1.aar/defdb7ef9d056879ae9a1ab72d98eeba/AndroidManifest.xml:28:18-44
 	android:label
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:52:5-37
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:57:5-37
 	android:largeHeap
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:53:5-29
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:58:5-29
 	android:icon
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:51:5-39
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:56:5-39
 	android:allowBackup
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:50:5-31
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:55:5-31
 	android:usesCleartextTraffic
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:54:5-40
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:59:5-40
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:49:5-36
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:54:5-36
 activity#host.exp.exponent.LauncherActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:56:5-61:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:61:5-66:16
 	android:launchMode
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:59:7-38
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:64:7-38
 	android:exported
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:58:7-30
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:63:7-30
 	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:60:7-66
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:65:7-66
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:57:7-39
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:62:7-39
 activity#host.exp.exponent.experience.ExperienceActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:63:5-68:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:68:5-73:16
 	android:windowSoftInputMode
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:67:7-49
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:72:7-49
 	android:configChanges
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:65:7-77
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:70:7-77
 	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:66:7-50
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:71:7-50
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:64:7-52
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:69:7-52
 activity#host.exp.exponent.MainActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:70:5-90:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:75:5-95:16
 	android:launchMode
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:72:7-38
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:77:7-38
 	android:windowSoftInputMode
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:75:7-49
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:80:7-49
 	android:configChanges
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:73:7-77
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:78:7-77
 	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:74:7-51
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:79:7-51
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:71:7-35
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:76:7-35
 intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:scheme:expbbdaf6d098bb4baeb9a6eaa247b0ce83
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:76:7-83:23
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:81:7-88:23
 data
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:77:9-69
-	android:path
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:149:56-84
-	android:scheme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:77:15-67
-action#android.intent.action.VIEW
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:79:9-60
-	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:79:17-58
-category#android.intent.category.DEFAULT
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:81:9-67
-	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:81:19-65
-category#android.intent.category.BROWSABLE
 ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:82:9-69
+	android:path
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:154:56-84
+	android:scheme
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:82:15-67
+action#android.intent.action.VIEW
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:84:9-60
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:82:19-67
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:84:17-58
+category#android.intent.category.DEFAULT
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:86:9-67
+	android:name
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:86:19-65
+category#android.intent.category.BROWSABLE
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:87:9-69
+	android:name
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:87:19-67
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:84:7-88:23
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:89:7-93:23
 action#android.intent.action.MAIN
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:85:9-60
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:90:9-60
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:85:17-58
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:90:17-58
 category#android.intent.category.LAUNCHER
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:87:9-68
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:92:9-68
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:87:19-66
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:92:19-66
 activity#host.exp.exponent.experience.HomeActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:92:5-98:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:97:5-103:16
 	android:screenOrientation
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:96:7-43
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:101:7-43
 	android:label
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:94:7-39
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:99:7-39
 	android:launchMode
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:95:7-38
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:100:7-38
 	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:97:7-50
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:102:7-50
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:93:7-46
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:98:7-46
 activity#host.exp.exponent.experience.TvActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:100:5-109:15
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:105:5-114:15
 	android:screenOrientation
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:104:7-44
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:109:7-44
 	android:label
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:102:7-39
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:107:7-39
 	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:103:7-50
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:108:7-50
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:101:7-44
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:106:7-44
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LEANBACK_LAUNCHER
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:105:6-108:22
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:110:6-113:22
 category#android.intent.category.LEANBACK_LAUNCHER
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:107:8-77
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:112:8-77
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:107:18-74
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:112:18-74
 activity#com.facebook.react.devsupport.DevSettingsActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:113:5-81
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:118:5-81
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:113:15-79
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:118:15-79
 activity#abi35_0_0.com.facebook.react.devsupport.DevSettingsActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:117:5-91
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:122:5-91
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:117:15-89
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:122:15-89
 activity#abi34_0_0.com.facebook.react.devsupport.DevSettingsActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:120:5-91
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:125:5-91
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:120:15-89
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:125:15-89
 activity#abi33_0_0.com.facebook.react.devsupport.DevSettingsActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:123:5-91
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:128:5-91
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:123:15-89
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:128:15-89
 activity#host.exp.exponent.ExponentDevActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:127:5-134:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:132:5-139:16
 	android:screenOrientation
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:131:7-43
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:136:7-43
 	android:label
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:130:7-48
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:135:7-48
 	android:windowSoftInputMode
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:133:7-46
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:138:7-46
 	android:exported
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:129:7-30
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:134:7-30
 	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:132:7-49
-	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:128:7-42
-activity#host.exp.exponent.oauth.OAuthWebViewActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:136:5-140:16
-	android:screenOrientation
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:138:7-43
-	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:139:7-50
-	android:name
 		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:137:7-49
+	android:name
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:133:7-42
+activity#host.exp.exponent.oauth.OAuthWebViewActivity
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:141:5-145:16
+	android:screenOrientation
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:143:7-43
+	android:theme
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:144:7-50
+	android:name
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:142:7-49
 activity#net.openid.appauth.RedirectUriReceiverActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:142:5-151:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:147:5-156:16
 REJECTED from [net.openid:appauth:0.7.1] /home/hwadii/.gradle/caches/transforms-1/files-1.1/appauth-0.7.1.aar/3ea84fd1ab25e08f569b3e9861b4ab8f/AndroidManifest.xml:32:9-43:20
 	tools:node
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:144:9-29
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:149:9-29
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:143:9-70
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:148:9-70
 intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:path:oauthredirect+data:scheme:com.polytech.sightstudy
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:145:7-150:23
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:150:7-155:23
 activity#host.exp.exponent.oauth.OAuthResultActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:153:5-155:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:158:5-160:16
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:154:7-48
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:159:7-48
 activity#expo.modules.payments.stripe.RedirectUriReceiver
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:158:5-169:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:163:5-174:16
 	android:launchMode
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:160:9-40
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:165:9-40
 	android:exported
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:159:9-32
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:164:9-32
 	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:162:9-79
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:167:9-79
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:161:9-72
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:166:9-72
 intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:scheme:expo.modules.payments.stripe.f156186d-d143-409d-98ef-69afb09d36ad
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:163:9-168:25
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:168:9-173:25
 activity#abiabi35_0_0.expo.modules.payments.stripe.RedirectUriReceiver
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:172:3-183:14
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:177:3-188:14
 	android:launchMode
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:174:4-35
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:179:4-35
 	android:exported
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:173:4-27
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:178:4-27
 	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:176:4-74
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:181:4-74
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:175:4-80
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:180:4-80
 intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:scheme:abiabi35_0_0.expo.modules.payments.stripe
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:177:4-182:20
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:182:4-187:20
 activity#abi34_0_0.expo.modules.payments.stripe.RedirectUriReceiver
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:186:5-197:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:191:5-202:16
 	android:launchMode
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:188:7-38
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:193:7-38
 	android:exported
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:187:7-30
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:192:7-30
 	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:190:7-77
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:195:7-77
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:189:7-80
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:194:7-80
 intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:scheme:abi34_0_0.expo.modules.payments.stripe
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:191:7-196:23
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:196:7-201:23
 activity#abi33_0_0.expo.modules.payments.stripe.RedirectUriReceiver
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:200:5-211:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:205:5-216:16
 	android:launchMode
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:202:7-38
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:207:7-38
 	android:exported
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:201:7-30
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:206:7-30
 	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:204:7-77
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:209:7-77
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:203:7-80
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:208:7-80
 intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:scheme:abi33_0_0.expo.modules.payments.stripe
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:205:7-210:23
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:210:7-215:23
 activity#host.exp.exponent.chrometabs.ChromeTabsManagerActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:215:5-217:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:220:5-222:16
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:216:7-59
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:221:7-59
 activity#host.exp.exponent.experience.ErrorActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:219:5-223:16
-	android:screenOrientation
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:222:7-43
-	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:221:7-49
-	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:220:7-47
-activity#host.exp.exponent.experience.InfoActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:225:5-229:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:224:5-228:16
 	android:screenOrientation
 		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:227:7-43
 	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:228:7-50
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:226:7-49
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:226:7-46
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:225:7-47
+activity#host.exp.exponent.experience.InfoActivity
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:230:5-234:16
+	android:screenOrientation
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:232:7-43
+	android:theme
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:233:7-50
+	android:name
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:231:7-46
 activity#com.facebook.FacebookActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:231:5-236:39
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:236:5-241:39
 MERGED from [com.facebook.android:facebook-common:5.0.1] /home/hwadii/.gradle/caches/transforms-1/files-1.1/facebook-common-5.0.1.aar/8fd16bc37c0fd084ea5debf53a2fdeed/AndroidManifest.xml:29:9-32:66
 MERGED from [com.facebook.android:facebook-common:5.0.1] /home/hwadii/.gradle/caches/transforms-1/files-1.1/facebook-common-5.0.1.aar/8fd16bc37c0fd084ea5debf53a2fdeed/AndroidManifest.xml:29:9-32:66
 	android:label
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:234:7-39
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:239:7-39
 	android:configChanges
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:233:7-90
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:238:7-90
 	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:235:7-66
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:240:7-66
 		REJECTED from [com.facebook.android:facebook-common:5.0.1] /home/hwadii/.gradle/caches/transforms-1/files-1.1/facebook-common-5.0.1.aar/8fd16bc37c0fd084ea5debf53a2fdeed/AndroidManifest.xml:32:13-63
 	tools:replace
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:236:7-36
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:241:7-36
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:232:7-51
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:237:7-51
 activity#com.facebook.ads.InterstitialAdActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:238:5-242:69
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:243:5-247:69
 	android:label
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:241:7-39
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:246:7-39
 	android:configChanges
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:240:7-90
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:245:7-90
 	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:242:7-66
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:247:7-66
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:239:7-61
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:244:7-61
 service#host.exp.exponent.ExponentIntentService
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:244:5-246:34
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:249:5-251:34
 	android:exported
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:246:7-31
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:251:7-31
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:245:7-44
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:250:7-44
 receiver#host.exp.exponent.referrer.InstallReferrerReceiver
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:249:5-255:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:254:5-260:16
 	android:exported
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:251:7-30
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:256:7-30
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:250:7-72
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:255:7-72
 intent-filter#action:name:com.android.vending.INSTALL_REFERRER
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:252:7-254:23
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:257:7-259:23
 action#com.android.vending.INSTALL_REFERRER
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:253:9-71
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:258:9-71
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:253:17-68
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:258:17-68
 receiver#com.google.android.gms.analytics.AnalyticsReceiver
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:265:5-270:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:270:5-275:16
 MERGED from [com.google.android.gms:play-services-analytics:16.0.8] /home/hwadii/.gradle/caches/transforms-1/files-1.1/play-services-analytics-16.0.8.aar/c11289183fd6b62fa2c155a69f2be627/AndroidManifest.xml:30:9-34:20
 MERGED from [com.google.android.gms:play-services-analytics:16.0.8] /home/hwadii/.gradle/caches/transforms-1/files-1.1/play-services-analytics-16.0.8.aar/c11289183fd6b62fa2c155a69f2be627/AndroidManifest.xml:30:9-34:20
 	android:enabled
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:266:15-37
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:271:15-37
 	android:exported
 		ADDED from [com.google.android.gms:play-services-analytics:16.0.8] /home/hwadii/.gradle/caches/transforms-1/files-1.1/play-services-analytics-16.0.8.aar/c11289183fd6b62fa2c155a69f2be627/AndroidManifest.xml:33:13-37
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:265:15-80
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:270:15-80
 intent-filter#action:name:com.google.android.gms.analytics.ANALYTICS_DISPATCH
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:267:7-269:23
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:272:7-274:23
 action#com.google.android.gms.analytics.ANALYTICS_DISPATCH
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:268:9-86
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:273:9-86
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:268:17-83
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:273:17-83
 service#com.google.android.gms.analytics.AnalyticsService
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:272:5-274:40
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:277:5-279:40
 MERGED from [com.google.android.gms:play-services-analytics:16.0.8] /home/hwadii/.gradle/caches/transforms-1/files-1.1/play-services-analytics-16.0.8.aar/c11289183fd6b62fa2c155a69f2be627/AndroidManifest.xml:36:9-39:40
 MERGED from [com.google.android.gms:play-services-analytics:16.0.8] /home/hwadii/.gradle/caches/transforms-1/files-1.1/play-services-analytics-16.0.8.aar/c11289183fd6b62fa2c155a69f2be627/AndroidManifest.xml:36:9-39:40
 	android:enabled
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:273:14-36
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:278:14-36
 	android:exported
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:274:14-38
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:279:14-38
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:272:14-78
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:277:14-78
 receiver#com.google.android.gms.gcm.GcmReceiver
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:277:5-287:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:282:5-292:16
 	android:exported
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:279:7-30
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:284:7-30
 	android:permission
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:280:7-67
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:285:7-67
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:278:7-60
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:283:7-60
 intent-filter#action:name:com.google.android.c2dm.intent.RECEIVE+action:name:com.google.android.c2dm.intent.REGISTRATION+category:name:com.polytech.sightstudy
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:281:7-286:23
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:286:7-291:23
 action#com.google.android.c2dm.intent.RECEIVE
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:282:9-72
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:287:9-72
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:282:17-70
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:287:17-70
 action#com.google.android.c2dm.intent.REGISTRATION
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:283:9-77
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:288:9-77
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:283:17-75
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:288:17-75
 category#com.polytech.sightstudy
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:285:9-59
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:290:9-59
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:285:19-57
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:290:19-57
 service#host.exp.exponent.gcm.ExponentGcmListenerService
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:289:5-295:15
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:294:5-300:15
 	android:exported
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:291:7-31
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:296:7-31
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:290:7-53
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:295:7-53
 intent-filter#action:name:com.google.android.c2dm.intent.RECEIVE
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:292:7-294:23
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:297:7-299:23
 service#host.exp.exponent.gcm.ExponentInstanceIDListenerService
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:296:5-302:15
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:301:5-307:15
 	android:exported
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:298:7-31
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:303:7-31
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:297:7-60
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:302:7-60
 intent-filter#action:name:com.google.android.gms.iid.InstanceID
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:299:7-301:23
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:304:7-306:23
 action#com.google.android.gms.iid.InstanceID
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:300:9-71
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:305:9-71
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:300:17-69
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:305:17-69
 service#host.exp.exponent.gcm.GcmRegistrationIntentService
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:303:5-306:15
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:308:5-311:15
 	android:exported
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:305:7-31
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:310:7-31
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:304:7-55
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:309:7-55
 service#host.exp.exponent.fcm.ExpoFcmMessagingService
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:309:5-314:15
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:314:5-319:15
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:310:7-50
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:315:7-50
 intent-filter#action:name:com.google.firebase.MESSAGING_EVENT
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:311:7-313:23
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:316:7-318:23
 action#com.google.firebase.MESSAGING_EVENT
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:312:9-69
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:317:9-69
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:312:17-67
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:317:17-67
 meta-data#com.google.firebase.messaging.default_notification_icon
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:315:5-317:62
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:320:5-322:62
 	android:resource
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:317:7-59
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:322:7-59
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:316:7-77
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:321:7-77
 meta-data#com.google.firebase.messaging.default_notification_color
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:318:5-320:47
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:323:5-325:47
 	android:resource
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:320:7-44
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:325:7-44
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:319:7-78
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:324:7-78
 service#host.exp.exponent.fcm.FcmRegistrationIntentService
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:321:5-324:15
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:326:5-329:15
 	android:exported
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:323:7-31
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:328:7-31
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:322:7-55
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:327:7-55
 activity#com.theartofdev.edmodo.cropper.CropImageActivity
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:327:5-330:16
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:332:5-335:16
 	android:theme
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:329:7-50
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:334:7-50
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:328:7-70
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:333:7-70
 meta-data#io.fabric.ApiKey
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:335:5-337:65
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:340:5-342:65
 	android:value
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:337:7-63
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:342:7-63
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:336:7-38
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:341:7-38
 meta-data#com.google.android.geo.API_KEY
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:342:5-344:64
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:347:5-349:64
 	android:value
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:344:7-62
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:349:7-62
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:343:7-52
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:348:7-52
 meta-data#com.google.android.gms.ads.APPLICATION_ID
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:349:5-351:63
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:354:5-356:63
 	android:value
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:351:7-61
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:356:7-61
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:350:7-63
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:355:7-63
 meta-data#com.facebook.sdk.ApplicationId
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:357:5-83
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:362:5-83
 	android:value
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:357:62-81
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:362:62-81
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:357:16-61
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:362:16-61
 meta-data#standaloneStripeScheme
-ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:359:5-109
+ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:364:5-109
 	android:value
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:359:54-106
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:364:54-106
 	android:name
-		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:359:16-53
+		ADDED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml:364:16-53
 uses-sdk
 INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /home/hwadii/code/sight-study/android/app/src/main/AndroidManifest.xml
@@ -940,6 +971,8 @@ MERGED from [org.webkit:android-jsc:r245459] /home/hwadii/.gradle/caches/transfo
 MERGED from [org.webkit:android-jsc:r245459] /home/hwadii/.gradle/caches/transforms-1/files-1.1/android-jsc-r245459.aar/0e363b016b6db80b5f2fdc93a71ff09b/AndroidManifest.xml:7:5-9:41
 MERGED from [:react-native-voice] /home/hwadii/code/sight-study/node_modules/react-native-voice/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:8:5-11:54
 MERGED from [:react-native-voice] /home/hwadii/code/sight-study/node_modules/react-native-voice/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:8:5-11:54
+MERGED from [:react-native-fs] /home/hwadii/code/sight-study/node_modules/react-native-fs/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
+MERGED from [:react-native-fs] /home/hwadii/code/sight-study/node_modules/react-native-fs/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
 MERGED from [com.facebook.react:react-native:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/react-native-35.0.0.aar/06fadcec1c030d085b9c8e23c6b313e8/AndroidManifest.xml:7:5-9:41
 MERGED from [com.facebook.react:react-native:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/react-native-35.0.0.aar/06fadcec1c030d085b9c8e23c6b313e8/AndroidManifest.xml:7:5-9:41
 MERGED from [:unimodules-react-native-adapter] /home/hwadii/code/sight-study/node_modules/@unimodules/react-native-adapter/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:7:5-9:41
@@ -1232,18 +1265,6 @@ uses-permission#host.exp.exponent.permission.C2D_MESSAGE
 ADDED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:25:5-80
 	android:name
 		ADDED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:25:22-77
-uses-feature#android.hardware.camera
-ADDED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:43:5-45:36
-	android:required
-		ADDED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:45:9-33
-	android:name
-		ADDED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:44:9-47
-uses-feature#android.hardware.camera.autofocus
-ADDED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:46:5-48:36
-	android:required
-		ADDED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:48:9-33
-	android:name
-		ADDED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:47:9-57
 uses-feature#android.hardware.location
 ADDED from [host.exp.exponent:expoview:35.0.0] /home/hwadii/.gradle/caches/transforms-1/files-1.1/expoview-35.0.0.aar/e037d359e3172bef5dd1b73231b339b4/AndroidManifest.xml:49:5-51:36
 	android:required

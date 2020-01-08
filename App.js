@@ -10,6 +10,7 @@ import Settings from "./src/Settings"
 import Selection from "./src/Selection"
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
+import { initDB, dropDB } from "./service/db/User";
 
 // TODO: Use Context.Provider to track user preferences. 
 
@@ -30,7 +31,7 @@ const MainNavigator = createStackNavigator(
   },
   {
     // headerMode: 'none',
-    initialRouteName: "Opencv",
+    initialRouteName: "Test",
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour",

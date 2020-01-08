@@ -11,6 +11,7 @@ import expo.loaders.provider.interfaces.AppLoaderPackagesProviderInterface;
 import host.exp.exponent.generated.BasePackageList;
 import okhttp3.OkHttpClient;
 import com.wenkesj.voice.VoicePackage;
+import com.rnfs.RNFSPackage;
 
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
@@ -27,7 +28,8 @@ public class MainApplication extends ExpoApplication implements AppLoaderPackage
     return Arrays.<ReactPackage>asList(
         // Add your own packages here!
         // TODO: add native modules!
-        new VoicePackage()
+        new VoicePackage(),
+        new RNFSPackage()
 
         // Needed for `react-native link`
         // new MainReactPackage()
