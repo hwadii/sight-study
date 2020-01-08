@@ -2,7 +2,7 @@ import React from "react";
 import Card from "./Card";
 import { Text, StyleSheet, View } from "react-native";
 import { styles as common } from "./styles/common";
-import { getId, getFirstName } from "./util/util";
+import { getFirstName } from "./util/util";
 
 const texts = [
   {
@@ -35,6 +35,7 @@ export default class Menu extends React.Component {
   async componentDidMount() {
     const firstName = await getFirstName();
     this.setState({ firstName });
+    
   }
 
   render() {
