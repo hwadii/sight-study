@@ -103,6 +103,11 @@ function NoAccount({ navigate }) {
         onPress={() => navigate("AddUser")}
         color={colors.SUCESS}
       />
+      <Button
+        title="Modifier email medecin"
+        onPress={() => navigate("SetDoctor")}
+        color={colors.PRIMARY}
+      />
     </View>
   );
 }

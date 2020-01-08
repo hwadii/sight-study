@@ -1,30 +1,19 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  DatePickerIOS,
-  Picker
-} from "react-native";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import * as User from "../service/db/User";
 import { styles as common } from "./styles/common";
+import { setDoctorEmail } from "./util/util";
 
-export default class AddUser extends React.Component {
+export default class SetDoctor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      prenom: "",
-      nom: "",
-      date: new Date(),
-      sex: ""
+      mail: ""
     };
-    this.setDate = this.setDate.bind(this);
-    this.setSex = this.setSex.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
-    this.handleAddUser = this.handleAddUser.bind(this);
+    this.handleModifMedecin = this.handleModifMedecin.bind(this);
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
   }
 
@@ -37,50 +26,34 @@ export default class AddUser extends React.Component {
     this.setState({ [field]: e.nativeEvent.text });
   }
 
-  handleAddUser() {
+  async handleModifMedecin() {
     const { navigate } = this.props.navigation;
-    const { nom, prenom } = this.state;
-    User.addUser(nom, prenom, 0, () => {
-      navigate("SetUser");
-    });
-  }
-
-  setDate(newDate) {
-    console.log(newDate);
-    this.setState({ date: newDate });
-  }
-
-  setSex(newSex) {
-    console.log(this.state);
-    this.setState({ sex: newSex });
+    const { mail } = this.state;
+    await setDoctorEmail(mail);
+    navigate("SetUser");
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.header}>Nouveau patient</Text>
+        <Text style={styles.header}>Modification Mail Medecin</Text>
         <Form
           navigate={this.props.navigation.navigate}
           handleChange={this.handleChangeField}
-          handleAddUser={this.handleAddUser}
-          setDate={this.setDate}
-          setSex={this.setSex}
+          handleModifMedecin={this.handleModifMedecin}
         />
       </View>
     );
   }
 }
 
-function Form({ handleChange, handleAddUser, setDate, setSex }) {
+function Form({ handleChange, handleModifMedecin }) {
   return (
     <View style={styles.form}>
-      <Field label="Prénom" handler={e => handleChange(e, "prenom")} />
-      <Field label="Nom" handler={e => handleChange(e, "nom")} />
-      <DateN label="Date de naissance" handler={e => setDate(e)} />
-      <RadioButton label="Sex" handler={e => setSex(e)} />
+      <Field label="Mail" handler={e => handleChange(e, "mail")} />
       <TouchableOpacity
         style={styles.confirmButton}
-        onPress={() => handleAddUser()}
+        onPress={() => handleModifMedecin()}
       >
         <Text style={styles.confirmButtonText}>CONFIRMER</Text>
       </TouchableOpacity>
@@ -94,32 +67,10 @@ function Field({ label, handler }) {
       <Text style={common.inputsLabels}>{label}</Text>
       <TextInput
         style={common.inputs}
-        maxLength={20}
         autoCorrect={false}
-        placeholder={`Entrez son ${label.toLowerCase()}`}
+        placeholder={`Entrez le ${label.toLowerCase()}`}
         onChange={handler}
       />
-    </>
-  );
-}
-
-function RadioButton({ label, handler }) {
-  return (
-    <>
-      <Text style={common.inputsLabels}>{label}</Text>
-      <Picker onValueChange={handler}>
-        <Picker.Item label="Homme" value="homme" />
-        <Picker.Item label="Femme" value="femme" />
-      </Picker>
-    </>
-  );
-}
-
-function DateN({ label, handler }) {
-  return (
-    <>
-      <Text style={common.inputsLabels}>{label}</Text>
-      <DatePickerIOS date={new Date()} onDateChange={handler} mode="date" />
     </>
   );
 }

@@ -92,6 +92,21 @@ async function clear() {
   }
 }
 
+async function setDoctorEmail(email) {
+  try {
+    await AsyncStorage.setItem("doctor_email", email);
+  } catch {
+    console.log("Error setting email");
+  }
+}
+
+async function getDoctorEmail() {
+  try {
+    return await AsyncStorage.getItem("doctor_email");
+  } catch {
+    console.log("Error getting email");
+  }
+}
 
 export {
   getId,
@@ -101,5 +116,7 @@ export {
   getUserType,
   setUserName,
   getFirstName,
-  getLastName
+  getLastName,
+  setDoctorEmail,
+  getDoctorEmail
 };
