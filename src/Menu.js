@@ -1,8 +1,8 @@
 import React from "react";
 import Card from "./Card";
-import { Text, StyleSheet, View, NetInfo } from "react-native";
+import { Text, StyleSheet, View } from "react-native";
 import { styles as common } from "./styles/common";
-import { getId, getFirstName } from "./util/util";
+import { getFirstName } from "./util/util";
 
 const texts = [
   {

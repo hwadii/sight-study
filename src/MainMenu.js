@@ -3,12 +3,10 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { styles as common } from "./styles/common";
 import { getFirstName, getLastName } from "./util/util";
 import * as User from "../service/db/User";
+import { clear } from "./util/util";
 
 export default class MainMenu extends React.Component {
   constructor(props) {
-    //User.resetDB();
-    //User.initDB()
-    //User.addUser("colas","adam",0,()=>console.log("ok"))
     super(props);
     this.state = {
       firstName: "",
@@ -38,30 +36,17 @@ export default class MainMenu extends React.Component {
 
   render() {
     const { firstName, lastName } = this.state;
-    if(firstName==null || lastName==null){
-      return(
-        <View style={common.containers}>
-        <UserConnected firstName={firstName} lastName={lastName} />
-        {/* <Text style={common.headers}>Menu principal</Text> */}
-        <TouchableOpacity
-          style={common.actionButtons}
-          onPress={() => this.handleAction("REGLAGES")}
-        >
-          <Text style={common.actionButtonsText}>Réglages</Text>
-        </TouchableOpacity>
-      </View>
-      )
-    }
     return (
       <View style={common.containers}>
         <UserConnected firstName={firstName} lastName={lastName} />
-        {/* <Text style={common.headers}>Menu principal</Text> */}
-        <TouchableOpacity
-          style={common.actionButtons}
-          onPress={() => this.handleAction("TEST")}
-        >
-          <Text style={common.actionButtonsText}>Aller au test</Text>
-        </TouchableOpacity>
+        {firstName === null || lastName === null ? null : (
+          <TouchableOpacity
+            style={common.actionButtons}
+            onPress={() => this.handleAction("TEST")}
+          >
+            <Text style={common.actionButtonsText}>Aller au test</Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           style={common.actionButtons}
           onPress={() => this.handleAction("REGLAGES")}

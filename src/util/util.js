@@ -1,5 +1,4 @@
 import { AsyncStorage } from "react-native";
-import * as Network from 'expo-network';
 
 /**
  * Set current user name
@@ -85,10 +84,19 @@ async function getId() {
   }
 }
 
+async function clear() {
+  try {
+    await AsyncStorage.clear();
+  } catch {
+    console.log("Unable to clear storage");
+  }
+}
+
 
 export {
   getId,
   setId,
+  clear,
   setUserType,
   getUserType,
   setUserName,
