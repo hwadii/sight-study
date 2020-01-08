@@ -1,4 +1,5 @@
 import { AsyncStorage } from "react-native";
+import * as Network from 'expo-network';
 
 /**
  * Set current user name
@@ -83,6 +84,7 @@ async function getId() {
     console.log(error);
   }
 }
+
 
 export {
   getId,

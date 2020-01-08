@@ -6,6 +6,7 @@ import * as User from "../service/db/User";
 
 export default class MainMenu extends React.Component {
   constructor(props) {
+    //User.resetDB();
     //User.initDB()
     //User.addUser("colas","adam",0,()=>console.log("ok"))
     super(props);
@@ -37,6 +38,20 @@ export default class MainMenu extends React.Component {
 
   render() {
     const { firstName, lastName } = this.state;
+    if(firstName==null || lastName==null){
+      return(
+        <View style={common.containers}>
+        <UserConnected firstName={firstName} lastName={lastName} />
+        {/* <Text style={common.headers}>Menu principal</Text> */}
+        <TouchableOpacity
+          style={common.actionButtons}
+          onPress={() => this.handleAction("REGLAGES")}
+        >
+          <Text style={common.actionButtonsText}>Réglages</Text>
+        </TouchableOpacity>
+      </View>
+      )
+    }
     return (
       <View style={common.containers}>
         <UserConnected firstName={firstName} lastName={lastName} />

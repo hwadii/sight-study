@@ -1,7 +1,8 @@
 import React from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image,Alert,NetInfo } from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { scale } from "react-native-size-matters";
+
 
 export default class Card extends React.Component {
   constructor(props) {
@@ -14,7 +15,25 @@ export default class Card extends React.Component {
       <View style={styles.card}>
         <TouchableHighlight
           underlayColor="#fff"
-          onPress={() => navigate(route)}
+          onPress={() =>{ 
+            NetInfo.isConnected.fetch().done((isConnected) => {
+              if(route=="TestScreen" && (isConnected==false)){
+                Alert.alert(
+                  "Configuration de la tablette",
+                  `il faut etre connecté à internet pour passer le test`,
+                  [
+                    {
+                      text: "Annuler"
+                    }
+                  ]
+                );
+              }
+              else{
+                navigate(route)
+              }
+            });
+
+  }}
         >
           <Content title={title} description={description} image={image} />
         </TouchableHighlight>
