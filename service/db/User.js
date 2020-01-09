@@ -6,7 +6,7 @@ function initDB() {
   // table users
   db.transaction(tx => {
     tx.executeSql(
-      "create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(25), prenom VARCHAR(25), duplicata INTEGER, type INTEGER , derniere_connexion DATE);"
+      "create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(25), prenom VARCHAR(25), duplicata INTEGER, type INTEGER , derniere_connexion DATE, sex VARCHAR(25) , date_de_naissance Date);"
     );
   });
   // table score
@@ -134,7 +134,7 @@ function getType(id, callback) {
 function getUsers(callback) {
   db.transaction(tx => {
     tx.executeSql(
-      "select id, nom, prenom, duplicata, derniere_connexion from user order by prenom ASC;",
+      "select id, nom, prenom, duplicata, derniere_connexion, sex, date_de_naissance from user order by prenom ASC;",
       [],
       (_, { rows }) => {
         callback(rows._array);
@@ -144,15 +144,15 @@ function getUsers(callback) {
   });
 }
 
-function addUser(nom, prenom, type, callback) {
+function addUser(nom, prenom, type, sex, date_de_naissance, callback) {
   db.transaction(
     tx => {
       tx.executeSql(
-        "select duplicata from user where nom=? and prenom=?;",
-        [nom, prenom],
+        "select duplicata from user where nom=? and prenom=? and sex=? and date_de_naissance=?;",
+        [nom, prenom,sex,date_de_naissance],
         (_, { rows }) => {
           const duplicata = parseInt(rows.length);
-          addUser_onSuccess(nom, prenom, duplicata, type, callback);
+          addUser_onSuccess(nom, prenom, duplicata, type, sex, date_de_naissance, callback);
         }
       );
     },
@@ -161,13 +161,13 @@ function addUser(nom, prenom, type, callback) {
   );
 }
 
-function addUser_onSuccess(nom, prenom, duplicata, type, callback) {
+function addUser_onSuccess(nom, prenom, duplicata, type, sex, date_de_naissance, callback) {
   const date = new Date().toLocaleDateString("fr-FR");
   db.transaction(
     tx => {
       tx.executeSql(
-        "insert into user (nom, prenom, duplicata, type, derniere_connexion) values (?,?,?,?,?);",
-        [nom, prenom, duplicata, type, date]
+        "insert into user (nom, prenom, duplicata, type, derniere_connexion, sex, date_de_naissance) values (?,?,?,?,?,?,?);",
+        [nom, prenom, duplicata, type, date, sex, date_de_naissance]
       );
     },
     console.error,

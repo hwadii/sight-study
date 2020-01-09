@@ -39,11 +39,11 @@ export default class AddUser extends React.Component {
 
   handleAddUser() {
     const { navigate } = this.props.navigation;
-    const { nom, prenom } = this.state;
+    const { nom, prenom,sex,date } = this.state;
     console.log(this.state)
-    /*User.addUser(nom, prenom, 0, () => {
+    User.addUser(nom, prenom, 0,sex,date, () => {
       navigate("SetUser");
-    });*/
+    });
   }
 
   setDate(newDate) {
