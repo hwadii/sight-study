@@ -19,7 +19,7 @@ export default class AddUser extends React.Component {
       prenom: "",
       nom: "",
       date: new Date(),
-      sex: ""
+      sex: "homme"
     };
     this.setDate = this.setDate.bind(this);
     this.setSex = this.setSex.bind(this);
@@ -40,19 +40,19 @@ export default class AddUser extends React.Component {
   handleAddUser() {
     const { navigate } = this.props.navigation;
     const { nom, prenom } = this.state;
-    User.addUser(nom, prenom, 0, () => {
+    console.log(this.state)
+    /*User.addUser(nom, prenom, 0, () => {
       navigate("SetUser");
-    });
+    });*/
   }
 
   setDate(newDate) {
-    console.log(newDate);
     this.setState({ date: newDate });
   }
 
   setSex(newSex) {
-    console.log(this.state);
     this.setState({ sex: newSex });
+
   }
 
   render() {
@@ -65,19 +65,20 @@ export default class AddUser extends React.Component {
           handleAddUser={this.handleAddUser}
           setDate={this.setDate}
           setSex={this.setSex}
+          state= {this.state}
         />
       </View>
     );
   }
 }
 
-function Form({ handleChange, handleAddUser, setDate, setSex }) {
+function Form({ handleChange, handleAddUser, setDate, setSex, state }) {
   return (
     <View style={styles.form}>
       <Field label="Prénom" handler={e => handleChange(e, "prenom")} />
       <Field label="Nom" handler={e => handleChange(e, "nom")} />
-      <DateN label="Date de naissance" handler={e => setDate(e)} />
-      <RadioButton label="Sex" handler={e => setSex(e)} />
+      <DateN label="Date de naissance" handler={e => setDate(e)} state={state} />
+      <RadioButton label="Sex" handler={e => setSex(e)} state={state}/>
       <TouchableOpacity
         style={styles.confirmButton}
         onPress={() => handleAddUser()}
@@ -103,11 +104,12 @@ function Field({ label, handler }) {
   );
 }
 
-function RadioButton({ label, handler }) {
+function RadioButton({ label, handler,state }) {
   return (
     <>
       <Text style={common.inputsLabels}>{label}</Text>
-      <Picker onValueChange={handler}>
+      <Picker selectedValue = {state.sex} onValueChange={handler}>
+      
         <Picker.Item label="Homme" value="homme" />
         <Picker.Item label="Femme" value="femme" />
       </Picker>
@@ -115,11 +117,11 @@ function RadioButton({ label, handler }) {
   );
 }
 
-function DateN({ label, handler }) {
+function DateN({ label, handler, state }) {
   return (
     <>
       <Text style={common.inputsLabels}>{label}</Text>
-      <DatePickerIOS date={new Date()} onDateChange={handler} mode="date" />
+      <DatePickerIOS date={state.date} onDateChange={handler} mode="date" />
     </>
   );
 }
