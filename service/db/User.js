@@ -3,11 +3,13 @@ import * as SQLite from "expo-sqlite";
 const db = SQLite.openDatabase("sigthstudy.db");
 
 function initDB() {
+  // table users
   db.transaction(tx => {
     tx.executeSql(
       "create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(25), prenom VARCHAR(25), duplicata INTEGER, type INTEGER , derniere_connexion DATE);"
     );
   });
+  // table score
   db.transaction(tx => {
     tx.executeSql(
       "create table if not exists score (id_user INTEGER, date DATE, oeil_gauche INTEGER, oeil_droit INTEGER);"
@@ -22,6 +24,11 @@ function dropDB() {
   db.transaction(tx => {
     tx.executeSql("drop table score");
   });
+}
+
+function resetDB() {
+  dropDB();
+  initDB();
 }
 
 function getUser(nom, prenom, duplicata, callback) {
@@ -45,15 +52,11 @@ function getUser(nom, prenom, duplicata, callback) {
 function getUserById(id, callback) {
   db.transaction(
     tx => {
-      tx.executeSql(
-        "select * from user where id=?;",
-        [id],
-        (_, {rows}) => {
-          if (rows.length > 0) {
-            callback(rows._array);
-          }
+      tx.executeSql("select * from user where id=?;", [id], (_, { rows }) => {
+        if (rows.length > 0) {
+          callback(rows._array);
         }
-      );
+      });
     },
     console.error,
     console.log
@@ -68,7 +71,7 @@ function getUsersLike(recherche, callback) {
       db.transaction(
         tx => {
           tx.executeSql(
-            "select id, nom, prenom, duplicata, derniere_connexion from user where (nom=? and prenom like ?) or (nom like ? and prenom=?);",
+            "select id, nom, prenom, duplicata, derniere_connexion from user where (nom=? and prenom like ?) or (nom like ? and prenom=?) order by prenom ASC;",
             [recherche1, recherche2 + "%", recherche2 + "%", recherche1],
             (_, { rows }) => {
               callback(rows._array);
@@ -131,7 +134,7 @@ function getType(id, callback) {
 function getUsers(callback) {
   db.transaction(tx => {
     tx.executeSql(
-      "select id, nom, prenom, duplicata, derniere_connexion from user;",
+      "select id, nom, prenom, duplicata, derniere_connexion from user order by prenom ASC;",
       [],
       (_, { rows }) => {
         callback(rows._array);
@@ -221,6 +224,7 @@ function getScore(user, callback) {
 export {
   initDB,
   dropDB,
+  resetDB,
   getUser,
   getUserById,
   getUsersLike,

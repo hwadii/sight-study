@@ -1,9 +1,8 @@
 import React from "react";
 import Card from "./Card";
 import { Text, StyleSheet, View } from "react-native";
-import { styles as commonStyles } from "./styles/common";
-import { getId, getFirstName } from "./util/util";
-import * as User from "../service/db/User";
+import { styles as common } from "./styles/common";
+import { getFirstName } from "./util/util";
 
 const texts = [
   {
@@ -36,6 +35,7 @@ export default class Menu extends React.Component {
   async componentDidMount() {
     const firstName = await getFirstName();
     this.setState({ firstName });
+    
   }
 
   render() {
@@ -44,7 +44,7 @@ export default class Menu extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.greetings}>
-          <Text style={{ ...commonStyles.headers, fontWeight: "normal" }}>
+          <Text style={{ ...common.headers, fontWeight: "normal" }}>
             Bonjour,{" "}
             <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>
               {firstName}
