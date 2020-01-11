@@ -4,10 +4,13 @@ import { styles as common } from "./styles/common";
 import { getFirstName, getLastName, getDoctorEmail } from "./util/util";
 import * as User from "../service/db/User";
 import { clear } from "./util/util";
+import * as Speech from 'expo-speech';
+
 
 export default class MainMenu extends React.Component {
   constructor(props) {
     super(props);
+    Speech.speak("Bienvenue sur l'application sight-study", {language:"fr"})
     this.state = {
       firstName: null,
       lastName: null,
