@@ -6,7 +6,6 @@ import Score from "./src/Score";
 import Test from "./src/Test";
 import TestScreen from "./src/TestScreen";
 import Menu from "./src/Menu";
-import Settings from "./src/Settings"
 import MainMenu from "./src/MainMenu"
 import SetDoctor from "./src/SetDoctor"
 import { createAppContainer } from "react-navigation";
