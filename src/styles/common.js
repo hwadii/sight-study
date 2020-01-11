@@ -1,5 +1,12 @@
 import { StyleSheet, Dimensions } from "react-native";
 
+export const colors = {
+  DANGER: "#dc3545",
+  SUCESS: "#28a745",
+  PRIMARY: "#007bff",
+  DISABLED: "#6c757d"
+}
+
 export const styles = StyleSheet.create({
   containers: {
     flexDirection: "column",
@@ -27,6 +34,9 @@ export const styles = StyleSheet.create({
     paddingVertical: 5,
     fontWeight: "bold",
     textAlign: "center"
+  },
+  important: {
+    fontSize: 20
   },
   inputs: {
     borderTopWidth: 1,

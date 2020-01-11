@@ -2,20 +2,22 @@ import * as SQLite from "expo-sqlite";
 
 const db = SQLite.openDatabase("sigthstudy.db");
 
-function initDB() {
+export function initDB() {
+  // table users
   db.transaction(tx => {
     tx.executeSql(
-      "create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(25), prenom VARCHAR(25), duplicata INTEGER, type INTEGER , derniere_connexion DATE);"
+      "create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(25), prenom VARCHAR(25), derniere_connexion DATE, sex VARCHAR(25), date_de_naissance DATE);"
     );
   });
+  // table score
   db.transaction(tx => {
     tx.executeSql(
-      "create table if not exists score (id_user INTEGER, date DATE, oeil_gauche INTEGER, oeil_droit INTEGER, Primary Key(`id_user`,`date`) );"
+      "create table if not exists score (id_user INTEGER, date DATE, oeil_gauche INTEGER, oeil_droit INTEGER);"
     );
   });
 }
 
-function dropDB() {
+export function dropDB() {
   db.transaction(tx => {
     tx.executeSql("drop table user");
   });
@@ -24,12 +26,17 @@ function dropDB() {
   });
 }
 
-function getUser(nom, prenom, duplicata, callback) {
+export function resetDB() {
+  dropDB();
+  initDB();
+}
+
+export function getUser(nom, prenom, callback) {
   db.transaction(
     tx => {
       tx.executeSql(
-        "select id from user where nom=? and prenom=? and duplicata=?;",
-        [nom, prenom, duplicata],
+        "select id from user where nom=? and prenom=?;",
+        [nom, prenom],
         (_, { rows }) => {
           if (rows.length > 0) {
             callback(rows._array[0].id);
@@ -42,25 +49,21 @@ function getUser(nom, prenom, duplicata, callback) {
   );
 }
 
-function getUserById(id, callback) {
+export function getUserById(id, callback) {
   db.transaction(
     tx => {
-      tx.executeSql(
-        "select * from user where id=?;",
-        [id],
-        (_, {rows}) => {
-          if (rows.length > 0) {
-            callback(rows._array);
-          }
+      tx.executeSql("select * from user where id=?;", [id], (_, { rows }) => {
+        if (rows.length > 0) {
+          callback(rows._array);
         }
-      );
+      });
     },
     console.error,
     console.log
   );
 }
 
-function getUsersLike(recherche, callback) {
+export function getUsersLike(recherche, callback) {
   if (recherche.length > 0) {
     if (recherche.includes(" ")) {
       const recherche1 = recherche.split(" ")[0];
@@ -68,7 +71,7 @@ function getUsersLike(recherche, callback) {
       db.transaction(
         tx => {
           tx.executeSql(
-            "select id, nom, prenom, duplicata, derniere_connexion from user where (nom=? and prenom like ?) or (nom like ? and prenom=?);",
+            "select id, nom, prenom, derniere_connexion from user where (nom=? and prenom like ?) or (nom like ? and prenom=?) order by prenom ASC;",
             [recherche1, recherche2 + "%", recherche2 + "%", recherche1],
             (_, { rows }) => {
               callback(rows._array);
@@ -82,7 +85,7 @@ function getUsersLike(recherche, callback) {
       db.transaction(
         tx => {
           tx.executeSql(
-            "select id, nom, prenom, duplicata, derniere_connexion from user where nom like ? or prenom like ?;",
+            "select id, nom, prenom, derniere_connexion from user where nom like ? or prenom like ?;",
             [recherche + "%", recherche + "%"],
             (_, { rows }) => {
               callback(rows._array);
@@ -97,7 +100,7 @@ function getUsersLike(recherche, callback) {
     db.transaction(
       tx => {
         tx.executeSql(
-          "select id, nom, prenom, duplicata, derniere_connexion from user;",
+          "select id, nom, prenom, derniere_connexion from user;",
           [],
           (_, { rows }) => {
             callback(rows._array);
@@ -110,28 +113,10 @@ function getUsersLike(recherche, callback) {
   }
 }
 
-function getType(id, callback) {
-  db.transaction(
-    tx => {
-      tx.executeSql(
-        "select type from user where id=?;",
-        [id],
-        (_, { rows }) => {
-          if (rows.length > 0) {
-            callback(rows._array[0].type);
-          }
-        }
-      );
-    },
-    console.error,
-    console.log
-  );
-}
-
-function getUsers(callback) {
+export function getUsers(callback) {
   db.transaction(tx => {
     tx.executeSql(
-      "select id, nom, prenom, duplicata, derniere_connexion from user;",
+      "select id, nom, prenom, derniere_connexion, sex, date_de_naissance from user order by prenom ASC;",
       [],
       (_, { rows }) => {
         callback(rows._array);
@@ -141,30 +126,12 @@ function getUsers(callback) {
   });
 }
 
-function addUser(nom, prenom, type, callback) {
+export function addUser(nom, prenom, sex, date_de_naissance, callback) {
   db.transaction(
     tx => {
       tx.executeSql(
-        "select duplicata from user where nom=? and prenom=?;",
-        [nom, prenom],
-        (_, { rows }) => {
-          const duplicata = parseInt(rows.length);
-          addUser_onSuccess(nom, prenom, duplicata, type, callback);
-        }
-      );
-    },
-    console.error,
-    console.log
-  );
-}
-
-function addUser_onSuccess(nom, prenom, duplicata, type, callback) {
-  const date = new Date().toLocaleDateString("fr-FR");
-  db.transaction(
-    tx => {
-      tx.executeSql(
-        "insert into user (nom, prenom, duplicata, type, derniere_connexion) values (?,?,?,?,?);",
-        [nom, prenom, duplicata, type, date]
+        "insert into user (nom, prenom, sex, date_de_naissance) values (?,?,?,?);",
+        [nom, prenom, sex, date_de_naissance]
       );
     },
     console.error,
@@ -172,7 +139,7 @@ function addUser_onSuccess(nom, prenom, duplicata, type, callback) {
   );
 }
 
-function removeUser(id, callback) {
+export function removeUser(id, callback) {
   db.transaction(
     tx => {
       tx.executeSql(
@@ -187,7 +154,7 @@ function removeUser(id, callback) {
   );
 }
 
-function addScore(id_user, oeil_gauche, oeil_droit, callback) {
+export function addScore(id_user, oeil_gauche, oeil_droit, callback) {
   const date = new Date().toLocaleDateString("fr-FR");
   db.transaction(
     tx => {
@@ -202,7 +169,7 @@ function addScore(id_user, oeil_gauche, oeil_droit, callback) {
   callback(true);
 }
 
-function getScore(user, callback) {
+export function getScore(user, callback) {
   db.transaction(
     tx => {
       tx.executeSql(
@@ -217,17 +184,3 @@ function getScore(user, callback) {
     console.log
   );
 }
-
-export {
-  initDB,
-  dropDB,
-  getUser,
-  getUserById,
-  getUsersLike,
-  getType,
-  getUsers,
-  addUser,
-  removeUser,
-  addScore,
-  getScore
-};

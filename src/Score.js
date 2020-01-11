@@ -63,7 +63,7 @@ export default class Score extends React.Component {
       )
     }
     return (
-      <View style={{ flex: 1, height: "100%" }}>
+      <View style={{ flex: 1, height: "100%", ...styles.container }}>
         {isLoading ? (
           <ActivityIndicator
             style={{ flex: 1, justifyContent: "center" }}
@@ -133,3 +133,10 @@ export default class Score extends React.Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center"
+  }
+})
