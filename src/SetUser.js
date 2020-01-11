@@ -78,25 +78,25 @@ export default class SetUser extends React.Component {
 
   render() {
     const { users } = this.state;
-    const { navigation } = this.props;
+    const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
         <View style={styles.noAccount}>
           <Button
             title="Ajouter un patient"
-            onPress={() => navigation.navigate("AddUser")}
+            onPress={() => navigate("AddUser")}
             color={colors.SUCESS}
           />
           <Button
-            title="Ajouter un médecin"
-            onPress={() => navigation.navigate("AddDoctor")}
-            color={colors.SUCESS}
+            title="Email du médecin"
+            onPress={() => navigate("SetDoctor")}
+            color={colors.PRIMARY}
           />
         </View>
         <UsersList
           handlers={[this.handleSearch, this.handleSelect, this.handleDelete]}
           users={users}
-          navigate={navigation.navigate}
+          navigate={navigate}
         />
       </View>
     );
