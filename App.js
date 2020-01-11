@@ -18,7 +18,6 @@ const Routes = {
   Test,
   TestScreen,
   Menu,
-  Settings,
   MainMenu,
   SetDoctor
 };
