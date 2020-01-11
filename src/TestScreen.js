@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,7 +10,7 @@ import {
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
 
-export default class TestScreen extends React.Component {
+export default class TestScreen extends Component {
   state = {
     recognized: "",
     pitch: "",
@@ -18,8 +18,7 @@ export default class TestScreen extends React.Component {
     end: "",
     started: "",
     results: [],
-    partialResults: [],
-    showRecordButton: false
+    partialResults: []
   };
 
   constructor(props) {
@@ -42,8 +41,8 @@ export default class TestScreen extends React.Component {
     } else {
       this.setState({ showRecordButton: true });
     }
+    console.log(await Voice.getSpeechRecognitionServices());
   }
-
   componentWillUnmount() {
     Voice.destroy().then(Voice.removeAllListeners);
   }
@@ -189,14 +188,12 @@ export default class TestScreen extends React.Component {
           );
         })}
         <Text style={styles.stat}>{`End: ${this.state.end}`}</Text>
-        {this.state.showRecordButton && (
         <TouchableHighlight onPress={this._startRecognizing}>
           <Image
             style={styles.button}
             source={require("../assets/button.png")}
           />
         </TouchableHighlight>
-        )}
         <TouchableHighlight onPress={this._stopRecognizing}>
           <Text style={styles.action}>Stop Recognizing</Text>
         </TouchableHighlight>
