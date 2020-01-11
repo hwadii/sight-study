@@ -4,7 +4,7 @@ import {
   Text,
   View,
   Dimensions,
-  DatePickerIOS,
+  DatePickerAndroid,
   Picker
 } from "react-native";
 import { scale } from "react-native-size-matters";
@@ -18,110 +18,118 @@ export default class AddUser extends React.Component {
     this.state = {
       prenom: "",
       nom: "",
-      date: new Date(),
-      sex: "homme"
+      date: "",
+      sex: "H"
     };
-    this.setDate = this.setDate.bind(this);
-    this.setSex = this.setSex.bind(this);
     this.handleChangeField = this.handleChangeField.bind(this);
-    this.handleAddUser = this.handleAddUser.bind(this);
-    this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
-  }
-
-  // FIXME: utile ?
-  componentDidMount() {
-    User.initDB();
-  }
-
-  handleChangeField(e, field) {
-    this.setState({ [field]: e.nativeEvent.text });
-  }
-
-  handleAddUser() {
-    const { navigate } = this.props.navigation;
-    const { nom, prenom,sex,date } = this.state;
-    console.log(this.state)
-    User.addUser(nom, prenom, 0,sex,date, () => {
-      navigate("SetUser");
+    this.showDatePickerAndSet = this.showDatePickerAndSet.bind(this);
+    this.props.navigation.addListener("willFocus", () => {
+      this.setState({ prenom: "", nom: "", date: "" });
     });
   }
 
-  setDate(newDate) {
-    this.setState({ date: newDate });
+  handleChangeField(e, field) {
+    this.setState({ [field]: e });
   }
 
-  setSex(newSex) {
-    this.setState({ sex: newSex });
+  handleAddUser() {
+    const { goBack } = this.props.navigation;
+    const { nom, prenom, sex, date } = this.state;
+    User.addUser(nom, prenom, sex, date.toISOString(), () => {
+      goBack();
+    });
+  }
 
+  async showDatePickerAndSet() {
+    try {
+      const { action, year, month, day } = await DatePickerAndroid.open({
+        date: new Date(1980, 4, 25)
+      });
+      if (action !== DatePickerAndroid.dismissedAction) {
+        this.handleChangeField(new Date(year, month, day), "date");
+      }
+    } catch ({ code, message }) {
+      console.warn("Cannot open date picker", message);
+    }
   }
 
   render() {
+    const { prenom, nom, sex, date } = this.state;
     return (
       <View style={styles.container}>
         <Text style={styles.header}>Nouveau patient</Text>
         <Form
-          navigate={this.props.navigation.navigate}
+          userInfo={{ prenom, nom, date, sex }}
           handleChange={this.handleChangeField}
-          handleAddUser={this.handleAddUser}
-          setDate={this.setDate}
-          setSex={this.setSex}
-          state= {this.state}
+          showDatePickerAndSet={this.showDatePickerAndSet}
         />
+        <TouchableOpacity
+          style={{ ...styles.form, ...styles.confirmButton }}
+          onPress={() => this.handleAddUser()}
+        >
+          <Text style={styles.confirmButtonText}>CONFIRMER</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 }
 
-function Form({ handleChange, handleAddUser, setDate, setSex, state }) {
+function Form({ handleChange, userInfo, showDatePickerAndSet }) {
+  const { prenom, nom, sex, date } = userInfo;
   return (
     <View style={styles.form}>
-      <Field label="Prénom" handler={e => handleChange(e, "prenom")} />
-      <Field label="Nom" handler={e => handleChange(e, "nom")} />
-      <DateN label="Date de naissance" handler={e => setDate(e)} state={state} />
-      <RadioButton label="Sex" handler={e => setSex(e)} state={state}/>
-      <TouchableOpacity
-        style={styles.confirmButton}
-        onPress={() => handleAddUser()}
+      <Field
+        value={prenom}
+        label="Prénom"
+        handleOnChange={e => handleChange(e, "prenom")}
+      />
+      <Field
+        value={nom}
+        label="Nom"
+        handleOnChange={e => handleChange(e, "nom")}
+      />
+      <Field
+        label="Date de naissance"
+        value={date}
+        handleOnFocus={() => showDatePickerAndSet()}
+      />
+      <Select
+        label="Sexe"
+        value={sex}
+        handleOnChange={e => handleChange(e, "sex")}
       >
-        <Text style={styles.confirmButtonText}>CONFIRMER</Text>
-      </TouchableOpacity>
+        <Picker.Item label="Homme" value="H" />
+        <Picker.Item label="Femme" value="F" />
+      </Select>
     </View>
   );
 }
 
-function Field({ label, handler }) {
+// HACK: si onFocus => on attend une date donc on veut une value dans le champ
+function Field({ label, value, handleOnChange, handleOnFocus }) {
   return (
     <>
       <Text style={common.inputsLabels}>{label}</Text>
       <TextInput
+        value={typeof value === "object" ? value.toLocaleDateString() : value}
         style={common.inputs}
         maxLength={20}
         autoCorrect={false}
-        placeholder={`Entrez son ${label.toLowerCase()}`}
-        onChange={handler}
+        placeholder={label}
+        onChangeText={handleOnChange}
+        onFocus={handleOnFocus}
       />
     </>
   );
 }
 
-function RadioButton({ label, handler,state }) {
+function Select({ label, handleOnChange, value, children }) {
   return (
     <>
       <Text style={common.inputsLabels}>{label}</Text>
-      <Picker selectedValue = {state.sex} onValueChange={handler}>
-      
-        <Picker.Item label="Homme" value="homme" />
-        <Picker.Item label="Femme" value="femme" />
+      <Picker selectedValue={value} onValueChange={handleOnChange}>
+        {children}
       </Picker>
-    </>
-  );
-}
-
-function DateN({ label, handler, state }) {
-  return (
-    <>
-      <Text style={common.inputsLabels}>{label}</Text>
-      <DatePickerIOS date={state.date} onDateChange={handler} mode="date" />
     </>
   );
 }

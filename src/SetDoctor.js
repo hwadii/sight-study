@@ -2,9 +2,10 @@ import React from "react";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
-import * as User from "../service/db/User";
 import { styles as common } from "./styles/common";
 import { setDoctorEmail } from "./util/util";
+
+// IMPORTANT: remove this garbage and merge with addUser
 
 export default class SetDoctor extends React.Component {
   constructor(props) {
@@ -15,11 +16,6 @@ export default class SetDoctor extends React.Component {
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleModifMedecin = this.handleModifMedecin.bind(this);
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
-  }
-
-  // FIXME: utile ?
-  componentDidMount() {
-    User.initDB();
   }
 
   handleChangeField(e, field) {
