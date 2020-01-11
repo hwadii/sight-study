@@ -31,7 +31,10 @@ export default class Card extends React.Component {
     const { title, description, image } = this.props;
     return (
       <View style={styles.card}>
-        <TouchableHighlight underlayColor="#fff" onPress={() => this.handleOnTest()}>
+        <TouchableHighlight
+          underlayColor="#fff"
+          onPress={() => this.handleOnTest()}
+        >
           <Content title={title} description={description} image={image} />
         </TouchableHighlight>
       </View>

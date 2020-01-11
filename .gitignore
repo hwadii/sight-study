@@ -2,6 +2,9 @@ node_modules
 .vscode/
 .expo/
 .expo-source/
+<<<<<<< HEAD
 build/
 *.class
+=======
+>>>>>>> adam
 .idea

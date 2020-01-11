@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import SetUser from "./src/SetUser";
 import AddUser from "./src/AddUser";
 import AddDoctor from "./src/AddDoctor";
@@ -7,8 +7,9 @@ import Score from "./src/Score";
 import Test from "./src/Test";
 import TestScreen from "./src/TestScreen";
 import Menu from "./src/Menu";
-import Settings from "./src/Settings";
-import MainMenu from "./src/MainMenu";
+import Settings from "./src/Settings"
+import MainMenu from "./src/MainMenu"
+import SetDoctor from "./src/SetDoctor"
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
@@ -21,7 +22,8 @@ const Routes = {
   TestScreen,
   Menu,
   Settings,
-  MainMenu
+  MainMenu,
+  SetDoctor
 };
 
 const MainNavigator = createStackNavigator(
