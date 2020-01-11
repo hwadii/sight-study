@@ -139,7 +139,7 @@ function UsersList({ users, handlers }) {
         renderItem={({ item }) => (
           <UserElement
             id={item.id}
-            user={{ prenom: item.prenom, nom: item.nom }}
+            user={{ prenom: item.prenom, nom: item.nom, sexe: item.sex }}
             handleDelete={handleDelete}
             handleSelect={handleSelect}
           />
@@ -156,7 +156,7 @@ function UserElement({ user, id, handleDelete, handleSelect }) {
   return (
     <View style={styles.userBox}>
       <Text style={styles.userText}>
-        {user.prenom} {user.nom}
+        {user.prenom} {user.nom} <Text style={styles.userTextMore}>({user.sexe})</Text>
       </Text>
       {/* <Text>Dernière connexion: {lastConnected}</Text> */}
       <View style={styles.actions}>
@@ -200,8 +200,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold"
   },
-  link: {
-    fontWeight: "bold",
-    color: "#007BFF"
+  userTextMore: {
+    fontSize: 14,
+    fontStyle: "italic",
+    color: colors.DISABLED
   }
 });
