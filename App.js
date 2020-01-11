@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import SetUser from "./src/SetUser";
 import AddUser from "./src/AddUser";
-import AddDoctor from "./src/AddDoctor";
 import Score from "./src/Score";
 import Test from "./src/Test";
 import TestScreen from "./src/TestScreen";
@@ -36,6 +35,7 @@ const MainNavigator = createStackNavigator(
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour"
+      // TODO: Add aide avec différents textes en fonction de la vue
       // headerRight: () => <Text style={styles.helpText}>Aide 💡</Text>
     }
   }
