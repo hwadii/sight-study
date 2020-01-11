@@ -4,6 +4,7 @@ import {
   TextInput,
   FlatList,
   Button,
+  TouchableOpacity,
   Text,
   View,
   Alert
@@ -82,16 +83,18 @@ export default class SetUser extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.noAccount}>
-          <Button
-            title="Ajouter un patient"
+          <TouchableOpacity
             onPress={() => navigate("AddUser")}
-            color={colors.SUCESS}
-          />
-          <Button
-            title="Email du médecin"
+            style={styles.actionButtons}
+          >
+            <Text style={common.actionButtonsText}>Ajouter un patient</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={() => navigate("SetDoctor")}
-            color={colors.PRIMARY}
-          />
+            style={styles.actionButtons}
+          >
+            <Text style={common.actionButtonsText}>Email du médecin</Text>
+          </TouchableOpacity>
         </View>
         <UsersList
           handlers={[this.handleSearch, this.handleSelect, this.handleDelete]}
@@ -148,7 +151,8 @@ function UserElement({ user, id, handleDelete, handleSelect }) {
     <View style={styles.userBox}>
       <View style={{ justifyContent: "center" }}>
         <Text style={styles.userText}>
-        {user.prenom} {user.nom} <Text style={styles.userTextMore}>({user.sexe})</Text>
+          {user.prenom} {user.nom}{" "}
+          <Text style={styles.userTextMore}>({user.sexe})</Text>
         </Text>
       </View>
       {/* <Text>Dernière connexion: {lastConnected}</Text> */}
@@ -197,5 +201,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: "italic",
     color: colors.DISABLED
+  },
+  actionButtons: {
+    ...common.actionButtons,
+    marginHorizontal: 5,
+    maxWidth: 200
   }
 });
