@@ -17,7 +17,6 @@ import com.rnfs.RNFSPackage;
 // import com.facebook.react.ReactApplication;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import com.horcrux.svg.SvgPackage;
-import com.adamfreeman.rnocv3.RNOpencv3Package;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import org.reactnative.camera.RNCameraPackage;
 
@@ -40,8 +39,6 @@ public class MainApplication extends ExpoApplication implements AppLoaderPackage
         // new MainReactPackage(),
             new RNPermissionsPackage(),
             // new SvgPackage(),
-            new RNOpencv3Package(),
-            // new RNGestureHandlerPackage(),
             new RNCameraPackage()
     );
   }
