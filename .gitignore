@@ -4,4 +4,3 @@ node_modules
 .expo-source/
 build
 .gradle
-R.java

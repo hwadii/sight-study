@@ -11,8 +11,12 @@ import java.util.List;
 import host.exp.exponent.experience.DetachActivity;
 import host.exp.exponent.generated.DetachBuildConstants;
 
-public class MainActivity extends DetachActivity {
+import com.facebook.react.ReactPackage;
+import com.facebook.react.modules.core.PermissionAwareActivity;
+import com.facebook.react.modules.core.PermissionListener;
 
+public class MainActivity extends DetachActivity  implements PermissionAwareActivity{
+  private PermissionListener permissionListener;
   @Override
   public String publishedUrl() {
     return "exp://exp.host/@hwadii/sight-study";
@@ -43,4 +47,17 @@ public class MainActivity extends DetachActivity {
     // Add extra initialProps here
     return expBundle;
   }
+  
+  public void requestPermissions(String[] permissions, int requestCode, PermissionListener listener) {
+    permissionListener = listener;
+    requestPermissions(permissions, requestCode);
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    if (permissionListener != null) {
+        permissionListener.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+  }
+  
 }
