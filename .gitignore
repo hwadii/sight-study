@@ -2,3 +2,6 @@ node_modules
 .vscode/
 .expo/
 .expo-source/
+build
+.gradle
+R.java
