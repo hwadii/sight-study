@@ -2,6 +2,9 @@ import * as SQLite from "expo-sqlite";
 
 const db = SQLite.openDatabase("sigthstudy.db");
 
+/**
+ * Initialize database.
+ */
 export function initDB() {
   // table users
   db.transaction(tx => {
@@ -17,6 +20,9 @@ export function initDB() {
   });
 }
 
+/**
+ * Drops database.
+ */
 export function dropDB() {
   db.transaction(tx => {
     tx.executeSql("drop table user");
@@ -26,11 +32,22 @@ export function dropDB() {
   });
 }
 
+
+/**
+ * Resets database.
+ */
 export function resetDB() {
   dropDB();
   initDB();
 }
 
+/**
+ * Gets user.
+ *
+ * @param {string} nom last name of the user.
+ * @param {string} prenom first name of the user.
+ * @param {function} callback callback to be called after getting a user.
+ */
 export function getUser(nom, prenom, callback) {
   db.transaction(
     tx => {
@@ -49,6 +66,12 @@ export function getUser(nom, prenom, callback) {
   );
 }
 
+/**
+ * Gets user by id.
+ *
+ * @param {number} id user id.
+ * @param {function} callback callback to be called after getting a user by id.
+ */
 export function getUserById(id, callback) {
   db.transaction(
     tx => {
@@ -63,6 +86,13 @@ export function getUserById(id, callback) {
   );
 }
 
+
+/**
+ * "Fuzzy search" through users.
+ *
+ * @param {string} recherche search term.
+ * @param {function} callback callback to be called after getting a user.
+ */
 export function getUsersLike(recherche, callback) {
   if (recherche.length > 0) {
     if (recherche.includes(" ")) {
@@ -113,6 +143,11 @@ export function getUsersLike(recherche, callback) {
   }
 }
 
+/**
+ * Gets every user.
+ *
+ * @param {function} callback callback to be called after getting users.
+ */
 export function getUsers(callback) {
   db.transaction(tx => {
     tx.executeSql(
@@ -126,6 +161,15 @@ export function getUsers(callback) {
   });
 }
 
+/**
+ * Adds user.
+ *
+ * @param {string} nom user's last name.
+ * @param {string} prenom user's first name.
+ * @param {string} sex user's sex.
+ * @param {string} date_de_naissance user's date of birth.
+ * @param {function} callback callback to be called after adding user.
+ */
 export function addUser(nom, prenom, sex, date_de_naissance, callback) {
   db.transaction(
     tx => {
@@ -139,6 +183,12 @@ export function addUser(nom, prenom, sex, date_de_naissance, callback) {
   );
 }
 
+/**
+ * Removes user by id.
+ *
+ * @param {number} id user id.
+ * @param {function} callback callback to be called after getting a user by id.
+ */
 export function removeUser(id, callback) {
   db.transaction(
     tx => {
@@ -154,6 +204,14 @@ export function removeUser(id, callback) {
   );
 }
 
+/**
+ * Adds score for a user.
+ *
+ * @param {number} id_user user id.
+ * @param {number} oeil_gauche left eye score.
+ * @param {number} oeil_droit right eye score.
+ * @param {function} callback callback to be called after adding a score.
+ */
 export function addScore(id_user, oeil_gauche, oeil_droit, callback) {
   const date = new Date().toLocaleDateString("fr-FR");
   db.transaction(
@@ -169,12 +227,18 @@ export function addScore(id_user, oeil_gauche, oeil_droit, callback) {
   callback(true);
 }
 
-export function getScore(user, callback) {
+/**
+ * Gets score for a user.
+ *
+ * @param {number} id user id.
+ * @param {function} callback callback to be called after adding a score.
+ */
+export function getScore(id, callback) {
   db.transaction(
     tx => {
       tx.executeSql(
         "select date, oeil_gauche, oeil_droit from score where id_user=? order by date ASC",
-        [user],
+        [id],
         (_, { rows }) => {
           callback(rows._array);
         }
