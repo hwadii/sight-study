@@ -23,19 +23,17 @@ export default class SetUser extends React.Component {
     this.state = {
       users: []
     };
-    this.props.navigation.addListener("willFocus", () => {
-      User.getUsers(users => {
-        this.setState({ users });
-      });
+    this.props.navigation.addListener("willFocus", async () => {
+      this.setState({ users: await User.getUsers() });
     });
     this.handleSearch = this.handleSearch.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
   }
 
-  handleSearch(e) {
-    User.getUsersLike(e.nativeEvent.text, users => {
-      this.setState({ users });
+  async handleSearch(e) {
+    this.setState({
+      users: await User.getUsersLike(e.nativeEvent.text)
     });
   }
 
@@ -66,12 +64,13 @@ export default class SetUser extends React.Component {
         },
         {
           text: "OK",
-          onPress: () =>
-            User.removeUser(id, () => {
-              this.setState({
-                users: oldUsersList.filter(user => user.id !== id)
-              });
-            })
+          onPress: () => {
+            // FIXME: await ici?
+            User.removeUser(id);
+            this.setState({
+              users: oldUsersList.filter(user => user.id !== id)
+            });
+          }
         }
       ]
     );
@@ -206,6 +205,6 @@ const styles = StyleSheet.create({
     ...common.actionButtons,
     flex: 1,
     alignContent: "space-around",
-    marginHorizontal: 5,
+    marginHorizontal: 5
   }
 });
