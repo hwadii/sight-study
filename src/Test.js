@@ -1,14 +1,10 @@
-import React, { Component, View } from 'react';
-import {PermissionsAndroid,  Image} from 'react-native';
+import React, { Component } from "react";
+import { Image, View } from "react-native";
+import { PermissionsAndroid } from "react-native";
 
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-} from 'react-native';
- 
-import QRCodeScanner from 'react-native-qrcode-scanner';
+import { StyleSheet, Text } from "react-native";
 
+import QRCodeScanner from "react-native-qrcode-scanner";
 
 export default class Test extends Component {
   constructor(props) {
@@ -22,6 +18,10 @@ export default class Test extends Component {
   }
 
   componentDidMount(){
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
+    );
+    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
     const { navigation } = this.props;
     this.setState({'eye': JSON.stringify(navigation.getParam('eye'))})
   }
@@ -64,42 +64,54 @@ export default class Test extends Component {
       var img
       if (JSON.stringify(navigation.getParam('eye')) == '"left"') img = require('./img/imgleft.png')
       else img = require('./img/imgright.png')
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE)
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA)
     return (
       <QRCodeScanner
         onRead={this.onSuccess}
         vibrate={false}
-        reactivate={true} 
+        reactivate={true}
         showMarker={true}
-        customMarker={<Image style={{width: 900, height: 900, marginTop: 160}} tintColor={this.state.color} source={ img } />}
-        cameraType={'front'}
+        containerStyle={styles.marker}
+        customMarker={<Marker />}
+        cameraType="front"
         bottomContent={
-            <Text style={styles.buttonText}>{this.state.indication}</Text>
+          <Text style={styles.buttonText}>{this.state.indication}</Text>
         }
       />
     );
   }
 }
- 
+
+function Marker() {
+  return (
+    <Image
+      style={{ width: "100%", height: "100%" }}
+      tintColor={this.state.color}
+      source={ img }
+    />
+  );
+}
+
 const styles = StyleSheet.create({
   centerText: {
     flex: 1,
     fontSize: 18,
     padding: 32,
-    color: '#777',
+    color: "#777"
   },
   textBold: {
-    fontWeight: '500',
-    color: '#000',
+    fontWeight: "500",
+    color: "#000"
   },
   buttonText: {
     fontSize: 21,
-    color: 'rgb(255,255,255)',
+    color: "rgb(255,255,255)"
   },
   buttonTouchable: {
-    padding: 16,
+    padding: 16
   },
+  marker: {
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center"
+  }
 });
- 
-AppRegistry.registerComponent('default', () => ScanScreen);
