@@ -5,26 +5,27 @@ import {
   FlatList,
   Button,
   TouchableOpacity,
+  TouchableHighlight,
   Text,
   View,
   Alert
 } from "react-native";
 import * as User from "../service/db/User";
-import { setId, setUserName } from "./util/util";
+import { setId, setUserName, getId } from "./util/util";
 import { styles as common, colors } from "./styles/common";
-
-// TODO: Create Frequently used components?
-// TODO: Look into issue when many names.
-// TODO: Add segmented view
 
 export default class SetUser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      currentUserId: null,
       users: []
     };
     this.props.navigation.addListener("willFocus", async () => {
-      this.setState({ users: await User.getUsers() });
+      this.setState({
+        users: await User.getUsers(),
+        currentUserId: await getId()
+      });
     });
     this.handleSearch = this.handleSearch.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
@@ -47,7 +48,7 @@ export default class SetUser extends React.Component {
       [
         {
           text: "OK",
-          onPress: () => this.props.navigation.navigate("MainMenu")
+          onPress: () => this.setState({ currentUserId: id })
         }
       ]
     );
@@ -77,7 +78,7 @@ export default class SetUser extends React.Component {
   }
 
   render() {
-    const { users } = this.state;
+    const { users, currentUserId } = this.state;
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
@@ -96,9 +97,9 @@ export default class SetUser extends React.Component {
           </TouchableOpacity>
         </View>
         <UsersList
-          handlers={[this.handleSearch, this.handleSelect, this.handleDelete]}
           users={users}
-          navigate={navigate}
+          currentUserId={currentUserId}
+          handlers={[this.handleSearch, this.handleSelect, this.handleDelete]}
         />
       </View>
     );
@@ -121,7 +122,7 @@ function SearchBar({ handleSearch }) {
 /**
  * List of users
  */
-function UsersList({ users, handlers }) {
+function UsersList({ users, currentUserId, handlers }) {
   const [handleSearch, handleSelect, handleDelete] = handlers;
   return (
     <View style={styles.usersList}>
@@ -131,8 +132,8 @@ function UsersList({ users, handlers }) {
         ListHeaderComponent={<SearchBar handleSearch={handleSearch} />}
         renderItem={({ item }) => (
           <UserElement
-            id={item.id}
-            user={{ prenom: item.prenom, nom: item.nom, sexe: item.sex }}
+            user={item}
+            currentUserId={currentUserId}
             handleDelete={handleDelete}
             handleSelect={handleSelect}
           />
@@ -145,41 +146,46 @@ function UsersList({ users, handlers }) {
 /**
  * A row of the users list
  */
-function UserElement({ user, id, handleDelete, handleSelect }) {
+function UserElement({ user, currentUserId, handleDelete, handleSelect }) {
+  const { id, nom, prenom, sex, date_de_naissance } = user;
+  const isSelected = id === currentUserId;
   return (
-    <View style={styles.userBox}>
-      <View style={{ justifyContent: "center" }}>
+    <TouchableHighlight
+      underlayColor="#f5f5f5"
+      style={{ backgroundColor: isSelected ? "#f5f5f5" : "#fff" }}
+      onPress={() => handleSelect(id, user)}
+    >
+      <View style={styles.userBox}>
         <Text style={styles.userText}>
-          {user.prenom} {user.nom}{" "}
-          <Text style={styles.userTextMore}>({user.sexe})</Text>
+          {prenom} {nom}
         </Text>
+        <Text style={styles.userTextMore}>
+          ({sex === "F" ? "Femme" : "Homme"})
+        </Text>
+        <Text style={{ fontSize: 18 }}>
+          {new Date(date_de_naissance).toLocaleDateString()}
+        </Text>
+        <View style={styles.actions}>
+          <Button title="Exporter" color={colors.PRIMARY} />
+          <Button
+            title="Supprimer"
+            color={colors.DANGER}
+            onPress={() => handleDelete(id, user)}
+          />
+        </View>
       </View>
-      {/* <Text>Dernière connexion: {lastConnected}</Text> */}
-      <View style={styles.actions}>
-        <Button title="Choisir" onPress={() => handleSelect(id, user)} />
-        <Button
-          title="Supprimer"
-          color={colors.DANGER}
-          onPress={() => handleDelete(id, user)}
-        />
-      </View>
-    </View>
+    </TouchableHighlight>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 15,
-    marginBottom: 35
   },
   noAccount: {
     flexDirection: "row",
     justifyContent: "center",
-    paddingBottom: 5
-  },
-  noAccountText: {
-    fontSize: 20
+    marginVertical: 10
   },
   actions: {
     flexDirection: "row"
@@ -190,7 +196,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 18,
     paddingTop: 26,
-    paddingBottom: 26
+    paddingBottom: 26,
+    borderBottomWidth: 2,
+    borderBottomColor: "#f5f5f5"
   },
   userText: {
     fontSize: 18,

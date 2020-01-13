@@ -73,7 +73,7 @@ async function getId() {
   try {
     const value = await AsyncStorage.getItem("id");
     if (value !== null) {
-      return value;
+      return parseInt(value);
     }
   } catch (error) {
     console.log(error);
