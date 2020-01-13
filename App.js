@@ -8,6 +8,7 @@ import TestScreen from "./src/TestScreen";
 import Menu from "./src/Menu";
 import Settings from "./src/Settings"
 import Selection from "./src/Selection"
+import MenuLeftRight from "./src/MenuLeftRigth"
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { initDB, dropDB } from "./service/db/User";
@@ -22,7 +23,8 @@ const Routes = {
   TestScreen,
   Menu,
   Settings,
-  Selection
+  Selection,
+  MenuLeftRight
 };
 
 const MainNavigator = createStackNavigator(
@@ -31,7 +33,7 @@ const MainNavigator = createStackNavigator(
   },
   {
     // headerMode: 'none',
-    initialRouteName: "Test",
+    initialRouteName: "MenuLeftRight",
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour",
