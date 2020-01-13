@@ -1,30 +1,40 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFirstName, getLastName, getDoctorEmail } from "./util/util";
+import { getFirstName, getLastName, getDoctorEmail,getDistance,getDecalage  } from "./util/util";
 import * as User from "../service/db/User";
 import { clear } from "./util/util";
 import * as Speech from 'expo-speech';
+import ScreenBrightness from 'react-native-screen-brightness';
 
 
 export default class MainMenu extends React.Component {
   constructor(props) {
     super(props);
-    Speech.speak("Bienvenue sur l'application sight-study", {language:"fr"})
+    //Speech.speak("Bienvenue sur l'application sight-study", {language:"fr"})
     this.state = {
       firstName: null,
       lastName: null,
-      doctorEmail: null
+      doctorEmail: null,
+      distance : null,
+      decalage : null
     };
     this.props.navigation.addListener("willFocus", async () => {
       const userName = await Promise.all([getFirstName(), getLastName()]); // [firstName, lastName]
       const mail = await getDoctorEmail();
+      const distance = await getDistance();
+      const decalage = await getDecalage();
       this.setState({
         firstName: userName[0],
         lastName: userName[1],
-        doctorEmail: mail
+        doctorEmail: mail,
+        distance : distance,
+        decalage : decalage
       });
     });
+  }
+  async componentDidMount(){
+    ScreenBrightness.setBrightness(1);
   }
 
   handleAction(action) {
@@ -33,11 +43,12 @@ export default class MainMenu extends React.Component {
   }
 
   render() {
-    const { firstName, lastName, doctorEmail } = this.state;
+    const { firstName, lastName, doctorEmail, distance, decalage } = this.state;
     return (
       <View style={common.containers}>
         <UserConnected firstName={firstName} lastName={lastName} />
         <DoctorMail email={doctorEmail} />
+        <Settings distance={distance} decalage={decalage}/>
         {firstName === null || lastName === null ? null : (
           <TouchableOpacity
             style={common.actionButtons}
@@ -84,6 +95,33 @@ function DoctorMail({ email }) {
       ) : (
         <Text style={common.important}>
           Le mail du médecin n'est pas configurée.
+        </Text>
+      )}
+    </View>
+  );
+}
+
+function Settings({ distance, decalage }) {
+  return (
+    <View>
+      {distance? (
+        <Text style={common.important}>
+          La distance est {" "}
+          <Text style={{ fontWeight: "bold" }}>{distance}</Text>.
+        </Text>
+      ) : (
+        <Text style={common.important}>
+          La distance n'est pas configurée.
+        </Text>
+      )}
+      {decalage? (
+        <Text style={common.important}>
+          Le decalage est {" "}
+          <Text style={{ fontWeight: "bold" }}>{decalage}</Text>.
+        </Text>
+      ) : (
+        <Text style={common.important}>
+          Le decalage n'est pas configurée.
         </Text>
       )}
     </View>

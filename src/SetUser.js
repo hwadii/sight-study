@@ -95,6 +95,12 @@ export default class SetUser extends React.Component {
           >
             <Text style={common.actionButtonsText}>Email du médecin</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigate("Settings")}
+            style={styles.actionButtons}
+          >
+            <Text style={common.actionButtonsText}>Parametre de l'application</Text>
+          </TouchableOpacity>
         </View>
         <UsersList
           handlers={[this.handleSearch, this.handleSelect, this.handleDelete]}

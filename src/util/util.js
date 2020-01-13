@@ -85,6 +85,38 @@ async function getDoctorEmail() {
   }
 }
 
+async function setDistance(distance){
+  try{
+    await AsyncStorage.setItem("distance",distance);
+  }catch{
+    console.log("Error setting distance");
+  }
+}
+
+async function getDistance() {
+  try {
+    return await AsyncStorage.getItem("distance");
+  } catch {
+    console.log("Error getting distance");
+  }
+}
+
+async function setDecalage(decalage){
+  try{
+    await AsyncStorage.setItem("decalage",decalage);
+  }catch{
+    console.log("Error setting decalage");
+  }
+}
+
+async function getDecalage() {
+  try {
+    return await AsyncStorage.getItem("decalage");
+  } catch {
+    console.log("Error getting decalage");
+  }
+}
+
 export {
   getId,
   setId,
@@ -93,5 +125,9 @@ export {
   getFirstName,
   getLastName,
   setDoctorEmail,
-  getDoctorEmail
+  getDoctorEmail,
+  setDistance,
+  getDistance,
+  setDecalage,
+  getDecalage
 };
