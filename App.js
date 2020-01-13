@@ -11,7 +11,6 @@ import MainMenu from "./src/MainMenu"
 import SetDoctor from "./src/SetDoctor"
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
-import { resetDB } from "./service/db/User"
 
 const Routes = {
   SetUser,

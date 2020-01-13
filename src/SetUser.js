@@ -210,7 +210,8 @@ const styles = StyleSheet.create({
   },
   actionButtons: {
     ...common.actionButtons,
+    flex: 1,
+    alignContent: "space-around",
     marginHorizontal: 5,
-    maxWidth: 200
   }
 });
