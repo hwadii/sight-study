@@ -1,11 +1,13 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles as common } from "./styles/common";
-import * as User from "../service/db/User";
 import { getFullName, getDoctorEmail } from "./util";
-import * as Speech from "expo-speech";
+import Help from "./Help";
 
 export default class MainMenu extends React.Component {
+  static navigationOptions = {
+    headerRight: () => <Help />
+  }
   constructor(props) {
     super(props);
     this.state = {

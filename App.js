@@ -6,8 +6,8 @@ import Score from "./src/Score";
 import Test from "./src/Test";
 import TestScreen from "./src/TestScreen";
 import Menu from "./src/Menu";
-import MainMenu from "./src/MainMenu"
-import SetDoctor from "./src/SetDoctor"
+import MainMenu from "./src/MainMenu";
+import SetDoctor from "./src/SetDoctor";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
@@ -32,8 +32,6 @@ const MainNavigator = createStackNavigator(
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour"
-      // TODO: Add aide avec différents textes en fonction de la vue
-      // headerRight: () => <Text style={styles.helpText}>Aide 💡</Text>
     }
   }
 );
@@ -55,8 +53,5 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1
-  },
-  helpText: {
-    fontSize: 16
   }
 });
