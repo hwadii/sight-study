@@ -62,8 +62,8 @@ export default class Test extends Component {
   render() {
       const { navigation } = this.props;
       var img
-      if (JSON.stringify(navigation.getParam('eye')) == '"left"') img = require('./img/imgleft.png')
-      else img = require('./img/imgright.png')
+      if (JSON.stringify(navigation.getParam('eye')) == '"left"') img = require('../assets/imgleft.png')
+      else img = require('../assets/imgright.png')
     return (
       <QRCodeScanner
         onRead={this.onSuccess}
