@@ -64,14 +64,14 @@ export function resetDB() {
  *
  * @param {string} nom last name of the user.
  * @param {string} prenom first name of the user.
- * @returns {Promise} Promise reolving to user id.
+ * @returns {Promise} Promise reolving to user id or null if user does not exist.
  */
 export async function getUser(nom, prenom) {
   const usersWithId = await _executeSql(
     "select id from user where nom=? and prenom=?;",
     [nom, prenom]
   );
-  return usersWithId[0].id;
+  return usersWithId.length ? usersWithId[0].id : null;
 }
 
 /**
@@ -106,10 +106,7 @@ export async function getUsersLike(recherche) {
       );
     }
   } else {
-    return await _executeSql(
-      "select id, nom, prenom, sex from user;",
-      []
-    );
+    return await _executeSql("select id, nom, prenom, sex from user;", []);
   }
 }
 

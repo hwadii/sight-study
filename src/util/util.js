@@ -1,4 +1,5 @@
 import { AsyncStorage } from "react-native";
+import { getUser as getUserFromDb } from "../../service/db/User";
 
 /**
  * Set current user name
@@ -31,6 +32,24 @@ async function getLastName() {
   try {
     const lastName = await AsyncStorage.getItem("lastName");
     return lastName;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+/**
+ * Gets user's full name
+ */
+async function getFullName() {
+  try {
+    const fullName = await Promise.all([getFirstName(), getLastName()]);
+    const userInDb = await getUserFromDb(fullName[1], fullName[0]);
+    if (userInDb !== null) 
+      return fullName.join(" ");
+    else {
+      await AsyncStorage.multiRemove(["firstName", "lastName"])
+      return null;
+    }
   } catch (error) {
     console.log(error);
   }
@@ -93,5 +112,6 @@ export {
   getFirstName,
   getLastName,
   setDoctorEmail,
-  getDoctorEmail
+  getDoctorEmail,
+  getFullName
 };
