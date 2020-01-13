@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { Image } from "react-native";
-import { PermissionsAndroid } from "react-native"
+import { Image, View } from "react-native";
+import { PermissionsAndroid } from "react-native";
 // import imgd from './img/imgd.png';
 // import imgg from './img/imgg.png';
 
@@ -18,8 +18,10 @@ export default class Test extends Component {
   };
 
   componentDidMount() {
-    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE)
-    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA)
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
+    );
+    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
   }
 
   onSuccess = e => {
@@ -62,20 +64,25 @@ export default class Test extends Component {
         vibrate={false}
         reactivate={true}
         showMarker={true}
-        customMarker={
-          <Image
-            style={{ width: "150%", height: "150%" }}
-            tintColor={this.state.color}
-            source={require("./img/imgd.png")}
-          />
-        }
-        cameraType={"front"}
+        containerStyle={styles.marker}
+        customMarker={<Marker />}
+        cameraType="front"
         bottomContent={
           <Text style={styles.buttonText}>{this.state.indication}</Text>
         }
       />
     );
   }
+}
+
+function Marker() {
+  return (
+    <Image
+      style={{ width: "100%", height: "100%" }}
+      tintColor="black"
+      source={require("../assets/imgd.png")}
+    />
+  );
 }
 
 const styles = StyleSheet.create({
@@ -95,5 +102,10 @@ const styles = StyleSheet.create({
   },
   buttonTouchable: {
     padding: 16
+  },
+  marker: {
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center"
   }
 });
