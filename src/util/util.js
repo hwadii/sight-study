@@ -1,4 +1,5 @@
 import { AsyncStorage } from "react-native";
+import base64 from 'react-native-base64'
 
 /**
  * Set current user name
@@ -85,10 +86,10 @@ async function getDoctorEmail() {
   }
 }
 
-async function setDistance(distance){
-  try{
-    await AsyncStorage.setItem("distance",distance);
-  }catch{
+async function setDistance(distance) {
+  try {
+    await AsyncStorage.setItem("distance", distance);
+  } catch{
     console.log("Error setting distance");
   }
 }
@@ -101,10 +102,10 @@ async function getDistance() {
   }
 }
 
-async function setDecalage(decalage){
-  try{
-    await AsyncStorage.setItem("decalage",decalage);
-  }catch{
+async function setDecalage(decalage) {
+  try {
+    await AsyncStorage.setItem("decalage", decalage);
+  } catch{
     console.log("Error setting decalage");
   }
 }
@@ -115,6 +116,37 @@ async function getDecalage() {
   } catch {
     console.log("Error getting decalage");
   }
+}
+
+async function sendmail() {
+  let headers = new Headers();
+  headers.set('Authorization', 'Basic ' + base64.encode("0cfcb70e5789a15691fd433c4d75fc00" + ":" + "283db4b296ba835850b9fe6fd4ac8383"));
+  headers.set('Content-Type', 'application/json');
+  const rawResponse = await fetch('https://api.mailjet.com/v3.1/send', {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify({
+      "Messages": [
+        {
+          "From": {
+            "Email": "sightstudyapp@gmail.com",
+            "Name": "Sight Study"
+          },
+          "To": [
+            {
+              "Email": "colas.adam@gmail.com",
+              "Name": "passenger 1"
+            }
+          ],
+          "Subject": "Résultats de adam",
+          "HTMLPart": "Le patient ${name} vient d'obtenir le score de <b>${score}</b>."
+        }
+      ]
+    })
+  });
+  const content = await rawResponse.json();
+
+  console.log(content);
 }
 
 export {
@@ -129,5 +161,6 @@ export {
   setDistance,
   getDistance,
   setDecalage,
-  getDecalage
+  getDecalage,
+  sendmail
 };

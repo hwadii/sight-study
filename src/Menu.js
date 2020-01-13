@@ -2,11 +2,9 @@ import React from "react";
 import Card from "./Card";
 import { Text, StyleSheet, View, Button, Linking } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFirstName } from "./util/util";
+import { getFirstName,sendmail } from "./util/util";
 import * as Speech from 'expo-speech';
-import base64 from 'react-native-base64'
 
-import Communications from 'react-native-communications';
 
 const texts = [
   {
@@ -46,44 +44,13 @@ export default class Menu extends React.Component {
     
   }
 
-  async sendmail() {
-    let headers = new Headers();
-          headers.set('Authorization', 'Basic ' + base64.encode("0cfcb70e5789a15691fd433c4d75fc00"+ ":" + "283db4b296ba835850b9fe6fd4ac8383"));
-          headers.set('Content-Type', 'application/json');
-const rawResponse = await fetch('https://api.mailjet.com/v3.1/send', {
-  method: 'POST',
-  headers: headers,
-  body: JSON.stringify({
-  "Messages": [
-    {
-      "From": {
-        "Email": "sightstudyapp@gmail.com",
-        "Name": "Sight Study"
-      },
-      "To": [
-        {
-          "Email": "colas.adam@gmail.com",
-		   "Name": "passenger 1"
-        }
-      ],
-      "Subject": "Résultats de adam",
-      "HTMLPart": "Le patient ${name} vient d'obtenir le score de <b>${score}</b>."
-    }
-  ]
-})
-});
-const content = await rawResponse.json();
-
-  console.log(content);
-  }
-
   render() {
     const { firstName } = this.state;
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
         <View style={styles.greetings}>
-       <Button onPress={ async() => {this.sendmail()}         
+       <Button onPress={ async() => {sendmail()}         
       } title ="mail 3 " />
           <Text style={{ ...common.headers, fontWeight: "normal" }}>
             Bonjour,{" "}
