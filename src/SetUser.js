@@ -11,7 +11,7 @@ import {
   Alert
 } from "react-native";
 import * as User from "../service/db/User";
-import { setId, setUserName, getId } from "./util/util";
+import { setId, setUserName, getId } from "./util";
 import { styles as common, colors } from "./styles/common";
 
 export default class SetUser extends React.Component {
@@ -21,15 +21,25 @@ export default class SetUser extends React.Component {
       currentUserId: null,
       users: []
     };
-    this.props.navigation.addListener("willFocus", async () => {
-      this.setState({
-        users: await User.getUsers(),
-        currentUserId: await getId()
-      });
-    });
     this.handleSearch = this.handleSearch.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
+  }
+
+  componentDidMount() {
+    this.willFocusSub = this.props.navigation.addListener(
+      "willFocus",
+      async () => {
+        this.setState({
+          users: await User.getUsers(),
+          currentUserId: await getId()
+        });
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.willFocusSub.remove();
   }
 
   async handleSearch(e) {
@@ -180,7 +190,7 @@ function UserElement({ user, currentUserId, handleDelete, handleSelect }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   noAccount: {
     flexDirection: "row",

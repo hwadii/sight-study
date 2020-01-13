@@ -1,32 +1,38 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFullName, getDoctorEmail } from "./util/util";
 import * as User from "../service/db/User";
-import { clear } from "./util/util";
+import { getFullName, getDoctorEmail } from "./util";
 import * as Speech from "expo-speech";
 
 export default class MainMenu extends React.Component {
   constructor(props) {
     super(props);
-    // Speech.speak("Bienvenue sur l'application Sight Study", {language:"fr"})
     this.state = {
       fullName: null,
       doctorEmail: null
     };
-    this.props.navigation.addListener("willFocus", async () => {
-      const userName = await getFullName();
-      const mail = await getDoctorEmail();
-      this.setState({
-        fullName: userName,
-        doctorEmail: mail
-      });
-    });
   }
 
   handleAction(action) {
     if (action === "REGLAGES") this.props.navigation.navigate("SetUser");
     if (action === "TEST") this.props.navigation.navigate("Menu");
+  }
+
+  componentDidMount() {
+    this.willFocusSub = this.props.navigation.addListener(
+      "willFocus",
+      async () => {
+        this.setState({
+          fullName: await getFullName(),
+          doctorEmail: await getDoctorEmail()
+        });
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.willFocusSub.remove();
   }
 
   render() {

@@ -2,7 +2,7 @@ import React from "react";
 import Card from "./Card";
 import { Text, StyleSheet, View } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFirstName } from "./util/util";
+import { getFirstName } from "./util";
 import * as Speech from "expo-speech";
 
 const texts = [

@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { styles as common } from "./styles/common";
-import { setDoctorEmail } from "./util/util";
+import { setDoctorEmail } from "./util";
 
 // IMPORTANT: remove this garbage and merge with addUser
 

@@ -23,9 +23,10 @@ export default class AddUser extends React.Component {
     };
     this.handleChangeField = this.handleChangeField.bind(this);
     this.showDatePickerAndSet = this.showDatePickerAndSet.bind(this);
-    this.props.navigation.addListener("willFocus", () => {
-      this.setState({ prenom: "", nom: "", date: "" });
-    });
+  }
+
+  componentWillUnmount() {
+    this.setState({ prenom: "", nom: "", date: "" });
   }
 
   handleChangeField(e, field) {
