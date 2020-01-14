@@ -9,6 +9,7 @@ import Menu from "./src/Menu";
 import Settings from "./src/Settings"
 import Selection from "./src/Selection"
 import MenuLeftRight from "./src/MenuLeftRigth"
+import Jeu from "./src/Jeu"
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { initDB, dropDB } from "./service/db/User";
@@ -24,7 +25,8 @@ const Routes = {
   Menu,
   Settings,
   Selection,
-  MenuLeftRight
+  MenuLeftRight,
+  Jeu
 };
 
 const MainNavigator = createStackNavigator(
