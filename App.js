@@ -12,6 +12,7 @@ import Settings from "./src/Settings";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import * as Font from "expo-font";
+import { initDB } from "./service/db/User";
 
 const Routes = {
   SetUser,
@@ -31,7 +32,7 @@ const MainNavigator = createStackNavigator(
   },
   {
     // headerMode: 'none',
-    initialRouteName: "TestScreen",
+    initialRouteName: "MainMenu",
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour"
@@ -45,6 +46,7 @@ class App extends React.Component {
   state = { fontLoaded: false };
 
   async componentDidMount() {
+    initDB();
     await Font.loadAsync({
       "optician-sans": require("./assets/fonts/Optician-Sans.otf")
     });
