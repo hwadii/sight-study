@@ -2,7 +2,8 @@ import React from "react";
 import Card from "./Card";
 import { Text, StyleSheet, View, Button, Linking } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFirstName, sendMail } from "./util/util";
+import { getFirstName, sendMail } from "./util";
+import Help from "./Help";
 
 const texts = [
   {
@@ -24,6 +25,9 @@ const texts = [
 ];
 
 export default class Menu extends React.Component {
+  static navigationOptions = {
+    headerRight: () => <Help />
+  };
   constructor(props) {
     super(props);
     this.state = {

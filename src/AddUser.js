@@ -23,21 +23,21 @@ export default class AddUser extends React.Component {
     };
     this.handleChangeField = this.handleChangeField.bind(this);
     this.showDatePickerAndSet = this.showDatePickerAndSet.bind(this);
-    this.props.navigation.addListener("willFocus", () => {
-      this.setState({ prenom: "", nom: "", date: "" });
-    });
+  }
+
+  componentWillUnmount() {
+    this.setState({ prenom: "", nom: "", date: "" });
   }
 
   handleChangeField(e, field) {
     this.setState({ [field]: e });
   }
 
-  handleAddUser() {
+  async handleAddUser() {
     const { goBack } = this.props.navigation;
     const { nom, prenom, sex, date } = this.state;
-    User.addUser(nom, prenom, sex, date.toISOString(), () => {
-      goBack();
-    });
+    await User.addUser(nom, prenom, sex, date.toISOString());
+    goBack();
   }
 
   async showDatePickerAndSet() {

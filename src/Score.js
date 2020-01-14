@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import * as User from "../service/db/User";
-import { getId } from "./util/util";
+import { getId } from "./util";
 
 // TODO: Breakup this component into a lot more.
 

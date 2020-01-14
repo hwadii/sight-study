@@ -1,33 +1,32 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFirstName, getLastName, getDoctorEmail,getDistance,getDecalage  } from "./util/util";
-import * as User from "../service/db/User";
-import { clear } from "./util/util";
-import * as Speech from 'expo-speech';
-
+import { getFullName, getDoctorEmail, getDistance, getDecalage } from "./util";
+import Help from "./Help";
 
 export default class MainMenu extends React.Component {
+  static navigationOptions = {
+    headerRight: () => <Help />
+  };
   constructor(props) {
     super(props);
     this.state = {
       firstName: null,
       lastName: null,
       doctorEmail: null,
-      distance : null,
-      decalage : null
+      distance: null,
+      decalage: null
     };
     this.props.navigation.addListener("willFocus", async () => {
-      const userName = await Promise.all([getFirstName(), getLastName()]); // [firstName, lastName]
+      const userName = await getFullName();
       const mail = await getDoctorEmail();
       const distance = await getDistance();
       const decalage = await getDecalage();
       this.setState({
-        firstName: userName[0],
-        lastName: userName[1],
+        fullName: userName,
         doctorEmail: mail,
-        distance : distance,
-        decalage : decalage
+        distance: distance,
+        decalage: decalage
       });
     });
   }
@@ -37,14 +36,30 @@ export default class MainMenu extends React.Component {
     if (action === "TEST") this.props.navigation.navigate("Menu");
   }
 
+  componentDidMount() {
+    this.willFocusSub = this.props.navigation.addListener(
+      "willFocus",
+      async () => {
+        this.setState({
+          fullName: await getFullName(),
+          doctorEmail: await getDoctorEmail()
+        });
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.willFocusSub.remove();
+  }
+
   render() {
-    const { firstName, lastName, doctorEmail, distance, decalage } = this.state;
+    const { fullName, doctorEmail, distance, decalage } = this.state;
     return (
       <View style={common.containers}>
-        <UserConnected firstName={firstName} lastName={lastName} />
+        <UserConnected fullName={fullName} />
         <DoctorMail email={doctorEmail} />
-        <Settings distance={distance} decalage={decalage}/>
-        {firstName === null || lastName === null ? null : (
+        <Settings distance={distance} decalage={decalage} />
+        {fullName === null ? null : (
           <TouchableOpacity
             style={common.actionButtons}
             onPress={() => this.handleAction("TEST")}
@@ -63,15 +78,14 @@ export default class MainMenu extends React.Component {
   }
 }
 
-function UserConnected({ firstName, lastName }) {
-  const formattedUser = `${firstName} ${lastName}`;
+function UserConnected({ fullName }) {
   return (
     <View>
-      {firstName === null && lastName === null ? (
+      {fullName === null ? (
         <Text style={common.important}>La tablette n'est pas configurée.</Text>
       ) : (
         <Text style={common.important}>
-          Le patient <Text style={{ fontWeight: "bold" }}>{formattedUser}</Text>{" "}
+          Le patient <Text style={{ fontWeight: "bold" }}>{fullName}</Text>{" "}
           utilise la tablette.
         </Text>
       )}
@@ -99,25 +113,21 @@ function DoctorMail({ email }) {
 function Settings({ distance, decalage }) {
   return (
     <View>
-      {distance? (
+      {distance ? (
         <Text style={common.important}>
-          La distance est {" "}
-          <Text style={{ fontWeight: "bold" }}>{distance}</Text>.
+          La distance est <Text style={{ fontWeight: "bold" }}>{distance}</Text>
+          .
         </Text>
       ) : (
-        <Text style={common.important}>
-          La distance n'est pas configurée.
-        </Text>
+        <Text style={common.important}>La distance n'est pas configurée.</Text>
       )}
-      {decalage? (
+      {decalage ? (
         <Text style={common.important}>
-          Le decalage est {" "}
-          <Text style={{ fontWeight: "bold" }}>{decalage}</Text>.
+          Le decalage est <Text style={{ fontWeight: "bold" }}>{decalage}</Text>
+          .
         </Text>
       ) : (
-        <Text style={common.important}>
-          Le decalage n'est pas configurée.
-        </Text>
+        <Text style={common.important}>Le decalage n'est pas configurée.</Text>
       )}
     </View>
   );

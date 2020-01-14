@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { styles as common } from "./styles/common";
-import { setDistance,setDecalage } from "./util/util";
+import { setDistance, setDecalage } from "./util/util";
 
 export default class Settings extends React.Component {
   constructor(props) {
@@ -23,16 +23,16 @@ export default class Settings extends React.Component {
 
   async handleModifDistance() {
     const { navigate } = this.props.navigation;
-    const { distance,decalage } = this.state;
+    const { distance, decalage } = this.state;
     await setDistance(distance);
-    await setDecalage(decalage)
+    await setDecalage(decalage);
     navigate("SetUser");
   }
 
   render() {
     return (
       <View style={styles.container}>
-          <Form
+        <Form
           navigate={this.props.navigation.navigate}
           handleChange={this.handleChangeField}
           handleModifDistance={this.handleModifDistance}
@@ -99,4 +99,3 @@ const styles = StyleSheet.create({
     textAlign: "center"
   }
 });
-
