@@ -30,7 +30,7 @@ const MainNavigator = createStackNavigator(
   },
   {
     // headerMode: 'none',
-    initialRouteName: "MainMenu",
+    initialRouteName: "TestScreen",
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour"
@@ -51,9 +51,9 @@ class App extends React.Component {
 }
 
 /**
- * get random element from an array
+ * get random char from an string
  */
-Array.prototype.random = function() {
+String.prototype.random = function() {
   const idx = Math.floor(Math.random() * this.length);
   return this[idx];
 };

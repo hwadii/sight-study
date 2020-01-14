@@ -32,11 +32,6 @@ export function dropDB() {
   });
 }
 
-export function resetDB() {
-  dropDB();
-  initDB();
-}
-
 /**
  * Private generic function which executes an SQL statement.
  * @param {string} sqlStatement SQL query

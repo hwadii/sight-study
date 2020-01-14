@@ -1,16 +1,9 @@
 import React from "react";
 import Card from "./Card";
-<<<<<<< HEAD
 import { Text, StyleSheet, View } from "react-native";
-import { styles as common } from "./styles/common";
-import { getFirstName } from "./util/util";
-import * as Speech from "expo-speech";
-=======
-import { Text, StyleSheet, View, Button, Linking } from "react-native";
 import { styles as common } from "./styles/common";
 import { getFirstName } from "./util";
 import Help from "./Help";
->>>>>>> master
 
 const texts = [
   {
