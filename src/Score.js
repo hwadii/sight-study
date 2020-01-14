@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import * as User from "../service/db/User";
-import { getId } from "./util/util";
+import { getId } from "./util";
 
 // TODO: Breakup this component into a lot more.
 
@@ -18,14 +18,23 @@ export default class Score extends React.Component {
     super(props);
     this.state = {
       id: "",
-      dates: [1, 3, 4, 10, 20, 30],
-      scoresOeilDroit: [2, 3, 4, 5, 10],
-      scoresOeilGauche: [1, 10, 100, 1000],
+      dates: [],
+      scoresOeilDroit: [],
+      scoresOeilGauche: [],
       isLoading: true
     };
   }
 
   componentDidMount() {
+    getId(AsyncStorage).then(id => {
+      User.getScore(id, score => {
+         this.setState({
+           id,
+           dates: score.map(d => d.date),
+           scoresOeilDroit: score.map(d => d.oeil_droit),
+           scoresOeilGauche: score.map(d => d.oeil_gauche),
+           isLoading: false
+         });
     setTimeout(() => {
       this.setState({ isLoading: false });
     }, 0);
@@ -42,10 +51,19 @@ export default class Score extends React.Component {
       });
     });
   }
+)})
+  }
   render() {
     const { isLoading, dates } = this.state;
+    if(isLoading || dates.length==0){
+      return(
+        <View>
+          <Text>pas de données</Text>
+        </View>
+      )
+    }
     return (
-      <View style={{ flex: 1, height: "100%" }}>
+      <View style={{ flex: 1, height: "100%", ...styles.container }}>
         {isLoading ? (
           <ActivityIndicator
             style={{ flex: 1, justifyContent: "center" }}
@@ -61,9 +79,6 @@ export default class Score extends React.Component {
                   {
                     data: this.state.scoresOeilGauche
                   },
-                  {
-                    data: [1, 2, 3, 4, 10, 60, 70]
-                  }
                 ]
               }}
               width={Dimensions.get("window").width - 50} // from react-native
@@ -118,3 +133,10 @@ export default class Score extends React.Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: "center"
+  }
+})

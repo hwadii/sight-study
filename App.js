@@ -1,45 +1,43 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import SignIn from "./src/SignIn";
-import SignUp from "./src/SignUp";
+import { StyleSheet, View } from "react-native";
+import SetUser from "./src/SetUser";
+import AddUser from "./src/AddUser";
 import Score from "./src/Score";
 import Test from "./src/Test";
 import TestScreen from "./src/TestScreen";
 import Menu from "./src/Menu";
 import Settings from "./src/Settings"
-import Selection from "./src/Selection"
 import MenuLeftRight from "./src/MenuLeftRigth"
 import Jeu from "./src/Jeu"
+import MainMenu from "./src/MainMenu";
+import SetDoctor from "./src/SetDoctor";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
-import { initDB, dropDB } from "./service/db/User";
-
-// TODO: Use Context.Provider to track user preferences. 
 
 const Routes = {
-  SignIn,
-  SignUp,
+  SetUser,
+  AddUser,
   Score,
   Test,
   TestScreen,
   Menu,
   Settings,
-  Selection,
   MenuLeftRight,
-  Jeu
+  Jeu,
+  MainMenu,
+  SetDoctor
 };
 
 const MainNavigator = createStackNavigator(
   {
-    ...Routes,
+    ...Routes
   },
   {
     // headerMode: 'none',
-    initialRouteName: "MenuLeftRight",
+    initialRouteName: "MainMenu",
     defaultNavigationOptions: {
       title: "Sight Study",
-      headerBackTitle: "Retour",
-      headerRight: () => <Text style={styles.helpText}>Aide 💡</Text>
+      headerBackTitle: "Retour"
     }
   }
 );
@@ -61,8 +59,5 @@ export default App;
 const styles = StyleSheet.create({
   container: {
     flex: 1
-  },
-  helpText: {
-    fontSize: 16
   }
 });

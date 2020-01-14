@@ -3,17 +3,18 @@ import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { styles as common } from "./styles/common";
-import { setDistance, setDecalage } from "./util";
+import { setDoctorEmail } from "./util";
 
-export default class Settings extends React.Component {
+// IMPORTANT: remove this garbage and merge with addUser
+
+export default class SetDoctor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      distance: "",
-      decalage: ""
+      mail: ""
     };
     this.handleChangeField = this.handleChangeField.bind(this);
-    this.handleModifDistance = this.handleModifDistance.bind(this);
+    this.handleModifMedecin = this.handleModifMedecin.bind(this);
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
   }
 
@@ -21,35 +22,34 @@ export default class Settings extends React.Component {
     this.setState({ [field]: e.nativeEvent.text });
   }
 
-  async handleModifDistance() {
+  async handleModifMedecin() {
     const { navigate } = this.props.navigation;
-    const { distance, decalage } = this.state;
-    await setDistance(distance);
-    await setDecalage(decalage);
+    const { mail } = this.state;
+    await setDoctorEmail(mail);
     navigate("SetUser");
   }
 
   render() {
     return (
       <View style={styles.container}>
+        <Text style={styles.header}>Modification Mail Medecin</Text>
         <Form
           navigate={this.props.navigation.navigate}
           handleChange={this.handleChangeField}
-          handleModifDistance={this.handleModifDistance}
+          handleModifMedecin={this.handleModifMedecin}
         />
       </View>
     );
   }
 }
 
-function Form({ handleChange, handleModifDistance }) {
+function Form({ handleChange, handleModifMedecin }) {
   return (
     <View style={styles.form}>
-      <Field label="Distance" handler={e => handleChange(e, "distance")} />
-      <Field label="Decalage" handler={e => handleChange(e, "decalage")} />
+      <Field label="Mail" handler={e => handleChange(e, "mail")} />
       <TouchableOpacity
         style={styles.confirmButton}
-        onPress={() => handleModifDistance()}
+        onPress={() => handleModifMedecin()}
       >
         <Text style={styles.confirmButtonText}>CONFIRMER</Text>
       </TouchableOpacity>

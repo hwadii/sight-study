@@ -1,8 +1,9 @@
 import React from "react";
 import Card from "./Card";
-import { Text, StyleSheet, View } from "react-native";
-import { styles as commonStyles } from "./styles/common";
-import { getId, getFirstName } from "./util/util";
+import { Text, StyleSheet, View, Button, Linking } from "react-native";
+import { styles as common } from "./styles/common";
+import { getFirstName, sendMail } from "./util";
+import Help from "./Help";
 
 const texts = [
   {
@@ -20,17 +21,13 @@ const texts = [
     description:
       "Vous pouvez suivre l’évolution de vos résultats au fil du temps ici.",
     image: require("../assets/diagram.png")
-  },
-  {
-    id: 3,
-    route: "Settings",
-    title: "Modifiez vos réglages ⚙️",
-    description: "Changez vos paramètres.",
-    image: require("../assets/settings.png")
   }
 ];
 
 export default class Menu extends React.Component {
+  static navigationOptions = {
+    headerRight: () => <Help />
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -50,7 +47,8 @@ export default class Menu extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.greetings}>
-          <Text style={{ ...commonStyles.headers, fontWeight: "normal" }}>
+          <Button onPress={async () => sendMail(40)} title="mail 3" />
+          <Text style={{ ...common.headers, fontWeight: "normal" }}>
             Bonjour,{" "}
             <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>
               {firstName}
@@ -59,9 +57,7 @@ export default class Menu extends React.Component {
           </Text>
         </View>
         <View style={styles.cards}>
-          <Cards
-            navigate={navigate}
-          />
+          <Cards navigate={navigate} />
         </View>
       </View>
     );
