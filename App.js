@@ -11,6 +11,7 @@ import SetDoctor from "./src/SetDoctor";
 import Settings from "./src/Settings";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
+import * as Font from "expo-font";
 
 const Routes = {
   SetUser,
@@ -41,12 +42,22 @@ const MainNavigator = createStackNavigator(
 const Navigation = createAppContainer(MainNavigator);
 
 class App extends React.Component {
+  state = { fontLoaded: false };
+
+  async componentDidMount() {
+    await Font.loadAsync({
+      "optician-sans": require("./assets/fonts/Optician-Sans.otf")
+    });
+    this.setState({ fontLoaded: true });
+  }
+
   render() {
-    return (
+    const { fontLoaded } = this.state;
+    return fontLoaded ? (
       <View style={styles.container}>
         <Navigation />
       </View>
-    );
+    ) : null;
   }
 }
 

@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import { Button, StyleSheet, Text, View, PixelRatio } from "react-native";
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
+import * as Font from "expo-font";
 
 const letters = "nckzorhsdv";
-const timeBetweenLetters = 500;
+const timeBetweenLetters = 4000;
 const screenFactor = 100 * PixelRatio.get() * 5 * 0.4;
 /**
  * Gets font size for current line
@@ -15,8 +16,8 @@ const getLineLength = lineCoefficient =>
 
 export default class TestScreen extends Component {
   static navigationOptions = {
-    headerShown: false 
-  }
+    headerShown: false
+  };
   state = {
     recognized: "",
     pitch: "",
@@ -35,6 +36,11 @@ export default class TestScreen extends Component {
     scores: {
       left: 0,
       right: 0
+    },
+
+    // for tests
+    tests: {
+      hideButtons: false
     }
   };
 
@@ -53,6 +59,9 @@ export default class TestScreen extends Component {
     const { status, expires, permissions } = await Permissions.askAsync(
       Permissions.AUDIO_RECORDING
     );
+    console.log(Font.isLoading("optician-sans"));
+    console.log(Font.isLoaded("optician-sans"));
+
     // this.setNextLetterId = setInterval(
     //   () => this.setNextLetter(),
     //   timeBetweenLetters
@@ -61,9 +70,27 @@ export default class TestScreen extends Component {
     // this._startRecognizing();
   }
 
+  // for tests
+  randomize() {
+    this.setNextLetterId = setInterval(
+      () => this.setNextLetter(),
+      timeBetweenLetters
+    );
+  }
+
+  toggleButtons() {
+    const { tests } = this.state;
+    this.setState({
+      tests: {
+        hideButtons: tests.hideButtons ? false : true
+      }
+    });
+  }
+  // !for tests
+
   componentWillUnmount() {
     Voice.destroy().then(Voice.removeAllListeners);
-    // clearInterval(this.setNextLetterId);
+    if (this.setNextLetterId) clearInterval(this.setNextLetterId);
   }
 
   nextEye() {
@@ -80,9 +107,7 @@ export default class TestScreen extends Component {
     // clearInterval(this.setNextLetterId);
   }
 
-  checkResults() {
-
-  }
+  checkResults() {}
 
   getNewScore() {
     const { scores, whichEye } = this.state;
@@ -245,13 +270,24 @@ export default class TestScreen extends Component {
   };
 
   render() {
-    const { letter, lineSize } = this.state;
+    const { letter, lineSize, tests } = this.state;
     return (
       <View style={styles.container}>
-        <Text style={{ fontSize: lineSize }}>{letter}</Text>
-        <Button title="Start" onPress={() => this._startRecognizing()}/>
-        <Button title="Stop" onPress={() => this._stopRecognizing()}/>
-        <Button title="Destroy" onPress={() => this._destroyRecognizer()}/>
+        <Text style={{ fontFamily: "optician-sans", fontSize: lineSize }}>
+          {letter}
+        </Text>
+        {!tests.hideButtons && (
+          <>
+            <Button title="Start" onPress={() => this._startRecognizing()} />
+            <Button title="Stop" onPress={() => this._stopRecognizing()} />
+            <Button title="Destroy" onPress={() => this._destroyRecognizer()} />
+            <Button title="Randomize" onPress={() => this.randomize()} />
+          </>
+        )}
+        <Button
+          title={tests.hideButtons ? "Show" : "Hide"}
+          onPress={() => this.toggleButtons()}
+        />
       </View>
     );
   }

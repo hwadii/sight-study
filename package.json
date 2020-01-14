@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "expo": "^35.0.1",
+    "expo-font": "~7.0.0",
     "expo-speech": "~7.0.0",
     "expo-sqlite": "~7.0.0",
     "expokit": "^35.0.3",
