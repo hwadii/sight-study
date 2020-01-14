@@ -67,6 +67,7 @@ export function resetDB() {
  * @returns {Promise} Promise reolving to user id or null if user does not exist.
  */
 export async function getUser(nom, prenom) {
+  if (!nom || !prenom) return null;
   const usersWithId = await _executeSql(
     "select id from user where nom=? and prenom=?;",
     [nom, prenom]

@@ -1,16 +1,15 @@
 import React from "react";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
+import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity } from "react-native";
 import { scale } from "react-native-size-matters";
-import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { styles as common } from "./styles/common";
-import { setDistance, setDecalage } from "./util/util";
+import { setDistance, setTolerance, getDistance, getTolerance } from "./util";
 
 export default class Settings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      distance: "",
-      decalage: ""
+      distance: null, 
+      tolerance: null
     };
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleModifDistance = this.handleModifDistance.bind(this);
@@ -23,16 +22,25 @@ export default class Settings extends React.Component {
 
   async handleModifDistance() {
     const { navigate } = this.props.navigation;
-    const { distance, decalage } = this.state;
+    const { distance, tolerance } = this.state;
     await setDistance(distance);
-    await setDecalage(decalage);
+    await setTolerance(tolerance);
     navigate("SetUser");
   }
 
+  async componentDidMount() {
+    this.setState({
+      distance: await getDistance(),
+      tolerance: await getTolerance()
+    })
+  }
+
   render() {
+    const {distance, tolerance} = this.state;
     return (
       <View style={styles.container}>
         <Form
+          values={[distance, tolerance]}
           navigate={this.props.navigation.navigate}
           handleChange={this.handleChangeField}
           handleModifDistance={this.handleModifDistance}
@@ -42,11 +50,12 @@ export default class Settings extends React.Component {
   }
 }
 
-function Form({ handleChange, handleModifDistance }) {
+function Form({ values, handleChange, handleModifDistance }) {
+  const [distance, tolerance] = values;
   return (
     <View style={styles.form}>
-      <Field label="Distance" handler={e => handleChange(e, "distance")} />
-      <Field label="Decalage" handler={e => handleChange(e, "decalage")} />
+      <Field value={distance} label="Distance" handler={e => handleChange(e, "distance")} />
+      <Field value={tolerance} label="Tolérance" handler={e => handleChange(e, "tolerance")} />
       <TouchableOpacity
         style={styles.confirmButton}
         onPress={() => handleModifDistance()}
@@ -57,14 +66,15 @@ function Form({ handleChange, handleModifDistance }) {
   );
 }
 
-function Field({ label, handler }) {
+function Field({ value, label, handler }) {
   return (
     <>
       <Text style={common.inputsLabels}>{label}</Text>
       <TextInput
+        defaultValue={value}
         style={common.inputs}
         autoCorrect={false}
-        placeholder={`Entrez le ${label.toLowerCase()}`}
+        placeholder={label}
         onChange={handler}
       />
     </>

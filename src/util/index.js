@@ -120,7 +120,7 @@ export async function getDistance() {
   }
 }
 
-export async function setDecalage(decalage) {
+export async function setTolerance(decalage) {
   try {
     await AsyncStorage.setItem("decalage", decalage);
   } catch {
@@ -128,7 +128,7 @@ export async function setDecalage(decalage) {
   }
 }
 
-export async function getDecalage() {
+export async function getTolerance() {
   try {
     return await AsyncStorage.getItem("decalage");
   } catch {
