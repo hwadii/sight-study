@@ -28,7 +28,6 @@ export default class AddDoctor extends React.Component {
     const { email } = this.state;
     await setDoctorEmail(email);
     navigate("SetUser");
-    console.log(email);
   }
 
   render() {

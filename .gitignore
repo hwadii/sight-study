@@ -2,7 +2,7 @@ node_modules
 .vscode/
 .expo/
 .expo-source/
-build/
-*.class
-.idea
+build
 .gradle
+local.properties
+.*

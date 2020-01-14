@@ -1,29 +1,21 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFirstName, getLastName, getDoctorEmail } from "./util/util";
-import * as User from "../service/db/User";
-import { clear } from "./util/util";
-import * as Speech from 'expo-speech';
+import { getFullName, getDoctorEmail, getDistance, getTolerance } from "./util";
+import Help from "./Help";
 
 export default class MainMenu extends React.Component {
+  static navigationOptions = {
+    headerRight: () => <Help />
+  };
   constructor(props) {
     super(props);
-    // Speech.speak("Bienvenue sur l'application sight-study", {language:"fr"})
     this.state = {
-      firstName: null,
-      lastName: null,
-      doctorEmail: null
+      fullName: null,
+      doctorEmail: null,
+      distance: null,
+      tolerance: null
     };
-    this.props.navigation.addListener("willFocus", async () => {
-      const userName = await Promise.all([getFirstName(), getLastName()]); // [firstName, lastName]
-      const mail = await getDoctorEmail();
-      this.setState({
-        firstName: userName[0],
-        lastName: userName[1],
-        doctorEmail: mail
-      });
-    });
   }
 
   handleAction(action) {
@@ -31,13 +23,32 @@ export default class MainMenu extends React.Component {
     if (action === "TEST") this.props.navigation.navigate("Menu");
   }
 
+  componentDidMount() {
+    this.willFocusSub = this.props.navigation.addListener(
+      "willFocus",
+      async () => {
+        this.setState({
+          fullName: await getFullName(),
+          doctorEmail: await getDoctorEmail(),
+          distance: await getDistance(),
+          tolerance: await getTolerance()
+        });
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.willFocusSub.remove();
+  }
+
   render() {
-    const { firstName, lastName, doctorEmail } = this.state;
+    const { fullName, doctorEmail, distance, tolerance } = this.state;
     return (
       <View style={common.containers}>
-        <UserConnected firstName={firstName} lastName={lastName} />
+        <UserConnected fullName={fullName} />
         <DoctorMail email={doctorEmail} />
-        {firstName === null || lastName === null ? null : (
+        <Settings distance={distance} tolerance={tolerance} />
+        {fullName === null ? null : (
           <TouchableOpacity
             style={common.actionButtons}
             onPress={() => this.handleAction("TEST")}
@@ -56,15 +67,14 @@ export default class MainMenu extends React.Component {
   }
 }
 
-function UserConnected({ firstName, lastName }) {
-  const formattedUser = `${firstName} ${lastName}`;
+function UserConnected({ fullName }) {
   return (
     <View>
-      {firstName === null && lastName === null ? (
+      {fullName === null ? (
         <Text style={common.important}>La tablette n'est pas configurée.</Text>
       ) : (
         <Text style={common.important}>
-          Le patient <Text style={{ fontWeight: "bold" }}>{formattedUser}</Text>{" "}
+          Le patient <Text style={{ fontWeight: "bold" }}>{fullName}</Text>{" "}
           utilise la tablette.
         </Text>
       )}
@@ -84,6 +94,29 @@ function DoctorMail({ email }) {
         <Text style={common.important}>
           Le mail du médecin n'est pas configurée.
         </Text>
+      )}
+    </View>
+  );
+}
+
+function Settings({ distance, tolerance }) {
+  return (
+    <View>
+      {distance ? (
+        <Text style={common.important}>
+          La distance est <Text style={{ fontWeight: "bold" }}>{distance}</Text>
+          .
+        </Text>
+      ) : (
+        <Text style={common.important}>La distance n'est pas configurée.</Text>
+      )}
+      {tolerance ? (
+        <Text style={common.important}>
+          Le tolerance est <Text style={{ fontWeight: "bold" }}>{tolerance}</Text>
+          .
+        </Text>
+      ) : (
+        <Text style={common.important}>La tolerance n'est pas configurée.</Text>
       )}
     </View>
   );
