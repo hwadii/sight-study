@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Linking } from "react-native";
 import { styles as common } from "./styles/common";
 import { getFirstName, getLastName, getDoctorEmail,getDistance,getDecalage  } from "./util/util";
 import * as User from "../service/db/User";
@@ -7,6 +7,7 @@ import { clear } from "./util/util";
 import * as Speech from 'expo-speech';
 import ScreenBrightness from 'react-native-screen-brightness';
 
+//import RNFS from 'react-native-fs';
 
 export default class MainMenu extends React.Component {
   constructor(props) {
@@ -24,6 +25,20 @@ export default class MainMenu extends React.Component {
       const mail = await getDoctorEmail();
       const distance = await getDistance();
       const decalage = await getDecalage();
+      User.getScore(1,(score)=>{
+        const rows = [
+          ["name1", "city1", "some other info"],
+          ["name2", "city2", "more info"]
+      ];
+      
+      let csvContent = "data:text/csv;charset=utf-8,";
+      
+      rows.forEach(function(rowArray) {
+          let row = rowArray.join(",");
+          csvContent += row + "\r\n";
+      });
+      console.log(csvContent)
+      })
       this.setState({
         firstName: userName[0],
         lastName: userName[1],

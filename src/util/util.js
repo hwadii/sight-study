@@ -1,6 +1,7 @@
 import { AsyncStorage } from "react-native";
 import base64 from 'react-native-base64'
 
+import * as User from "../../service/db/User";
 /**
  * Set current user name
  */
@@ -118,7 +119,11 @@ async function getDecalage() {
   }
 }
 
-async function sendmail() {
+async function sendmail(score){
+  mail = await getDoctorEmail()
+  firstname = await getFirstName()
+  lastName = await getLastName()
+  user = firstName + " " + lastName
   let headers = new Headers();
   headers.set('Authorization', 'Basic ' + base64.encode("0cfcb70e5789a15691fd433c4d75fc00" + ":" + "283db4b296ba835850b9fe6fd4ac8383"));
   headers.set('Content-Type', 'application/json');
@@ -134,19 +139,68 @@ async function sendmail() {
           },
           "To": [
             {
-              "Email": "colas.adam@gmail.com",
-              "Name": "passenger 1"
+              "Email": mail,
+              "Name": "Medecin"
             }
           ],
-          "Subject": "Résultats de adam",
-          "HTMLPart": "Le patient ${name} vient d'obtenir le score de <b>${score}</b>."
+          "Subject": "Résultats de "+user,
+          "HTMLPart": "Le patient"+ user +"vient d'obtenir le score de <b>"+score+"</b>.",
         }
       ]
     })
   });
   const content = await rawResponse.json();
 
-  console.log(content);
+}
+
+//user= id, 
+async function sendmailresults(id_user,nom,prenom) {
+  mail = await getDoctorEmail()
+  User.getScore(id_user,async (score)=>{
+    let csvContent = "date;oeil_droit;oeil_gauche \r\n";
+          console.log(score)
+          score.forEach(function(rowArray) {
+
+            csvContent += rowArray["date"] +";"+rowArray["oeil_droit"]+";"+rowArray["oeil_gauche"] +"\r\n";
+        });
+    
+    let headers = new Headers();
+    headers.set('Authorization', 'Basic ' + base64.encode("0cfcb70e5789a15691fd433c4d75fc00" + ":" + "283db4b296ba835850b9fe6fd4ac8383"));
+    headers.set('Content-Type', 'application/json');
+    const rawResponse = await fetch('https://api.mailjet.com/v3.1/send', {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({
+        "Messages": [
+          {
+            "From": {
+              "Email": "sightstudyapp@gmail.com",
+              "Name": "Sight Study"
+            },
+            "To": [
+              {
+                "Email": mail,
+                "Name": "Medecin"
+              }
+            ],
+            "Subject": "Résultats de "+nom+ " "+ prenom,
+            "HTMLPart": "Voici tous les resultats de "+nom+ " "+ prenom + ".",
+            "Attachments": [
+              {
+                  "ContentType": "application/CSV",
+                  "Filename": nom+ "_"+ prenom+".csv",
+                  "Base64Content": base64.encode(csvContent)
+              }
+          ]
+          }
+        ]
+      })
+    });
+    const content = await rawResponse.json();
+  
+    console.log(content);
+  })
+
 }
 
 export {
@@ -162,5 +216,6 @@ export {
   getDistance,
   setDecalage,
   getDecalage,
-  sendmail
+  sendmail,
+  sendmailresults
 };
