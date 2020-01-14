@@ -18,7 +18,7 @@ export default class Test extends Component {
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
   }
 
-  componentDidMount(){
+  componentDidMount() {
     PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
     );
@@ -67,18 +67,18 @@ export default class Test extends Component {
           if (tmp>distance+eps) this.setState({'indication' : "Rapprochez vous de\n" + parseInt(10*Math.abs(distance-tmp))/10. + " cm", 'color' : 'black', 'wellPlacedCount' : 0, 'wrongEyeCount' : 0})
           else this.setState({'indication' : "Parfait, ne bougez plus", 'wellPlacedCount' : this.state.wellPlacedCount+1, 'color' : 'green', 'wrongEyeCount' : 0})
         }
-      }else{
-        this.setState({'wrongEyeCount' : this.state.wrongEyeCount+1})
+      } else {
+        this.setState({ wrongEyeCount: this.state.wrongEyeCount + 1 });
       }
-    }
-    else console.log("pas bon qr code")
+    } else console.log("pas bon qr code");
 
     if (this.state.wrongEyeCount >= 4) this.setState({'indication' : "mauvais oeil", 'color' : 'black', 'wellPlacedCount' : 0})
-    if (this.state.wellPlacedCount >= wellPlacedInaRow) this.props.navigation.navigate('Jeu', {eye: this.state.eye})
+    if (this.state.wellPlacedCount >= wellPlacedInaRow) this.props.navigation.replace('Jeu', {eye: this.state.eye})
   }
 
   render() {
       const { navigation } = this.props;
+      const { color } = this.state;
       var img
       if (JSON.stringify(navigation.getParam('eye')) == 'left') img = require('../assets/imgleft.png')
       else img = require('../assets/imgright.png')
@@ -90,11 +90,7 @@ export default class Test extends Component {
         reactivate={true}
         showMarker={true}
         containerStyle={styles.marker}
-        customMarker={<Image
-          style={{ width: "250%", height: "250%", marginTop: "40%" }}
-          tintColor={this.state.color}
-          source={ img }
-        />}
+        customMarker={<Marker color={color} img={img} />}
         cameraType="front"
         bottomContent={
           <Text style={styles.buttonText}>{this.state.indication}</Text>
@@ -102,6 +98,16 @@ export default class Test extends Component {
       />
     );
   }
+}
+
+function Marker({ color, img }) {
+  return (
+    <Image
+      style={{ width: "250%", height: "250%", marginTop: "40%" }}
+      tintColor={color}
+      source={img}
+    />
+  );
 }
 
 const styles = StyleSheet.create({
@@ -126,6 +132,6 @@ const styles = StyleSheet.create({
   marker: {
     backgroundColor: "transparent",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   }
 });
