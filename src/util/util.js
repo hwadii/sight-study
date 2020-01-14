@@ -1,5 +1,5 @@
 import { AsyncStorage } from "react-native";
-import base64 from 'react-native-base64'
+import base64 from "./base64";
 
 /**
  * Set current user name
@@ -89,7 +89,7 @@ async function getDoctorEmail() {
 async function setDistance(distance) {
   try {
     await AsyncStorage.setItem("distance", distance);
-  } catch{
+  } catch {
     console.log("Error setting distance");
   }
 }
@@ -105,7 +105,7 @@ async function getDistance() {
 async function setDecalage(decalage) {
   try {
     await AsyncStorage.setItem("decalage", decalage);
-  } catch{
+  } catch {
     console.log("Error setting decalage");
   }
 }
@@ -118,35 +118,45 @@ async function getDecalage() {
   }
 }
 
-async function sendmail() {
-  let headers = new Headers();
-  headers.set('Authorization', 'Basic ' + base64.encode("0cfcb70e5789a15691fd433c4d75fc00" + ":" + "283db4b296ba835850b9fe6fd4ac8383"));
-  headers.set('Content-Type', 'application/json');
-  const rawResponse = await fetch('https://api.mailjet.com/v3.1/send', {
-    method: 'POST',
+async function sendMail(score) {
+  const to = await getDoctorEmail();
+  let name = await Promise.all([getFirstName(), getLastName()]);
+  name = name.join(" ");
+  console.log(`${name} ${to} ${score}`);
+  const headers = new Headers();
+  headers.set(
+    "Authorization",
+    "Basic " +
+      base64.encode(
+        "0cfcb70e5789a15691fd433c4d75fc00" +
+          ":" +
+          "283db4b296ba835850b9fe6fd4ac8383"
+      )
+  );
+  headers.set("Content-Type", "application/json");
+  const rawResponse = await fetch("https://api.mailjet.com/v3.1/send", {
+    method: "POST",
     headers: headers,
     body: JSON.stringify({
-      "Messages": [
+      Messages: [
         {
-          "From": {
-            "Email": "sightstudyapp@gmail.com",
-            "Name": "Sight Study"
+          From: {
+            Email: "sightstudyapp@gmail.com",
+            Name: "Sight Study"
           },
-          "To": [
+          To: [
             {
-              "Email": "colas.adam@gmail.com",
-              "Name": "passenger 1"
+              Email: to,
+              Name: name
             }
           ],
-          "Subject": "Résultats de adam",
-          "HTMLPart": "Le patient ${name} vient d'obtenir le score de <b>${score}</b>."
+          Subject: `Résultats de ${name}`,
+          HTMLPart: `Le patient ${name} vient d'obtenir le score de <b>${score}</b>.`
         }
       ]
     })
   });
-  const content = await rawResponse.json();
-
-  console.log(content);
+  return rawResponse.json();
 }
 
 export {
@@ -162,5 +172,5 @@ export {
   getDistance,
   setDecalage,
   getDecalage,
-  sendmail
+  sendMail
 };

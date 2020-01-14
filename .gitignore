@@ -2,9 +2,7 @@ node_modules
 .vscode/
 .expo/
 .expo-source/
-<<<<<<< HEAD
-build/
-*.class
-=======
->>>>>>> adam
-.idea
+build
+.gradle
+local.properties
+.*

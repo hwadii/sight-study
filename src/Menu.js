@@ -2,9 +2,7 @@ import React from "react";
 import Card from "./Card";
 import { Text, StyleSheet, View, Button, Linking } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFirstName,sendmail } from "./util/util";
-import * as Speech from 'expo-speech';
-
+import { getFirstName, sendMail } from "./util/util";
 
 const texts = [
   {
@@ -28,20 +26,15 @@ const texts = [
 export default class Menu extends React.Component {
   constructor(props) {
     super(props);
-    //Speech.speak("Vous êtes sur votre compte", {language:"fr"})
-    //Speech.speak("Pour commencer le test appuyer sur l'icone de gauche", {language:"fr"})
-    //Speech.speak("Pour consulter vos résultats appuyer sur l'icone de droite", {language:"fr"})
     this.state = {
       firstName: ""
     };
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
-
   }
 
   async componentDidMount() {
     const firstName = await getFirstName();
     this.setState({ firstName });
-    
   }
 
   render() {
@@ -50,8 +43,7 @@ export default class Menu extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.greetings}>
-       <Button onPress={ async() => {sendmail()}         
-      } title ="mail 3 " />
+          <Button onPress={async () => sendMail(40)} title="mail 3" />
           <Text style={{ ...common.headers, fontWeight: "normal" }}>
             Bonjour,{" "}
             <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>

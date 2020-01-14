@@ -5,13 +5,11 @@ import { getFirstName, getLastName, getDoctorEmail,getDistance,getDecalage  } fr
 import * as User from "../service/db/User";
 import { clear } from "./util/util";
 import * as Speech from 'expo-speech';
-import ScreenBrightness from 'react-native-screen-brightness';
 
 
 export default class MainMenu extends React.Component {
   constructor(props) {
     super(props);
-    //Speech.speak("Bienvenue sur l'application sight-study", {language:"fr"})
     this.state = {
       firstName: null,
       lastName: null,
@@ -32,9 +30,6 @@ export default class MainMenu extends React.Component {
         decalage : decalage
       });
     });
-  }
-  async componentDidMount(){
-    ScreenBrightness.setBrightness(1);
   }
 
   handleAction(action) {
