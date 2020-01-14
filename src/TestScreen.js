@@ -1,20 +1,22 @@
 import React, { Component } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableHighlight,
-  PixelRatio
-} from "react-native";
+import { Button, StyleSheet, Text, View, PixelRatio } from "react-native";
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
 
 const letters = "nckzorhsdv";
 const timeBetweenLetters = 500;
 const screenFactor = 100 * PixelRatio.get() * 5 * 0.4;
+/**
+ * Gets font size for current line
+ * @param {number} lineCoefficient coefficient de ligne
+ */
+const getLineLength = lineCoefficient =>
+  Math.floor(screenFactor * Math.tan(Math.pow(10, lineCoefficient) / 60));
 
 export default class TestScreen extends Component {
+  static navigationOptions = {
+    headerShown: false 
+  }
   state = {
     recognized: "",
     pitch: "",
@@ -26,10 +28,14 @@ export default class TestScreen extends Component {
 
     letter: "",
     letterCount: 0,
-    lineSize: Math.floor(screenFactor * Math.tan(Math.pow(10, 1.0) / 60.0)),
-    lineNumber: 1,
+    lineSize: getLineLength(1),
+    lineNumber: 0,
     lineCoefficient: 1,
-    whichEye: "left"
+    whichEye: "left",
+    scores: {
+      left: 0,
+      right: 0
+    }
   };
 
   constructor(props) {
@@ -47,54 +53,78 @@ export default class TestScreen extends Component {
     const { status, expires, permissions } = await Permissions.askAsync(
       Permissions.AUDIO_RECORDING
     );
-    this.setState({ letter: letters.random() });
-    this.getNextLetterId = setInterval(
-      () => this.getNextLetter(),
-      timeBetweenLetters
-    );
+    // this.setNextLetterId = setInterval(
+    //   () => this.setNextLetter(),
+    //   timeBetweenLetters
+    // );
+    this.setNextLetter();
+    // this._startRecognizing();
   }
 
   componentWillUnmount() {
     Voice.destroy().then(Voice.removeAllListeners);
-    clearInterval(this.getNextLetterId);
+    // clearInterval(this.setNextLetterId);
   }
 
   nextEye() {
     this.setState({
       letter: letters.random(),
       lineCoefficient: 1,
-      lineSize: Math.floor(screenFactor * Math.tan(Math.pow(10, 1.0) / 60.0))
+      lineSize: getLineLength(1),
+      whichEye: "right"
     });
   }
 
   endTest() {
     console.log("FIN");
-    clearInterval(this.getNextLetterId);
+    // clearInterval(this.setNextLetterId);
   }
 
-  getNextLetter() {
-    const { letterCount, lineNumber, lineCoefficient } = this.state;
+  checkResults() {
+
+  }
+
+  getNewScore() {
+    const { scores, whichEye } = this.state;
+    const gotResult = Math.random() < 0.8 ? true : false;
+    let newScore = gotResult ? scores[whichEye] + 1 : scores[whichEye];
+    return newScore;
+  }
+
+  setNextLetter() {
+    const {
+      letterCount,
+      lineNumber,
+      lineCoefficient,
+      whichEye,
+      scores
+    } = this.state;
     const newLetterCount = letterCount + 1;
     let newLineNumber = lineNumber; // default is current line number
     let newLineCoefficient = lineCoefficient;
-    if (newLetterCount % 5 === 0) {
+    if (letterCount % 5 === 0) {
       newLineNumber += 1; // +1 if it's a fifth letter
       newLineCoefficient -= 0.1;
     }
-    const newLineSize = Math.floor(
-      screenFactor * Math.tan(Math.pow(10, newLineCoefficient) / 60.0)
-    );
     this.setState(
       {
         letter: letters.random(),
         letterCount: newLetterCount,
         lineNumber: newLineNumber,
-        lineSize: newLineSize,
-        lineCoefficient: newLineCoefficient
+        lineSize: getLineLength(newLineCoefficient),
+        lineCoefficient: newLineCoefficient,
+        scores: { ...scores, [whichEye]: this.getNewScore() }
       },
       () => {
-        const { lineNumber, letterCount, lineSize } = this.state;
-        console.log(lineNumber, letterCount, lineSize);
+        const {
+          lineNumber,
+          letterCount,
+          lineSize,
+          whichEye,
+          scores
+        } = this.state;
+        console.log(lineNumber, letterCount, lineSize, whichEye);
+        console.log(scores);
         if (letterCount === 25) this.nextEye();
         if (letterCount === 50) this.endTest();
       }
@@ -111,7 +141,7 @@ export default class TestScreen extends Component {
 
   onSpeechRecognized = e => {
     // eslint-disable-next-line
-    console.log("onSpeechRecognized: ", e);
+    // console.log("onSpeechRecognized: ", e);
     this.setState({
       recognized: "√"
     });
@@ -120,6 +150,8 @@ export default class TestScreen extends Component {
   onSpeechEnd = e => {
     // eslint-disable-next-line
     console.log("onSpeechEnd: ", e);
+    this.setNextLetter();
+    // this._startRecognizing();
     this.setState({
       end: "√"
     });
@@ -151,7 +183,7 @@ export default class TestScreen extends Component {
 
   onSpeechVolumeChanged = e => {
     // eslint-disable-next-line
-    console.log("onSpeechVolumeChanged: ", e);
+    // console.log("onSpeechVolumeChanged: ", e);
     this.setState({
       pitch: e.value
     });
@@ -217,6 +249,9 @@ export default class TestScreen extends Component {
     return (
       <View style={styles.container}>
         <Text style={{ fontSize: lineSize }}>{letter}</Text>
+        <Button title="Start" onPress={() => this._startRecognizing()}/>
+        <Button title="Stop" onPress={() => this._stopRecognizing()}/>
+        <Button title="Destroy" onPress={() => this._destroyRecognizer()}/>
       </View>
     );
   }
