@@ -77,7 +77,8 @@ export default class Score extends React.Component {
                 labels: this.state.dates,
                 datasets: [
                   {
-                    data: this.state.scoresOeilGauche
+                    data: this.state.scoresOeilGauche,
+                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
                   },
                 ]
               }}
@@ -104,7 +105,8 @@ export default class Score extends React.Component {
                 labels: this.state.dates,
                 datasets: [
                   {
-                    data: this.state.scoresOeilDroit
+                    data: this.state.scoresOeilDroit,
+                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`
                   }
                 ]
               }}

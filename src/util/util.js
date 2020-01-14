@@ -203,6 +203,68 @@ async function sendmailresults(id_user,nom,prenom) {
 
 }
 
+
+ function csvscore(user){
+  User.getScore(user["id"],(score)=>{
+    let csvContent = "date;oeil_droit;oeil_gauche \r\n";
+    score.forEach(function(rowArray) {
+      csvContent += rowArray["date"] +";"+rowArray["oeil_droit"]+";"+rowArray["oeil_gauche"] +"\r\n";
+      console.log(csvContent)
+      return csvContent
+  });
+});
+}
+
+async function sendmailallresults() {
+  mail = await getDoctorEmail()
+  User.getUsers(async (users)=>{
+    let csvContent = ""
+      users.forEach(function(user){
+        csvContent += user["nom"]+";"+user["prenom"]+";"+user["sex"]+ "\r\n"
+        console.log("balise")
+        console.log(csvscore(user["id"]))
+        csvContent += csvscore(user["id"])
+        csvContent += "\r\n"
+      })
+      let headers = new Headers();
+      headers.set('Authorization', 'Basic ' + base64.encode("0cfcb70e5789a15691fd433c4d75fc00" + ":" + "283db4b296ba835850b9fe6fd4ac8383"));
+      headers.set('Content-Type', 'application/json');
+      const rawResponse = await fetch('https://api.mailjet.com/v3.1/send', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+          "Messages": [
+            {
+              "From": {
+                "Email": "sightstudyapp@gmail.com",
+                "Name": "Sight Study"
+              },
+              "To": [
+                {
+                  "Email": mail,
+                  "Name": "Medecin"
+                }
+              ],
+              "Subject": "tous les resulats",
+              "HTMLPart": "Voici tous les resultats.",
+              "Attachments": [
+                {
+                    "ContentType": "application/CSV",
+                    "Filename": "all_results.csv",
+                    "Base64Content": base64.encode(csvContent)
+                }
+            ]
+            }
+          ]
+        })
+      });
+      const content = await rawResponse.json();
+    
+      console.log(content);
+  })
+}
+
+
 export {
   getId,
   setId,
@@ -217,5 +279,6 @@ export {
   setDecalage,
   getDecalage,
   sendmail,
-  sendmailresults
+  sendmailresults,
+  sendmailallresults
 };

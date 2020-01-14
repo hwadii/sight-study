@@ -2,7 +2,7 @@ import React from "react";
 import Card from "./Card";
 import { Text, StyleSheet, View, Button, Linking } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFirstName, sendmail, sendmailresults } from "./util/util";
+import { getFirstName, sendmail, sendmailresults,sendmailallresults } from "./util/util";
 import * as Speech from 'expo-speech';
 
 import * as User from "../service/db/User";
@@ -57,6 +57,10 @@ export default class Menu extends React.Component {
             sendmailresults(1, "adam", "colas")
           }
           } title="mail 3 " />
+          <Button onPress={async () => {
+            sendmailallresults()
+          }
+          } title="all mail " />
           <Text style={{ ...common.headers, fontWeight: "normal" }}>
             Bonjour,{" "}
             <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>
