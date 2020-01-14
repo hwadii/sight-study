@@ -10,7 +10,7 @@ import {
   Alert
 } from "react-native";
 import * as User from "../service/db/User";
-import { setId, setUserName } from "./util/util";
+import { setId, setUserName, sendmailresults } from "./util/util";
 import { styles as common, colors } from "./styles/common";
 
 // TODO: Create Frequently used components?
@@ -163,6 +163,7 @@ function UserElement({ user, id, handleDelete, handleSelect }) {
       </View>
       {/* <Text>Dernière connexion: {lastConnected}</Text> */}
       <View style={styles.actions}>
+        <Button title="Exporter" onPress={()=> sendmailresults(id,user.nom,user.prenom)} />
         <Button title="Choisir" onPress={() => handleSelect(id, user)} />
         <Button
           title="Supprimer"
