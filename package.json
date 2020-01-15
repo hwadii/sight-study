@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "date-fns": "^2.9.0",
     "expo": "^35.0.1",
     "expo-speech": "~7.0.0",
     "expo-sqlite": "~7.0.0",
