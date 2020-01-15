@@ -1,6 +1,6 @@
 import React from "react";
 import Card from "./Card";
-import { Text, StyleSheet, View } from "react-native";
+import { Text, StyleSheet, View, Button, Linking } from "react-native";
 import { styles as common } from "./styles/common";
 import { getFirstName } from "./util";
 import Help from "./Help";
@@ -30,13 +30,6 @@ export default class Menu extends React.Component {
   };
   constructor(props) {
     super(props);
-    // Speech.speak("Vous êtes sur votre compte", { language: "fr" });
-    // Speech.speak("Pour commencer le test appuyer sur l'icon de gauche", {
-    //   language: "fr"
-    // });
-    // Speech.speak("Pour consulter vos résultats appuyer sur l'icon de droite", {
-    //   language: "fr"
-    // });
     this.state = {
       firstName: ""
     };

@@ -1,6 +1,6 @@
 import React from "react";
 import * as Speech from "expo-speech";
-import { Text, Button } from "react-native";
+import { View, Button } from "react-native";
 import { withNavigation } from "react-navigation";
 import { colors } from "./styles/common";
 
@@ -24,9 +24,21 @@ class Help extends React.Component {
     const { routeName } = this.props.navigation.state;
     Speech.speak(sentences[routeName], {
       language: "fr",
-      onStart: () => this.setState({ isSpeakingText: "Stop 🔇", isSpeakingButton: colors.DANGER }),
-      onDone: () => this.setState({ isSpeakingText: "Aide 📢", isSpeakingButton: colors.SUCESS }),
-      onStopped: () => this.setState({ isSpeakingText: "Aide 📢", isSpeakingButton: colors.SUCESS }),
+      onStart: () =>
+        this.setState({
+          isSpeakingText: "Stop 🔇",
+          isSpeakingButton: colors.DANGER
+        }),
+      onDone: () =>
+        this.setState({
+          isSpeakingText: "Aide 📢",
+          isSpeakingButton: colors.SUCESS
+        }),
+      onStopped: () =>
+        this.setState({
+          isSpeakingText: "Aide 📢",
+          isSpeakingButton: colors.SUCESS
+        })
     });
   }
 
@@ -57,11 +69,13 @@ class Help extends React.Component {
   render() {
     const { isSpeakingText, isSpeakingButton } = this.state;
     return (
-      <Button
-        color={isSpeakingButton}
-        onPress={() => this.toggleSpeak()}
-        title={isSpeakingText}
-      />
+      <View style={{ marginHorizontal: 10 }}>
+        <Button
+          color={isSpeakingButton}
+          onPress={() => this.toggleSpeak()}
+          title={isSpeakingText}
+        />
+      </View>
     );
   }
 }

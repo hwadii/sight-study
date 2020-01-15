@@ -46,7 +46,7 @@ class App extends React.Component {
   state = { fontLoaded: false };
 
   async componentDidMount() {
-    initDB();
+    await initDB();
     await Font.loadAsync({
       "optician-sans": require("./assets/fonts/Optician-Sans.otf")
     });
