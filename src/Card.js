@@ -22,7 +22,7 @@ export default class Card extends React.Component {
           ]
         );
       } else {
-        navigate(route);
+        navigate(route,{'eye': 'right'});
       }
     });
   }

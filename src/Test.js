@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 import { Image, View } from "react-native";
 import { PermissionsAndroid } from "react-native";
-
 import { StyleSheet, Text } from "react-native";
 
+import { getDistance, getDecalage } from "./util";
 import QRCodeScanner from "react-native-qrcode-scanner";
 
 export default class Test extends Component {
@@ -13,20 +13,31 @@ export default class Test extends Component {
                    color : 'black', 
                    wellPlacedCount : 0, 
                    wrongEyeCount : 0,
-                   eye : ''
+                   eye : '',
+                   distance: 0,
+                   decalage: 0
     }
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
   }
 
   componentDidMount() {
-    PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
-    );
-    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
     const { navigation } = this.props;
-    this.setState({'eye': navigation.getParam('eye')})
+    this.willFocusSub = this.props.navigation.addListener(
+      "willFocus",
+      async () => {
+        this.setState({
+          distance: await getDistance(),
+          decalage: await getDecalage(),
+          'eye': navigation.getParam('eye')
+        });
+      }
+    );  
   }
   
+  componentWillUnmount() {
+    this.willFocusSub.remove();
+  }
+
   square = (x) => {
     return x*x
   }
@@ -43,13 +54,14 @@ export default class Test extends Component {
 
   onSuccess = (e) => {
     if (e.data == "sight-study"){
-      var distance = 30
-      var eps = 1
+      var distance = this.state.distance
+      var eps = this.state.decalage
       var wellPlacedInaRow = 10
       var limit = 0
       if (this.state.eye=='left') limit = Math.min(e.bounds.origin[0].y, e.bounds.origin[0].y, e.bounds.origin[0].y);
       else limit = Math.max(e.bounds.origin[0].y, e.bounds.origin[0].y, e.bounds.origin[0].y);
       // var distancelimit = 10
+      // console.log(this.state.eye)
 
       if ((limit < e.bounds.height/2 && this.state.eye=='left') || (limit > e.bounds.height/2 && this.state.eye=='right')){
         var tmp = Math.sqrt(this.square(e.bounds.origin[1].y - e.bounds.origin[0].y) + this.square(e.bounds.origin[1].x - e.bounds.origin[0].x))
@@ -57,7 +69,6 @@ export default class Test extends Component {
         tmp = tmp + Math.sqrt(this.square(e.bounds.origin[0].y - e.bounds.origin[2].y) + this.square(e.bounds.origin[0].x - e.bounds.origin[2].x))
         // tmp = -0.05357*tmp + 43.3929
         tmp = 7520/tmp
-        // console.log(tmp)
         this.setState({'indication' : Math.abs(distance-tmp)})
 
         // this.colorCalcul(distancelimit, tmp, distance)
@@ -73,14 +84,18 @@ export default class Test extends Component {
     } else console.log("pas bon qr code");
 
     if (this.state.wrongEyeCount >= 4) this.setState({'indication' : "mauvais oeil", 'color' : 'black', 'wellPlacedCount' : 0})
-    if (this.state.wellPlacedCount >= wellPlacedInaRow) this.props.navigation.replace('Jeu', {eye: this.state.eye})
+    if (this.state.wellPlacedCount >= wellPlacedInaRow) this.props.navigation.replace('TestScreen', {eye: this.state.eye})
   }
 
   render() {
+      PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
+      );
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
       const { navigation } = this.props;
       const { color } = this.state;
       var img
-      if (JSON.stringify(navigation.getParam('eye')) == 'left') img = require('../assets/imgleft.png')
+      if (navigation.getParam('eye') == 'left') img = require('../assets/imgleft.png')
       else img = require('../assets/imgright.png')
     return (
       <QRCodeScanner

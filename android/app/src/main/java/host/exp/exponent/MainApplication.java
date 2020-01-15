@@ -15,6 +15,7 @@ import com.rnfs.RNFSPackage;
 
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
+import com.robinpowered.react.ScreenBrightness.ScreenBrightnessPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import com.horcrux.svg.SvgPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -37,6 +38,7 @@ public class MainApplication extends ExpoApplication implements AppLoaderPackage
 
         // Needed for `react-native link`
         // new MainReactPackage(),
+            new ScreenBrightnessPackage(),
             new RNPermissionsPackage(),
             // new SvgPackage(),
             new RNCameraPackage()

@@ -10,7 +10,6 @@
   "dependencies": {
     "core-js": "^3.6.3",
     "expo": "^35.0.1",
-    "expo-speech": "^7.0.0",
     "expo-sqlite": "~7.0.0",
     "expokit": "^35.0.4",
     "jetifier": "^1.6.5",
@@ -32,7 +31,8 @@
     "react-navigation-stack": "^1.10.3"
   },
   "devDependencies": {
-    "babel-preset-expo": "^7.1.0"
+    "babel-preset-expo": "^7.1.0",
+    "expo-speech": "^7.0.0"
   },
   "private": true
 }

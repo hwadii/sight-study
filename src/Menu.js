@@ -8,7 +8,7 @@ import Help from "./Help";
 const texts = [
   {
     id: 1,
-    route: "TestScreen",
+    route: "Test",
     title: "Commencer le test 📝",
     description:
       "Vous allez devoir lire les lettres affichées à l’écran. Veuillez vous installez dans une pièce sombre et silencieuse.",
