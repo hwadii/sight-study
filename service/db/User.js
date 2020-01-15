@@ -5,31 +5,23 @@ const db = SQLite.openDatabase("sigthstudy.db");
 /**
  * Initialize database.
  */
-export function initDB() {
+export async function initDB() {
   // table users
-  db.transaction(tx => {
-    tx.executeSql(
-      "create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(25), prenom VARCHAR(25), derniere_connexion DATE, sex VARCHAR(25), date_de_naissance DATE);"
-    );
-  });
+  await _executeSql(
+    "create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(25), prenom VARCHAR(25), derniere_connexion DATE, sex VARCHAR(25), date_de_naissance DATE);"
+  );
   // table score
-  db.transaction(tx => {
-    tx.executeSql(
-      "create table if not exists score (id_user INTEGER, date DATE, oeil_gauche INTEGER, oeil_droit INTEGER);"
-    );
-  });
+  await _executeSql(
+    "create table if not exists score (id_user INTEGER, date DATE, oeil_gauche INTEGER, oeil_droit INTEGER);"
+  );
 }
 
 /**
  * Drops database.
  */
-export function dropDB() {
-  db.transaction(tx => {
-    tx.executeSql("drop table user");
-  });
-  db.transaction(tx => {
-    tx.executeSql("drop table score");
-  });
+export async function dropDB() {
+  await _executeSql("drop table user");
+  await _executeSql("drop table score");
 }
 
 /**
@@ -67,7 +59,7 @@ export function resetDB() {
  * @returns {Promise} Promise reolving to user id or null if user does not exist.
  */
 export async function getUser(nom, prenom) {
-  if (!nom || !prenom) return null;
+  if (!nom || !prenom) return null; // return early if null
   const usersWithId = await _executeSql(
     "select id from user where nom=? and prenom=?;",
     [nom, prenom]

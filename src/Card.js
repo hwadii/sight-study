@@ -10,21 +10,7 @@ export default class Card extends React.Component {
 
   handleOnTest() {
     const { navigate, route } = this.props;
-    NetInfo.isConnected.fetch().done(isConnected => {
-      if (route === "TestScreen" && !isConnected) {
-        Alert.alert(
-          "Configuration de la tablette",
-          "Il faut être connecter à Internet pour passer le test.",
-          [
-            {
-              text: "Ok"
-            }
-          ]
-        );
-      } else {
-        navigate(route,{'eye': 'right'});
-      }
-    });
+    navigate(route, { eye: "right" });
   }
 
   render() {

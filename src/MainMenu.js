@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFullName, getDoctorEmail, getDistance, getDecalage } from "./util";
+import { getFullName, getDoctorEmail, getDistance, getTolerance } from "./util";
 import Help from "./Help";
 
 export default class MainMenu extends React.Component {
@@ -14,7 +14,7 @@ export default class MainMenu extends React.Component {
       fullName: null,
       doctorEmail: null,
       distance: null,
-      decalage: null
+      tolerance: null
     };
   }
 
@@ -31,7 +31,7 @@ export default class MainMenu extends React.Component {
           fullName: await getFullName(),
           doctorEmail: await getDoctorEmail(),
           distance: await getDistance(),
-          decalage: await getDecalage()
+          tolerance: await getTolerance()
         });
       }
     );
@@ -42,12 +42,12 @@ export default class MainMenu extends React.Component {
   }
 
   render() {
-    const { fullName, doctorEmail, distance, decalage } = this.state;
+    const { fullName, doctorEmail, distance, tolerance } = this.state;
     return (
       <View style={common.containers}>
         <UserConnected fullName={fullName} />
         <DoctorMail email={doctorEmail} />
-        <Settings distance={distance} decalage={decalage} />
+        <Settings distance={distance} tolerance={tolerance} />
         {fullName === null ? null : (
           <TouchableOpacity
             style={common.actionButtons}
@@ -99,7 +99,7 @@ function DoctorMail({ email }) {
   );
 }
 
-function Settings({ distance, decalage }) {
+function Settings({ distance, tolerance }) {
   return (
     <View>
       {distance ? (
@@ -110,13 +110,13 @@ function Settings({ distance, decalage }) {
       ) : (
         <Text style={common.important}>La distance n'est pas configurée.</Text>
       )}
-      {decalage ? (
+      {tolerance ? (
         <Text style={common.important}>
-          Le decalage est <Text style={{ fontWeight: "bold" }}>{decalage}</Text>
+          Le tolerance est <Text style={{ fontWeight: "bold" }}>{tolerance}</Text>
           .
         </Text>
       ) : (
-        <Text style={common.important}>Le decalage n'est pas configurée.</Text>
+        <Text style={common.important}>La tolerance n'est pas configurée.</Text>
       )}
     </View>
   );

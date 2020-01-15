@@ -2,7 +2,7 @@ import React from "react";
 import Card from "./Card";
 import { Text, StyleSheet, View, Button, Linking } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFirstName, sendMail } from "./util";
+import { getFirstName } from "./util";
 import Help from "./Help";
 
 const texts = [
@@ -47,7 +47,6 @@ export default class Menu extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.greetings}>
-          <Button onPress={async () => sendMail(40)} title="mail 3" />
           <Text style={{ ...common.headers, fontWeight: "normal" }}>
             Bonjour,{" "}
             <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>

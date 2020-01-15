@@ -3,7 +3,7 @@ import { Image, View } from "react-native";
 import { PermissionsAndroid } from "react-native";
 import { StyleSheet, Text } from "react-native";
 
-import { getDistance, getDecalage } from "./util";
+import { getDistance, getTolerance } from "./util";
 import QRCodeScanner from "react-native-qrcode-scanner";
 
 export default class Test extends Component {
@@ -27,7 +27,7 @@ export default class Test extends Component {
       async () => {
         this.setState({
           distance: await getDistance(),
-          decalage: await getDecalage(),
+          decalage: await getTolerance(),
           'eye': navigation.getParam('eye')
         });
       }
