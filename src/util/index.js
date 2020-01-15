@@ -1,7 +1,40 @@
-import { AsyncStorage } from "react-native";
+import { AsyncStorage, Alert } from "react-native";
 import base64 from "./base64";
 import { getUser as getUserFromDb } from "../../service/db/User";
+import { format } from "date-fns";
 
+// General
+/**
+ * Returns formatted date
+ * @param {Date} date a date
+ * @returns {string} the formatted date in the specified format
+ */
+export const formatDate = date => format(date, "dd/MM/yyyy");
+
+/**
+ * Shows alert
+ *
+ * @param {string} message the message of the alert.
+ * @param {Function} onPress function called when Ok is pressed
+ * @param {string} title the title of the alert
+ * @param {Array} moreButtons more buttons if needed
+ */
+export function showAlert(
+  message,
+  onPress,
+  moreButtons = [],
+  title = "Configuration de la tablette"
+) {
+  Alert.alert(title, message, [
+    ...moreButtons,
+    {
+      text: "OK",
+      onPress
+    }
+  ]);
+}
+
+// AsyncStorage
 /**
  * Set current user name
  */

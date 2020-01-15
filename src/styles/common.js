@@ -5,7 +5,7 @@ export const colors = {
   SUCESS: "#28a745",
   PRIMARY: "#007bff",
   DISABLED: "#6c757d"
-}
+};
 
 export const styles = StyleSheet.create({
   containers: {
@@ -17,7 +17,10 @@ export const styles = StyleSheet.create({
   actionButtons: {
     borderWidth: 1,
     width: "100%",
-    maxWidth: Dimensions.get("window").width < 400 ? Dimensions.get("window").width : 400,
+    maxWidth:
+      Dimensions.get("window").width < 400
+        ? Dimensions.get("window").width
+        : 400,
     borderColor: "#007BFF",
     backgroundColor: "#007BFF",
     padding: 15,
@@ -39,17 +42,23 @@ export const styles = StyleSheet.create({
     fontSize: 20
   },
   inputs: {
-    borderTopWidth: 1,
     borderColor: "#CCCCCC",
-    borderBottomWidth: 1,
-    height: 50,
+    borderWidth: 1,
+    borderRadius: 3,
     fontSize: 25,
+    height: 50,
     paddingLeft: 5,
     paddingRight: 5,
     marginBottom: 6
   },
+  get inputViews() {
+    return {
+      ...this.inputs,
+      textAlignVertical: "center"
+    };
+  },
   inputsLabels: {
     fontSize: 18,
     marginTop: 7
-  },
+  }
 });
