@@ -1,16 +1,23 @@
-import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableHighlight
-} from "react-native";
-
+import React, { Component } from "react";
+import { Button, StyleSheet, Text, View, PixelRatio } from "react-native";
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
+import * as Font from "expo-font";
 
-export default class TestScreen extends React.Component {
+const letters = "nckzorhsdv";
+const timeBetweenLetters = 4000;
+const screenFactor = 100 * PixelRatio.get() * 5 * 0.4;
+/**
+ * Gets font size for current line
+ * @param {number} lineCoefficient coefficient de ligne
+ */
+const getLineLength = lineCoefficient =>
+  Math.floor(screenFactor * Math.tan(Math.pow(10, lineCoefficient) / 60));
+
+export default class TestScreen extends Component {
+  static navigationOptions = {
+    headerShown: false
+  };
   state = {
     recognized: "",
     pitch: "",
@@ -19,7 +26,22 @@ export default class TestScreen extends React.Component {
     started: "",
     results: [],
     partialResults: [],
-    showRecordButton: false
+
+    letter: "",
+    letterCount: 0,
+    lineSize: getLineLength(1),
+    lineNumber: 0,
+    lineCoefficient: 1,
+    whichEye: "left",
+    scores: {
+      left: 0,
+      right: 0
+    },
+
+    // for tests
+    tests: {
+      hideButtons: false
+    }
   };
 
   constructor(props) {
@@ -37,15 +59,101 @@ export default class TestScreen extends React.Component {
     const { status, expires, permissions } = await Permissions.askAsync(
       Permissions.AUDIO_RECORDING
     );
-    if (status !== "granted") {
-      this.setState({ showRecordButton: false });
-    } else {
-      this.setState({ showRecordButton: true });
-    }
+    console.log(Font.isLoading("optician-sans"));
+    console.log(Font.isLoaded("optician-sans"));
+
+    // this.setNextLetterId = setInterval(
+    //   () => this.setNextLetter(),
+    //   timeBetweenLetters
+    // );
+    this.setNextLetter();
+    // this._startRecognizing();
   }
+
+  // for tests
+  randomize() {
+    this.setNextLetterId = setInterval(
+      () => this.setNextLetter(),
+      timeBetweenLetters
+    );
+  }
+
+  toggleButtons() {
+    const { tests } = this.state;
+    this.setState({
+      tests: {
+        hideButtons: tests.hideButtons ? false : true
+      }
+    });
+  }
+  // !for tests
 
   componentWillUnmount() {
     Voice.destroy().then(Voice.removeAllListeners);
+    if (this.setNextLetterId) clearInterval(this.setNextLetterId);
+  }
+
+  nextEye() {
+    this.setState({
+      letter: letters.random(),
+      lineCoefficient: 1,
+      lineSize: getLineLength(1),
+      whichEye: "right"
+    });
+  }
+
+  endTest() {
+    console.log("FIN");
+    // clearInterval(this.setNextLetterId);
+  }
+
+  checkResults() {}
+
+  getNewScore() {
+    const { scores, whichEye } = this.state;
+    const gotResult = Math.random() < 0.8 ? true : false;
+    let newScore = gotResult ? scores[whichEye] + 1 : scores[whichEye];
+    return newScore;
+  }
+
+  setNextLetter() {
+    const {
+      letterCount,
+      lineNumber,
+      lineCoefficient,
+      whichEye,
+      scores
+    } = this.state;
+    const newLetterCount = letterCount + 1;
+    let newLineNumber = lineNumber; // default is current line number
+    let newLineCoefficient = lineCoefficient;
+    if (letterCount % 5 === 0) {
+      newLineNumber += 1; // +1 if it's a fifth letter
+      newLineCoefficient -= 0.1;
+    }
+    this.setState(
+      {
+        letter: letters.random(),
+        letterCount: newLetterCount,
+        lineNumber: newLineNumber,
+        lineSize: getLineLength(newLineCoefficient),
+        lineCoefficient: newLineCoefficient,
+        scores: { ...scores, [whichEye]: this.getNewScore() }
+      },
+      () => {
+        const {
+          lineNumber,
+          letterCount,
+          lineSize,
+          whichEye,
+          scores
+        } = this.state;
+        console.log(lineNumber, letterCount, lineSize, whichEye);
+        console.log(scores);
+        if (letterCount === 25) this.nextEye();
+        if (letterCount === 50) this.endTest();
+      }
+    );
   }
 
   onSpeechStart = e => {
@@ -58,7 +166,7 @@ export default class TestScreen extends React.Component {
 
   onSpeechRecognized = e => {
     // eslint-disable-next-line
-    console.log("onSpeechRecognized: ", e);
+    // console.log("onSpeechRecognized: ", e);
     this.setState({
       recognized: "√"
     });
@@ -67,6 +175,8 @@ export default class TestScreen extends React.Component {
   onSpeechEnd = e => {
     // eslint-disable-next-line
     console.log("onSpeechEnd: ", e);
+    this.setNextLetter();
+    // this._startRecognizing();
     this.setState({
       end: "√"
     });
@@ -98,7 +208,7 @@ export default class TestScreen extends React.Component {
 
   onSpeechVolumeChanged = e => {
     // eslint-disable-next-line
-    console.log("onSpeechVolumeChanged: ", e);
+    // console.log("onSpeechVolumeChanged: ", e);
     this.setState({
       pitch: e.value
     });
@@ -160,87 +270,33 @@ export default class TestScreen extends React.Component {
   };
 
   render() {
+    const { letter, lineSize, tests } = this.state;
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native Voice!</Text>
-        <Text style={styles.instructions}>
-          Press the button and start speaking.
+        <Text style={{ fontFamily: "optician-sans", fontSize: lineSize }}>
+          {letter}
         </Text>
-        <Text style={styles.stat}>{`Started: ${this.state.started}`}</Text>
-        <Text
-          style={styles.stat}
-        >{`Recognized: ${this.state.recognized}`}</Text>
-        <Text style={styles.stat}>{`Pitch: ${this.state.pitch}`}</Text>
-        <Text style={styles.stat}>{`Error: ${this.state.error}`}</Text>
-        <Text style={styles.stat}>Results</Text>
-        {this.state.results.map((result, index) => {
-          return (
-            <Text key={`result-${index}`} style={styles.stat}>
-              {result}
-            </Text>
-          );
-        })}
-        <Text style={styles.stat}>Partial Results</Text>
-        {this.state.partialResults.map((result, index) => {
-          return (
-            <Text key={`partial-result-${index}`} style={styles.stat}>
-              {result}
-            </Text>
-          );
-        })}
-        <Text style={styles.stat}>{`End: ${this.state.end}`}</Text>
-        {this.state.showRecordButton && (
-        <TouchableHighlight onPress={this._startRecognizing}>
-          <Image
-            style={styles.button}
-            source={require("../assets/button.png")}
-          />
-        </TouchableHighlight>
+        {!tests.hideButtons && (
+          <>
+            <Button title="Start" onPress={() => this._startRecognizing()} />
+            <Button title="Stop" onPress={() => this._stopRecognizing()} />
+            <Button title="Destroy" onPress={() => this._destroyRecognizer()} />
+            <Button title="Randomize" onPress={() => this.randomize()} />
+          </>
         )}
-        <TouchableHighlight onPress={this._stopRecognizing}>
-          <Text style={styles.action}>Stop Recognizing</Text>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this._cancelRecognizing}>
-          <Text style={styles.action}>Cancel</Text>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this._destroyRecognizer}>
-          <Text style={styles.action}>Destroy</Text>
-        </TouchableHighlight>
+        <Button
+          title={tests.hideButtons ? "Show" : "Hide"}
+          onPress={() => this.toggleButtons()}
+        />
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  button: {
-    width: 50,
-    height: 50
-  },
   container: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5FCFF"
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: "center",
-    margin: 10
-  },
-  action: {
-    textAlign: "center",
-    color: "#0000FF",
-    marginVertical: 5,
-    fontWeight: "bold"
-  },
-  instructions: {
-    textAlign: "center",
-    color: "#333333",
-    marginBottom: 5
-  },
-  stat: {
-    textAlign: "center",
-    color: "#B0171F",
-    marginBottom: 1
+    alignItems: "center"
   }
 });

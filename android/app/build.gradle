@@ -204,7 +204,6 @@ dependencies {
         // from auto-generated BasePackageList.java
       ]
   ])
-  
   compile project(':react-native-voice')
   compile project(':react-native-fs')
 }

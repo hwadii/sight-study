@@ -10,7 +10,7 @@ export async function setUserName({ prenom: firstName, nom: lastName }) {
     await AsyncStorage.setItem("firstName", firstName);
     await AsyncStorage.setItem("lastName", lastName);
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 
@@ -22,7 +22,7 @@ export async function getFirstName() {
     const firstName = await AsyncStorage.getItem("firstName");
     return firstName;
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 
@@ -34,7 +34,7 @@ export async function getLastName() {
     const lastName = await AsyncStorage.getItem("lastName");
     return lastName;
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 
@@ -51,7 +51,7 @@ export async function getFullName() {
       return null;
     }
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 
@@ -62,7 +62,7 @@ export async function setId(id) {
   try {
     await AsyncStorage.setItem("id", id);
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 
@@ -76,7 +76,7 @@ export async function getId() {
       return parseInt(value);
     }
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 }
 
@@ -84,7 +84,7 @@ export async function clear() {
   try {
     await AsyncStorage.clear();
   } catch {
-    console.error("Unable to clear storage");
+    console.log("Unable to clear storage");
   }
 }
 
@@ -92,7 +92,7 @@ export async function setDoctorEmail(email) {
   try {
     await AsyncStorage.setItem("doctor_email", email);
   } catch {
-    console.error("Error setting email");
+    console.log("Error setting email");
   }
 }
 
@@ -100,7 +100,7 @@ export async function getDoctorEmail() {
   try {
     return await AsyncStorage.getItem("doctor_email");
   } catch {
-    console.error("Error getting email");
+    console.log("Error getting email");
   }
 }
 
@@ -108,7 +108,7 @@ export async function setDistance(distance) {
   try {
     await AsyncStorage.setItem("distance", distance);
   } catch {
-    console.error("Error setting distance");
+    console.log("Error setting distance");
   }
 }
 
@@ -116,23 +116,23 @@ export async function getDistance() {
   try {
     return await AsyncStorage.getItem("distance");
   } catch {
-    console.error("Error getting distance");
+    console.log("Error getting distance");
   }
 }
 
-export async function setDecalage(decalage) {
+export async function setTolerance(decalage) {
   try {
     await AsyncStorage.setItem("decalage", decalage);
   } catch {
-    console.error("Error setting decalage");
+    console.log("Error setting decalage");
   }
 }
 
-export async function getDecalage() {
+export async function getTolerance() {
   try {
     return await AsyncStorage.getItem("decalage");
   } catch {
-    console.error("Error getting decalage");
+    console.log("Error getting decalage");
   }
 }
 

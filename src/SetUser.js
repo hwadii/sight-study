@@ -109,7 +109,7 @@ export default class SetUser extends React.Component {
             onPress={() => navigate("Settings")}
             style={styles.actionButtons}
           >
-            <Text style={common.actionButtonsText}>Parametre de l'application</Text>
+            <Text style={common.actionButtonsText}>Paramètre de l'application</Text>
           </TouchableOpacity>
         </View>
         <UsersList
@@ -201,6 +201,10 @@ const styles = StyleSheet.create({
   noAccount: {
     flexDirection: "row",
     justifyContent: "center",
+    paddingBottom: 5
+  },
+  noAccountText: {
+    fontSize: 20,
     marginVertical: 10
   },
   actions: {
