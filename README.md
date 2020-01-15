@@ -6,7 +6,9 @@
 
 # Install app (deploy)
 
-...
+1. `expo publish`
+2. `cd android && ./gradlew assembleRelease`
+3. `adb install -r app/build/outputs/apk/release/app-release.apk`
 
 # Offline speech recognition
 
