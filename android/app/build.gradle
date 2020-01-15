@@ -198,8 +198,8 @@ dependencies {
         // from auto-generated BasePackageList.java
       ]
   ])
-  
-  compile project(':react-native-voice')
+
+  implementation project(':react-native-voice')
 }
 
 // This has to be down here for some reason
