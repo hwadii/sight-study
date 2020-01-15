@@ -5,12 +5,14 @@ import {
   View,
   Dimensions,
   DatePickerAndroid,
-  Picker
+  Picker,
+  TouchableHighlight
 } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import * as User from "../service/db/User";
 import { styles as common } from "./styles/common";
+import { formatDate } from "./util";
 
 export default class AddUser extends React.Component {
   constructor(props) {
@@ -41,9 +43,10 @@ export default class AddUser extends React.Component {
   }
 
   async showDatePickerAndSet() {
+    const { date } = this.state;
     try {
       const { action, year, month, day } = await DatePickerAndroid.open({
-        date: new Date(1980, 4, 25)
+        date: date || new Date(1981, 1, 1)
       });
       if (action !== DatePickerAndroid.dismissedAction) {
         this.handleChangeField(new Date(year, month, day), "date");
@@ -90,11 +93,13 @@ function Form({ handleChange, userInfo, showDatePickerAndSet }) {
         label="Nom"
         handleOnChange={e => handleChange(e, "nom")}
       />
-      <Field
-        label="Date de naissance"
-        value={date}
-        handleOnFocus={() => showDatePickerAndSet()}
-      />
+      <Text style={common.inputsLabels}>Date de naissance</Text>
+      <TouchableHighlight
+        underlayColor="#fff"
+        onPress={() => showDatePickerAndSet()}
+      >
+        <Text style={common.inputViews}>{date && formatDate(date)}</Text>
+      </TouchableHighlight>
       <Select
         label="Sexe"
         value={sex}
@@ -129,18 +134,19 @@ function Select({ label, handleOnChange, value, children }) {
   return (
     <>
       <Text style={common.inputsLabels}>{label}</Text>
-      <Picker selectedValue={value} onValueChange={handleOnChange}>
-        {children}
-      </Picker>
+      <View style={common.inputs}>
+        <Picker selectedValue={value} onValueChange={handleOnChange}>
+          {children}
+        </Picker>
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: "center",
-    marginTop: 15
+    paddingBottom: 15
   },
   form: {
     width: scale(320),

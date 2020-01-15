@@ -8,10 +8,9 @@ import {
   TouchableHighlight,
   Text,
   View,
-  Alert
 } from "react-native";
 import * as User from "../service/db/User";
-import { setId, setUserName, getId } from "./util";
+import { setId, setUserName, getId, formatDate, showAlert } from "./util";
 import { styles as common, colors } from "./styles/common";
 
 export default class SetUser extends React.Component {
@@ -52,38 +51,23 @@ export default class SetUser extends React.Component {
   async handleSelect(id, user) {
     await setId(id.toString());
     await setUserName(user);
-    Alert.alert(
-      "Configuration de la tablette",
+    showAlert(
       `La tablette est configurée pour ${user.prenom} ${user.nom}.`,
-      [
-        {
-          text: "OK",
-          onPress: () => this.setState({ currentUserId: id })
-        }
-      ]
+      () => this.setState({ currentUserId: id })
     );
   }
 
   handleDelete(id, user) {
     const { users: oldUsersList } = this.state;
-    Alert.alert(
-      "Configuration de la tablette",
+    showAlert(
       `Le patient ${user.prenom} ${user.nom} va être supprimé.`,
-      [
-        {
-          text: "Annuler"
-        },
-        {
-          text: "OK",
-          onPress: () => {
-            // FIXME: await ici?
-            User.removeUser(id);
-            this.setState({
-              users: oldUsersList.filter(user => user.id !== id)
-            });
-          }
-        }
-      ]
+      () => {
+        User.removeUser(id);
+        this.setState({
+          users: oldUsersList.filter(user => user.id !== id)
+        });
+      },
+      [{ text: "Annuler" }]
     );
   }
 
@@ -109,7 +93,9 @@ export default class SetUser extends React.Component {
             onPress={() => navigate("Settings")}
             style={styles.actionButtons}
           >
-            <Text style={common.actionButtonsText}>Paramètre de l'application</Text>
+            <Text style={common.actionButtonsText}>
+              Paramètre de l'application
+            </Text>
           </TouchableOpacity>
         </View>
         <UsersList
@@ -168,7 +154,7 @@ function UserElement({ user, currentUserId, handleDelete, handleSelect }) {
   return (
     <TouchableHighlight
       underlayColor="#f5f5f5"
-      style={{ backgroundColor: isSelected ? "#f5f5f5" : "#fff" }}
+      style={{ backgroundColor: isSelected ? "#e8e8e8" : "#fff" }}
       onPress={() => handleSelect(id, user)}
     >
       <View style={styles.userBox}>
@@ -179,7 +165,7 @@ function UserElement({ user, currentUserId, handleDelete, handleSelect }) {
           ({sex === "F" ? "Femme" : "Homme"})
         </Text>
         <Text style={{ fontSize: 18 }}>
-          {new Date(date_de_naissance).toLocaleDateString()}
+          {formatDate(new Date(date_de_naissance))}
         </Text>
         <View style={styles.actions}>
           <Button title="Exporter" color={colors.PRIMARY} />
@@ -210,11 +196,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     padding: 18,
     paddingTop: 26,
     paddingBottom: 26,
     borderBottomWidth: 2,
-    borderBottomColor: "#f5f5f5"
+    borderBottomColor: "#e8e8e8"
   },
   userText: {
     fontSize: 18,
