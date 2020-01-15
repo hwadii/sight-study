@@ -11,6 +11,7 @@ import MenuLeftRight from "./src/MenuLeftRigth"
 import Jeu from "./src/Jeu"
 import MainMenu from "./src/MainMenu";
 import SetDoctor from "./src/SetDoctor";
+import DistanceFinder from "./src/distanceFinder";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import * as Font from "expo-font";
@@ -27,7 +28,8 @@ const Routes = {
   MenuLeftRight,
   Jeu,
   MainMenu,
-  SetDoctor
+  SetDoctor,
+  DistanceFinder
 };
 
 const MainNavigator = createStackNavigator(

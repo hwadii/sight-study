@@ -3,7 +3,7 @@ import { Image, View } from "react-native";
 import { PermissionsAndroid } from "react-native";
 import { StyleSheet, Text } from "react-native";
 
-import { getDistance, getDecalage } from "./util";
+import { getDistance, getTolerance } from "./util";
 import QRCodeScanner from "react-native-qrcode-scanner";
 
 export default class Test extends Component {
@@ -27,7 +27,7 @@ export default class Test extends Component {
       async () => {
         this.setState({
           distance: await getDistance(),
-          decalage: await getDecalage(),
+          decalage: await getTolerance(),
           'eye': navigation.getParam('eye')
         });
       }
@@ -60,22 +60,18 @@ export default class Test extends Component {
       var limit = 0
       if (this.state.eye=='left') limit = Math.min(e.bounds.origin[0].y, e.bounds.origin[0].y, e.bounds.origin[0].y);
       else limit = Math.max(e.bounds.origin[0].y, e.bounds.origin[0].y, e.bounds.origin[0].y);
-      // var distancelimit = 10
-      // console.log(this.state.eye)
 
       if ((limit < e.bounds.height/2 && this.state.eye=='left') || (limit > e.bounds.height/2 && this.state.eye=='right')){
         var tmp = Math.sqrt(this.square(e.bounds.origin[1].y - e.bounds.origin[0].y) + this.square(e.bounds.origin[1].x - e.bounds.origin[0].x))
         tmp = tmp + Math.sqrt(this.square(e.bounds.origin[2].y - e.bounds.origin[1].y) + this.square(e.bounds.origin[2].x - e.bounds.origin[1].x))
         tmp = tmp + Math.sqrt(this.square(e.bounds.origin[0].y - e.bounds.origin[2].y) + this.square(e.bounds.origin[0].x - e.bounds.origin[2].x))
-        // tmp = -0.05357*tmp + 43.3929
         tmp = 7520/tmp
-        this.setState({'indication' : Math.abs(distance-tmp)})
-
-        // this.colorCalcul(distancelimit, tmp, distance)
+        console.log(tmp-distance-eps)
+        console.log(tmp-distance-eps>0)
 
         if (tmp<distance-eps) this.setState({'indication' : "Eloignez vous de\n" + parseInt(10*Math.abs(distance-tmp))/10. + " cm", 'color' : 'black', 'wellPlacedCount' : 0, 'wrongEyeCount' : 0 })
         else{
-          if (tmp>distance+eps) this.setState({'indication' : "Rapprochez vous de\n" + parseInt(10*Math.abs(distance-tmp))/10. + " cm", 'color' : 'black', 'wellPlacedCount' : 0, 'wrongEyeCount' : 0})
+          if (tmp-distance-eps>0) this.setState({'indication' : "Rapprochez vous de\n" + parseInt(10*Math.abs(distance-tmp))/10. + " cm", 'color' : 'black', 'wellPlacedCount' : 0, 'wrongEyeCount' : 0})
           else this.setState({'indication' : "Parfait, ne bougez plus", 'wellPlacedCount' : this.state.wellPlacedCount+1, 'color' : 'green', 'wrongEyeCount' : 0})
         }
       } else {
@@ -83,7 +79,7 @@ export default class Test extends Component {
       }
     } else console.log("pas bon qr code");
 
-    if (this.state.wrongEyeCount >= 4) this.setState({'indication' : "mauvais oeil", 'color' : 'black', 'wellPlacedCount' : 0})
+    if (this.state.wrongEyeCount >= 4) this.setState({'indication' : "Veuillez tester le bon oeuil", 'color' : 'black', 'wellPlacedCount' : 0})
     if (this.state.wellPlacedCount >= wellPlacedInaRow) this.props.navigation.replace('TestScreen', {eye: this.state.eye})
   }
 
@@ -99,7 +95,6 @@ export default class Test extends Component {
       else img = require('../assets/imgright.png')
     return (
       <QRCodeScanner
-        // cameraStyle={styles.invisible}
         onRead={this.onSuccess}
         vibrate={false}
         reactivate={true}

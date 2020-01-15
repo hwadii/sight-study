@@ -8,7 +8,7 @@ const db = SQLite.openDatabase("sigthstudy.db");
 export async function initDB() {
   // table users
   await _executeSql(
-    "create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(25), prenom VARCHAR(25), derniere_connexion DATE, sex VARCHAR(25), date_de_naissance DATE);"
+    "create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(25), prenom VARCHAR(25), derniere_connexion DATE, sex VARCHAR(25), date_de_naissance DATE, distance FLOAT);"
   );
   // table score
   await _executeSql(
@@ -78,6 +78,32 @@ export async function getUserById(id) {
 }
 
 /**
+ * Gets distance by id.
+ *
+ * @param {number} id user id.
+ * @returns {Promise} Promise resolving to an array of users.
+ */
+export async function getDistance(id) {
+  return await _executeSql("select distance from user where id=?;", [id]);
+}
+
+/**
+ * Set distance for a user.
+ *
+ * @param {number} id_user user id.
+ * @param {number} distance left eye score.
+ * @returns {Promise} Promise resolving to true if successful.
+ */
+export async function setDistance(id_user, distance) {
+  const date = new Date().toLocaleDateString("fr-FR");
+  const isSuccess = _executeSql(
+    "update user set distance=? where id=(?);",
+    [distance, id_user]
+  );
+  return !!isSuccess;
+}
+
+/**
  * "Fuzzy search" through users.
  *
  * @param {string} recherche search term.
@@ -125,7 +151,7 @@ export async function getUsers() {
  */
 export async function addUser(nom, prenom, sex, date_de_naissance) {
   await _executeSql(
-    "insert into user (nom, prenom, sex, date_de_naissance) values (?,?,?,?);",
+    "insert into user (nom, prenom, sex, date_de_naissance, distance) values (?,?,?,?,-1);",
     [nom, prenom, sex, date_de_naissance]
   );
 }

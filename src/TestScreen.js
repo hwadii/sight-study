@@ -1,8 +1,13 @@
 import React, { Component } from "react";
-import { Button, StyleSheet, Text, View, PixelRatio } from "react-native";
+import { Button, StyleSheet, Text, View, PixelRatio, Image, PermissionsAndroid  } from "react-native";
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
 import * as Font from "expo-font";
+
+import { getDistance } from "../service/db/User";
+import { getId } from "./util";
+
+import QRCodeScanner from "react-native-qrcode-scanner";
 
 const letters = "nckzorhsdv";
 const timeBetweenLetters = 4000;
@@ -41,7 +46,16 @@ export default class TestScreen extends Component {
     // for tests
     tests: {
       hideButtons: false
-    }
+    },
+    
+    // for distance
+    id: '',
+    indication : ' ' ,
+    wellPlaced : false, 
+    wrongEyeCount : 0,
+    eye : '',
+    timer: null,
+    counter: 0
   };
 
   constructor(props) {
@@ -59,16 +73,71 @@ export default class TestScreen extends Component {
     const { status, expires, permissions } = await Permissions.askAsync(
       Permissions.AUDIO_RECORDING
     );
-    console.log(Font.isLoading("optician-sans"));
-    console.log(Font.isLoaded("optician-sans"));
-
+    
+    const currentuser_id = await getId()
     // this.setNextLetterId = setInterval(
     //   () => this.setNextLetter(),
     //   timeBetweenLetters
     // );
     this.setNextLetter();
     // this._startRecognizing();
+
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
+    );
+    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+    const { navigation } = this.props;
+
+    this.setState({
+      id: currentuser_id,
+      distance: await getDistance(currentuser_id)
+    }); 
+    
+    let timer = setInterval(this.tick, 1000);
+    this.setState({timer, eye: navigation.getParam('eye')});
   }
+
+  tick =() => {
+    this.setState({
+      counter: this.state.counter + 1
+    });
+    if (this.state.counter >=2) this.setState({'indication' : "Veuillez vous placer devant l'écran", 'color' : 'black', 'wellPlaced' : false})
+  }
+
+  square = (x) => {
+    return x*x
+  }
+
+  onSuccess = (e) => {
+    if (e.data == "sight-study"){
+      var distance = this.state.distance[0].distance
+      var eps = distance*0.05
+
+      console.log(distance)
+      var limit = 0
+      if (this.state.eye=='left') limit = Math.min(e.bounds.origin[0].y, e.bounds.origin[0].y, e.bounds.origin[0].y);
+      else limit = Math.max(e.bounds.origin[0].y, e.bounds.origin[0].y, e.bounds.origin[0].y);
+
+      if ((limit < e.bounds.height/2 && this.state.eye=='left') || (limit > e.bounds.height/2 && this.state.eye=='right')){
+        var tmp = Math.sqrt(this.square(e.bounds.origin[1].y - e.bounds.origin[0].y) + this.square(e.bounds.origin[1].x - e.bounds.origin[0].x))
+        tmp = tmp + Math.sqrt(this.square(e.bounds.origin[2].y - e.bounds.origin[1].y) + this.square(e.bounds.origin[2].x - e.bounds.origin[1].x))
+        tmp = tmp + Math.sqrt(this.square(e.bounds.origin[0].y - e.bounds.origin[2].y) + this.square(e.bounds.origin[0].x - e.bounds.origin[2].x))
+        tmp = 7520/tmp
+          
+        if (tmp-distance+eps<0) this.setState({'indication' : "Eloignez vous de\n" + parseInt(10*Math.abs(distance-tmp))/10. + " cm", 'wellPlaced' : false, 'wrongEyeCount' : 0, 'counter' : 0 })
+        else{
+          if (tmp-distance-eps>0) this.setState({'indication' : "Rapprochez vous de\n" + parseInt(10*Math.abs(distance-tmp))/10. + " cm", 'wellPlaced' : false, 'wrongEyeCount' : 0, 'counter' : 0 })
+          else this.setState({'indication' : "Parfait, ne bougez plus", 'wellPlaced' : true, 'wrongEyeCount' : 0, 'counter' : 0 })
+        }
+      }else{
+        this.setState({'wrongEyeCount' : this.state.wrongEyeCount+1, 'counter' : 0 })
+      }
+    }
+    else console.log("pas bon qr code")
+    
+    if (this.state.wrongEyeCount >= 4) this.setState({'indication' : "Veuillez tester le bon oeil", 'wellPlaced' : false})
+  }
+
 
   // for tests
   randomize() {
@@ -270,7 +339,7 @@ export default class TestScreen extends Component {
   };
 
   render() {
-    const { letter, lineSize, tests } = this.state;
+    const { letter, lineSize, tests } = this.state;      
     return (
       <View style={styles.container}>
         <Text style={{ fontFamily: "optician-sans", fontSize: lineSize }}>
@@ -288,6 +357,16 @@ export default class TestScreen extends Component {
           title={tests.hideButtons ? "Show" : "Hide"}
           onPress={() => this.toggleButtons()}
         />
+        <Text style={{ fontFamily: "optician-sans", fontSize: 30 }}>
+          {this.state.indication}
+        </Text>
+        <QRCodeScanner
+        onRead={this.onSuccess}
+        vibrate={false}
+        reactivate={true}
+        containerStyle={{position: "absolute", opacity: 0}}
+        cameraType="front"
+      />
       </View>
     );
   }
@@ -295,6 +374,7 @@ export default class TestScreen extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    // position: 'absolute',
     flex: 1,
     justifyContent: "center",
     alignItems: "center"

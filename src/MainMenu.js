@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFullName, getDoctorEmail, getDistance, getTolerance } from "./util";
+import { getFullName, getDoctorEmail} from "./util";
 import Help from "./Help";
 
 export default class MainMenu extends React.Component {
@@ -30,8 +30,8 @@ export default class MainMenu extends React.Component {
         this.setState({
           fullName: await getFullName(),
           doctorEmail: await getDoctorEmail(),
-          distance: await getDistance(),
-          tolerance: await getTolerance()
+          // distance: await getDistance(),
+          // tolerance: await getTolerance()
         });
       }
     );
