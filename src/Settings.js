@@ -6,10 +6,6 @@ import { styles as common } from "./styles/common";
 export default class Settings extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      distance: null,
-      tolerance: null
-    };
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleModifDistance = this.handleModifDistance.bind(this);
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
@@ -21,25 +17,15 @@ export default class Settings extends React.Component {
 
   async handleModifDistance() {
     const { navigate } = this.props.navigation;
-    const { distance, tolerance } = this.state;
-    await setDistance(distance);
-    await setTolerance(tolerance);
     navigate("SetUser");
   }
 
-  async componentDidMount() {
-    this.setState({
-      distance: await getDistance(),
-      tolerance: await getTolerance()
-    });
-  }
+  async componentDidMount() {}
 
   render() {
-    const { distance, tolerance } = this.state;
     return (
       <View style={styles.container}>
         <Form
-          values={[distance, tolerance]}
           navigate={this.props.navigation.navigate}
           handleChange={this.handleChangeField}
           handleModifDistance={this.handleModifDistance}
@@ -50,19 +36,8 @@ export default class Settings extends React.Component {
 }
 
 function Form({ values, handleChange, handleModifDistance }) {
-  const [distance, tolerance] = values;
   return (
     <View style={styles.form}>
-      <Field
-        value={distance}
-        label="Distance"
-        handler={e => handleChange(e, "distance")}
-      />
-      <Field
-        value={tolerance}
-        label="Tolérance"
-        handler={e => handleChange(e, "tolerance")}
-      />
       <TouchableOpacity
         style={styles.confirmButton}
         onPress={() => handleModifDistance()}

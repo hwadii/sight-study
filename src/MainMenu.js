@@ -14,8 +14,6 @@ export default class MainMenu extends React.Component {
     this.state = {
       fullName: null,
       doctorEmail: null,
-      distance: null,
-      tolerance: null
     };
   }
 
@@ -31,9 +29,7 @@ export default class MainMenu extends React.Component {
       async () => {
         this.setState({
           fullName: await getFullName(),
-          doctorEmail: await getDoctorEmail()
-          // distance: await getDistance(),
-          // tolerance: await getTolerance()
+          doctorEmail: await getDoctorEmail(),
         });
       }
     );
@@ -44,12 +40,12 @@ export default class MainMenu extends React.Component {
   }
 
   render() {
-    const { fullName, doctorEmail, distance, tolerance } = this.state;
+    const { fullName, doctorEmail } = this.state;
     return (
       <View style={common.containers}>
         <UserConnected fullName={fullName} />
         <DoctorMail email={doctorEmail} />
-        <Settings distance={distance} tolerance={tolerance} />
+        {/* <Settings distance={distance} tolerance={tolerance} /> */}
         {fullName === null ? null : (
           <TouchableOpacity
             style={common.actionButtons}
@@ -101,25 +97,25 @@ function DoctorMail({ email }) {
   );
 }
 
-function Settings({ distance, tolerance }) {
-  return (
-    <View>
-      {distance ? (
-        <Text style={common.important}>
-          La distance est <Text style={{ fontWeight: "bold" }}>{distance}</Text>
-          .
-        </Text>
-      ) : (
-        <Text style={common.important}>La distance n'est pas configurée.</Text>
-      )}
-      {tolerance ? (
-        <Text style={common.important}>
-          La tolérance est{" "}
-          <Text style={{ fontWeight: "bold" }}>{tolerance}</Text>.
-        </Text>
-      ) : (
-        <Text style={common.important}>La tolerance n'est pas configurée.</Text>
-      )}
-    </View>
-  );
-}
+// function Settings({ distance, tolerance }) {
+//   return (
+//     <View>
+//       {distance ? (
+//         <Text style={common.important}>
+//           La distance est <Text style={{ fontWeight: "bold" }}>{distance}</Text>
+//           .
+//         </Text>
+//       ) : (
+//         <Text style={common.important}>La distance n'est pas configurée.</Text>
+//       )}
+//       {tolerance ? (
+//         <Text style={common.important}>
+//           Le tolerance est{" "}
+//           <Text style={{ fontWeight: "bold" }}>{tolerance}</Text>.
+//         </Text>
+//       ) : (
+//         <Text style={common.important}>La tolerance n'est pas configurée.</Text>
+//       )}
+//     </View>
+//   );
+// }
