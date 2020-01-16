@@ -98,7 +98,7 @@ export async function getFullName() {
  */
 export async function setId(id) {
   try {
-    await AsyncStorage.setItem("id", id);
+    return await AsyncStorage.setItem("id", id);
   } catch (error) {
     console.log(error);
   }
@@ -120,7 +120,7 @@ export async function getId() {
 
 export async function clear() {
   try {
-    await AsyncStorage.clear();
+    return await AsyncStorage.clear();
   } catch {
     console.log("Unable to clear storage");
   }
@@ -128,7 +128,7 @@ export async function clear() {
 
 export async function setDoctorEmail(email) {
   try {
-    await AsyncStorage.setItem("doctor_email", email);
+    return await AsyncStorage.setItem("doctor_email", email);
   } catch {
     console.log("Error setting email");
   }
@@ -144,7 +144,7 @@ export async function getDoctorEmail() {
 
 export async function setDistance(distance) {
   try {
-    await AsyncStorage.setItem("distance", distance);
+    return await AsyncStorage.setItem("distance", distance);
   } catch {
     console.log("Error setting distance");
   }
@@ -160,7 +160,7 @@ export async function getDistance() {
 
 export async function setTolerance(decalage) {
   try {
-    await AsyncStorage.setItem("decalage", decalage);
+    return await AsyncStorage.setItem("decalage", decalage);
   } catch {
     console.log("Error setting decalage");
   }
@@ -202,7 +202,7 @@ async function _send(message) {
   return rawResponse.json();
 }
 
-function createAttachement(fileName, CSVContent) {
+function _createAttachement(fileName, CSVContent) {
   if (!CSVContent) return [];
   return [
     {
@@ -213,7 +213,7 @@ function createAttachement(fileName, CSVContent) {
   ];
 }
 
-async function createMessage(
+async function _createMessage(
   Subject,
   HTMLPart,
   CSVContent = "",
@@ -235,7 +235,7 @@ async function createMessage(
         ],
         Subject,
         HTMLPart,
-        Attachments: createAttachement(fileName, CSVContent)
+        Attachments: _createAttachement(fileName, CSVContent)
       }
     ]
   };
@@ -244,7 +244,7 @@ async function createMessage(
 
 export async function sendWarningEmail(score) {
   const name = await getFullName();
-  const message = await createMessage(
+  const message = await _createMessage(
     `Résultats de ${name}`,
     `Le patient ${name} vient d'obtenir le score de <b>${score}/50</b>.`
   );
@@ -274,7 +274,7 @@ export async function sendSelectedUserResults(userId, fullName) {
   const scoresObtained = await getScore(userId);
   const csvToSend = _buildCsvOne(scoresObtained);
   const fileName = fullName.split(" ").join("");
-  const messageToSend = await createMessage(
+  const messageToSend = await _createMessage(
     `Résultats de ${fullName}`,
     `Voici tous les résultats de ${fullName}.`,
     csvToSend,
@@ -287,7 +287,7 @@ export async function sendSelectedUserResults(userId, fullName) {
 export async function sendAllUsersResults() {
   const allScores = await getScores();
   const csvToSend = _buildCsvAll(allScores);
-  const messageToSend = await createMessage(
+  const messageToSend = await _createMessage(
     `Tous les résultats`,
     `Voici les résultats de tous les utilisateurs.`,
     csvToSend,
