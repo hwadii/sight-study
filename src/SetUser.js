@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Text,
-  View,
+  View
 } from "react-native";
 import * as User from "../service/db/User";
 import { setId, setUserName, getId, formatDate, showAlert } from "./util";

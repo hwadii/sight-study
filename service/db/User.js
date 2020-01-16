@@ -81,8 +81,8 @@ export async function getUser(nom, prenom) {
  * @param {number} id user id.
  * @returns {Promise} Promise resolving to an array of users.
  */
-export async function getUserById(id) {
-  return await _executeSql("select * from user where id=?;", [id]);
+export function getUserById(id) {
+  return _executeSql("select * from user where id=?;", [id]);
 }
 
 /**
@@ -91,23 +91,23 @@ export async function getUserById(id) {
  * @param {string} recherche search term.
  * @returns {Promise} Promise resolving to users satisfiying the search terms.
  */
-export async function getUsersLike(recherche) {
+export function getUsersLike(recherche) {
   if (recherche.length > 0) {
     if (recherche.includes(" ")) {
       const recherche1 = recherche.split(" ")[0];
       const recherche2 = recherche.split(" ")[1];
-      return await _executeSql(
+      return _executeSql(
         "select id, nom, prenom, sex from user where (nom=? and prenom like ?) or (nom like ? and prenom=?) order by prenom ASC;",
         [recherche1, recherche2 + "%", recherche2 + "%", recherche1]
       );
     } else {
-      return await _executeSql(
+      return _executeSql(
         "select id, nom, prenom, sex from user where nom like ? or prenom like ?;",
         [recherche + "%", recherche + "%"]
       );
     }
   } else {
-    return await _executeSql("select id, nom, prenom, sex from user;", []);
+    return _executeSql("select id, nom, prenom, sex from user;", []);
   }
 }
 
@@ -116,8 +116,8 @@ export async function getUsersLike(recherche) {
  *
  * @returns {Promise} Promise resolving to every user.
  */
-export async function getUsers() {
-  return await _executeSql(
+export function getUsers() {
+  return _executeSql(
     "select id, nom, prenom, sex, date_de_naissance from user order by prenom ASC;",
     []
   );
@@ -131,8 +131,8 @@ export async function getUsers() {
  * @param {string} sex user's sex.
  * @param {string} date_de_naissance user's date of birth.
  */
-export async function addUser(nom, prenom, sex, date_de_naissance) {
-  await _executeSql(
+export function addUser(nom, prenom, sex, date_de_naissance) {
+  _executeSql(
     "insert into user (nom, prenom, sex, date_de_naissance) values (?,?,?,?);",
     [nom, prenom, sex, date_de_naissance]
   );
@@ -142,14 +142,9 @@ export async function addUser(nom, prenom, sex, date_de_naissance) {
  * Removes user by id.
  *
  * @param {number} id user id.
- * @returns {Promise} Promise resolving to true if successful.
  */
-export async function removeUser(id) {
-  /**
-   * @type {Array}
-   */
-  const result = await _executeSql("delete from user where id=?;", [id]);
-  return !!result.length;
+export function removeUser(id) {
+  _executeSql("delete from user where id=?;", [id]);
 }
 
 /**
@@ -160,7 +155,7 @@ export async function removeUser(id) {
  * @param {number} oeil_droit right eye score.
  * @returns {Promise} Promise resolving to true if successful.
  */
-export async function addScore(id_user, oeil_gauche, oeil_droit) {
+export function addScore(id_user, oeil_gauche, oeil_droit) {
   const date = new Date().toLocaleDateString("fr-FR");
   const isSuccess = _executeSql(
     "insert into score (id_user, date, oeil_gauche, oeil_droit) values (?,?,?,?);",
@@ -175,9 +170,15 @@ export async function addScore(id_user, oeil_gauche, oeil_droit) {
  * @param {number} id user id.
  * @returns {Promise} Promise that resolves to score of user `id`.
  */
-export async function getScore(id) {
-  return await _executeSql(
+export function getScore(id) {
+  return _executeSql(
     "select date, oeil_gauche, oeil_droit from score where id_user=? order by date ASC",
     [id]
+  );
+}
+
+export function getScores() {
+  return _executeSql(
+    "select user.nom, user.prenom, score.id_user, score.date, score.oeil_gauche, score.oeil_droit from score inner join user on user.id=score.id_user"
   );
 }

@@ -1,7 +1,14 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Button } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFullName, getDoctorEmail, getDistance, getTolerance } from "./util";
+import {
+  getFullName,
+  getDoctorEmail,
+  getDistance,
+  getTolerance,
+  sendCurrentUserResults,
+  sendAllUsersResults
+} from "./util";
 import Help from "./Help";
 
 export default class MainMenu extends React.Component {
@@ -23,7 +30,7 @@ export default class MainMenu extends React.Component {
     if (action === "TEST") this.props.navigation.navigate("Menu");
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.willFocusSub = this.props.navigation.addListener(
       "willFocus",
       async () => {
@@ -62,6 +69,10 @@ export default class MainMenu extends React.Component {
         >
           <Text style={common.actionButtonsText}>Réglages</Text>
         </TouchableOpacity>
+        <Button
+          title="current user results"
+          onPress={() => sendAllUsersResults()}
+        />
       </View>
     );
   }
@@ -112,8 +123,8 @@ function Settings({ distance, tolerance }) {
       )}
       {tolerance ? (
         <Text style={common.important}>
-          Le tolerance est <Text style={{ fontWeight: "bold" }}>{tolerance}</Text>
-          .
+          Le tolerance est{" "}
+          <Text style={{ fontWeight: "bold" }}>{tolerance}</Text>.
         </Text>
       ) : (
         <Text style={common.important}>La tolerance n'est pas configurée.</Text>

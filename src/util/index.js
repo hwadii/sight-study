@@ -1,7 +1,12 @@
 import { AsyncStorage, Alert } from "react-native";
 import base64 from "./base64";
-import { getUser as getUserFromDb } from "../../service/db/User";
 import { format } from "date-fns";
+import {
+  getUser as getUserFromDb,
+  getScore,
+  getIds,
+  getScores
+} from "../../service/db/User";
 
 // General
 /**
@@ -169,9 +174,10 @@ export async function getTolerance() {
   }
 }
 
-export async function sendMail(score) {
-  const to = await getDoctorEmail();
-  let name = await getFullName();
+const mailApi = "https://api.mailjet.com/v3.1/send";
+const headers = _createHeaders();
+
+function _createHeaders() {
   const headers = new Headers();
   headers.set(
     "Authorization",
@@ -183,27 +189,109 @@ export async function sendMail(score) {
       )
   );
   headers.set("Content-Type", "application/json");
-  const rawResponse = await fetch("https://api.mailjet.com/v3.1/send", {
+  return headers;
+}
+
+// TODO: check if results did not get sent.
+async function _send(message) {
+  const rawResponse = await fetch(mailApi, {
     method: "POST",
-    headers: headers,
-    body: JSON.stringify({
-      Messages: [
-        {
-          From: {
-            Email: "sightstudyapp@gmail.com",
-            Name: "Sight Study"
-          },
-          To: [
-            {
-              Email: to,
-              Name: name
-            }
-          ],
-          Subject: `Résultats de ${name}`,
-          HTMLPart: `Le patient ${name} vient d'obtenir le score de <b>${score}/50</b>.`
-        }
-      ]
-    })
+    headers,
+    body: message
   });
   return rawResponse.json();
+}
+
+function createAttachement(fileName, CSVContent) {
+  if (!CSVContent) return [];
+  return [
+    {
+      ContentType: "text/csv",
+      Filename: `${fileName}.csv`,
+      Base64Content: base64.encode(CSVContent)
+    }
+  ];
+}
+
+async function createMessage(
+  Subject,
+  HTMLPart,
+  CSVContent = "",
+  fileName = ""
+) {
+  const to = await getDoctorEmail();
+  const message = {
+    Messages: [
+      {
+        From: {
+          Email: "sightstudyapp@gmail.com",
+          Name: "Sight Study"
+        },
+        To: [
+          {
+            Email: to,
+            Name: "Médecin"
+          }
+        ],
+        Subject,
+        HTMLPart,
+        Attachments: createAttachement(fileName, CSVContent)
+      }
+    ]
+  };
+  return JSON.stringify(message);
+}
+
+export async function sendWarningEmail(score) {
+  const name = await getFullName();
+  const message = await createMessage(
+    `Résultats de ${name}`,
+    `Le patient ${name} vient d'obtenir le score de <b>${score}/50</b>.`
+  );
+  return _send(message);
+}
+
+function _buildCsvOne(scores) {
+  let csvContent = "Date,Oeil droit,Oeil gauche\r\n";
+  for (const row of scores) {
+    const { date, oeil_droit, oeil_gauche } = row;
+    csvContent += `${date},${oeil_droit},${oeil_gauche}\r\n`;
+  }
+  return csvContent;
+}
+
+function _buildCsvAll(scores) {
+  let csvContent = "Patient,Oeil droit,Oeil gauche,Date\r\n";
+  for (const row of scores) {
+    const { nom, prenom, oeil_droit, oeil_gauche, date } = row;
+    csvContent += `${prenom} ${nom},${oeil_droit},${oeil_gauche},${date}\r\n`;
+  }
+  console.log(csvContent);
+  return csvContent;
+}
+
+export async function sendSelectedUserResults(userId, fullName) {
+  const scoresObtained = await getScore(userId);
+  const csvToSend = _buildCsvOne(scoresObtained);
+  const fileName = fullName.split(" ").join("");
+  const messageToSend = await createMessage(
+    `Résultats de ${fullName}`,
+    `Voici tous les résultats de ${fullName}.`,
+    csvToSend,
+    fileName
+  );
+  return _send(messageToSend);
+}
+
+// TODO: le csv doit former autant d'entetes que necessaire
+export async function sendAllUsersResults() {
+  const allScores = await getScores();
+  const csvToSend = _buildCsvAll(allScores);
+  const messageToSend = await createMessage(
+    `Tous les résultats`,
+    `Voici les résultats de tous les utilisateurs.`,
+    csvToSend,
+    "tous-les-resultats"
+  );
+  return _send(messageToSend);
 }

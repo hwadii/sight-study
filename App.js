@@ -11,6 +11,7 @@ import SetDoctor from "./src/SetDoctor";
 import Settings from "./src/Settings";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
+import { initDB } from "./service/db/User";
 
 const Routes = {
   SetUser,

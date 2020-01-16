@@ -1,14 +1,21 @@
 import React from "react";
-import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  TextInput,
+  TouchableOpacity
+} from "react-native";
 import { scale } from "react-native-size-matters";
 import { styles as common } from "./styles/common";
-import { setDistance, setTolerance, getDistance, getTolerance } from "./util";
+import { setDistance, setTolerance } from "./util";
 
 export default class Settings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      distance: null, 
+      distance: null,
       tolerance: null
     };
     this.handleChangeField = this.handleChangeField.bind(this);
@@ -32,11 +39,11 @@ export default class Settings extends React.Component {
     this.setState({
       distance: await getDistance(),
       tolerance: await getTolerance()
-    })
+    });
   }
 
   render() {
-    const {distance, tolerance} = this.state;
+    const { distance, tolerance } = this.state;
     return (
       <View style={styles.container}>
         <Form
@@ -54,8 +61,16 @@ function Form({ values, handleChange, handleModifDistance }) {
   const [distance, tolerance] = values;
   return (
     <View style={styles.form}>
-      <Field value={distance} label="Distance" handler={e => handleChange(e, "distance")} />
-      <Field value={tolerance} label="Tolérance" handler={e => handleChange(e, "tolerance")} />
+      <Field
+        value={distance}
+        label="Distance"
+        handler={e => handleChange(e, "distance")}
+      />
+      <Field
+        value={tolerance}
+        label="Tolérance"
+        handler={e => handleChange(e, "tolerance")}
+      />
       <TouchableOpacity
         style={styles.confirmButton}
         onPress={() => handleModifDistance()}
