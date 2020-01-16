@@ -59,7 +59,7 @@ export function resetDB() {
  * @returns {Promise} Promise reolving to user id or null if user does not exist.
  */
 export async function getUser(nom, prenom) {
-  if (!nom || !prenom) return null;
+  if (!nom || !prenom) return null; // return early if null
   const usersWithId = await _executeSql(
     "select id from user where nom=? and prenom=?;",
     [nom, prenom]
@@ -73,8 +73,32 @@ export async function getUser(nom, prenom) {
  * @param {number} id user id.
  * @returns {Promise} Promise resolving to an array of users.
  */
-export function getUserById(id) {
-  return _executeSql("select * from user where id=?;", [id]);
+export async function getUserById(id) {
+  return await _executeSql("select * from user where id=?;", [id]);
+}
+
+/**
+ * Gets distance by id.
+ *
+ * @param {number} id user id.
+ * @returns {Promise} Promise resolving to an array of users.
+ */
+export async function getDistance(id) {
+  return _executeSql("select distance from user where id=?;", [id]);
+}
+
+/**
+ * Set distance for a user.
+ *
+ * @param {number} id_user user id.
+ * @param {number} distance left eye score.
+ * @returns {Promise} Promise resolving to true if successful.
+ */
+export async function setDistance(id_user, distance) {
+  return _executeSql("update user set distance=? where id=(?);", [
+    distance,
+    id_user
+  ]);
 }
 
 /**
