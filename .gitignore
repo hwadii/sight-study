@@ -4,9 +4,6 @@ node_modules
 .expo-source/
 build
 .gradle
-local.properties
+android/local.properties
 .*
-<<<<<<< HEAD
-=======
 release-key*
->>>>>>> voice

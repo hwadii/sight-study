@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, Text, View, Dimensions, TextInput, TouchableOpacity } from "react-native";
 import { scale } from "react-native-size-matters";
 import { styles as common } from "./styles/common";
-import { setDistance, setTolerance, getDistance, getTolerance } from "./util";
 
 export default class Settings extends React.Component {
   constructor(props) {
@@ -26,13 +25,6 @@ export default class Settings extends React.Component {
     await setDistance(distance);
     await setTolerance(tolerance);
     navigate("SetUser");
-  }
-
-  async componentDidMount() {
-    this.setState({
-      distance: await getDistance(),
-      tolerance: await getTolerance()
-    })
   }
 
   render() {
