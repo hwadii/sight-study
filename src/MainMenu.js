@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Button } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFullName, getDoctorEmail, getDistance, getTolerance } from "./util";
+import { getFullName, getDoctorEmail } from "./util";
 import Help from "./Help";
 
 export default class MainMenu extends React.Component {
@@ -13,8 +13,6 @@ export default class MainMenu extends React.Component {
     this.state = {
       fullName: null,
       doctorEmail: null,
-      distance: null,
-      tolerance: null
     };
   }
 
@@ -30,8 +28,6 @@ export default class MainMenu extends React.Component {
         this.setState({
           fullName: await getFullName(),
           doctorEmail: await getDoctorEmail(),
-          distance: await getDistance(),
-          tolerance: await getTolerance()
         });
       }
     );
@@ -42,12 +38,12 @@ export default class MainMenu extends React.Component {
   }
 
   render() {
-    const { fullName, doctorEmail, distance, tolerance } = this.state;
+    const { fullName, doctorEmail } = this.state;
     return (
       <View style={common.containers}>
         <UserConnected fullName={fullName} />
         <DoctorMail email={doctorEmail} />
-        <Settings distance={distance} tolerance={tolerance} />
+        {/* <Settings distance={distance} tolerance={tolerance} /> */}
         {fullName === null ? null : (
           <TouchableOpacity
             style={common.actionButtons}
@@ -99,25 +95,25 @@ function DoctorMail({ email }) {
   );
 }
 
-function Settings({ distance, tolerance }) {
-  return (
-    <View>
-      {distance ? (
-        <Text style={common.important}>
-          La distance est <Text style={{ fontWeight: "bold" }}>{distance}</Text>
-          .
-        </Text>
-      ) : (
-        <Text style={common.important}>La distance n'est pas configurée.</Text>
-      )}
-      {tolerance ? (
-        <Text style={common.important}>
-          Le tolerance est{" "}
-          <Text style={{ fontWeight: "bold" }}>{tolerance}</Text>.
-        </Text>
-      ) : (
-        <Text style={common.important}>La tolerance n'est pas configurée.</Text>
-      )}
-    </View>
-  );
-}
+// function Settings({ distance, tolerance }) {
+//   return (
+//     <View>
+//       {distance ? (
+//         <Text style={common.important}>
+//           La distance est <Text style={{ fontWeight: "bold" }}>{distance}</Text>
+//           .
+//         </Text>
+//       ) : (
+//         <Text style={common.important}>La distance n'est pas configurée.</Text>
+//       )}
+//       {tolerance ? (
+//         <Text style={common.important}>
+//           Le tolerance est{" "}
+//           <Text style={{ fontWeight: "bold" }}>{tolerance}</Text>.
+//         </Text>
+//       ) : (
+//         <Text style={common.important}>La tolerance n'est pas configurée.</Text>
+//       )}
+//     </View>
+//   );
+// }

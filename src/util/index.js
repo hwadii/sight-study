@@ -142,38 +142,6 @@ export async function getDoctorEmail() {
   }
 }
 
-export async function setDistance(distance) {
-  try {
-    return await AsyncStorage.setItem("distance", distance);
-  } catch {
-    console.log("Error setting distance");
-  }
-}
-
-export async function getDistance() {
-  try {
-    return await AsyncStorage.getItem("distance");
-  } catch {
-    console.log("Error getting distance");
-  }
-}
-
-export async function setTolerance(decalage) {
-  try {
-    return await AsyncStorage.setItem("decalage", decalage);
-  } catch {
-    console.log("Error setting decalage");
-  }
-}
-
-export async function getTolerance() {
-  try {
-    return await AsyncStorage.getItem("decalage");
-  } catch {
-    console.log("Error getting decalage");
-  }
-}
-
 const mailApi = "https://api.mailjet.com/v3.1/send";
 const headers = _createHeaders();
 
