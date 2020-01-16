@@ -1,9 +1,15 @@
 import React from "react";
-import { StyleSheet, Text, View, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  TextInput,
+  TouchableOpacity
+} from "react-native";
 import { scale } from "react-native-size-matters";
-import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { styles as common } from "./styles/common";
-import { setDistance, setDecalage } from "./util/util";
+import { setDistance, setDecalage } from "./util";
 
 export default class Settings extends React.Component {
   constructor(props) {

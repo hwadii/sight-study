@@ -1,6 +1,6 @@
 import React from "react";
 import Card from "./Card";
-import { Text, StyleSheet, View, Button, Linking } from "react-native";
+import { Text, StyleSheet, View, Button } from "react-native";
 import { styles as common } from "./styles/common";
 import { getFirstName, sendMail } from "./util";
 import Help from "./Help";

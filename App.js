@@ -8,8 +8,10 @@ import TestScreen from "./src/TestScreen";
 import Menu from "./src/Menu";
 import MainMenu from "./src/MainMenu";
 import SetDoctor from "./src/SetDoctor";
+import Settings from "./src/Settings";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
+import { initDB } from "./service/db/User";
 
 const Routes = {
   SetUser,
@@ -19,7 +21,8 @@ const Routes = {
   TestScreen,
   Menu,
   MainMenu,
-  SetDoctor
+  SetDoctor,
+  Settings
 };
 
 const MainNavigator = createStackNavigator(

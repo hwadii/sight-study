@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { styles as common } from "./styles/common";
-import { setDoctorEmail } from "./util";
+import { setDoctorEmail, getDoctorEmail } from "./util";
 
 // IMPORTANT: remove this garbage and merge with addUser
 
@@ -16,6 +16,10 @@ export default class SetDoctor extends React.Component {
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleModifMedecin = this.handleModifMedecin.bind(this);
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
+  }
+
+  async componentDidMount() {
+    this.setState({ mail: await getDoctorEmail() });
   }
 
   handleChangeField(e, field) {

@@ -109,7 +109,9 @@ export default class SetUser extends React.Component {
             onPress={() => navigate("Settings")}
             style={styles.actionButtons}
           >
-            <Text style={common.actionButtonsText}>Parametre de l'application</Text>
+            <Text style={common.actionButtonsText}>
+              Parametre de l'application
+            </Text>
           </TouchableOpacity>
         </View>
         <UsersList

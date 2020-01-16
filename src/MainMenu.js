@@ -1,7 +1,14 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Button } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFullName, getDoctorEmail, getDistance, getDecalage } from "./util";
+import {
+  getFullName,
+  getDoctorEmail,
+  getDistance,
+  getDecalage,
+  sendCurrentUserResults,
+  sendAllUsersResults
+} from "./util";
 import Help from "./Help";
 
 export default class MainMenu extends React.Component {
@@ -17,18 +24,6 @@ export default class MainMenu extends React.Component {
       distance: null,
       decalage: null
     };
-    this.props.navigation.addListener("willFocus", async () => {
-      const userName = await getFullName();
-      const mail = await getDoctorEmail();
-      const distance = await getDistance();
-      const decalage = await getDecalage();
-      this.setState({
-        fullName: userName,
-        doctorEmail: mail,
-        distance: distance,
-        decalage: decalage
-      });
-    });
   }
 
   handleAction(action) {
@@ -36,13 +31,15 @@ export default class MainMenu extends React.Component {
     if (action === "TEST") this.props.navigation.navigate("Menu");
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.willFocusSub = this.props.navigation.addListener(
       "willFocus",
       async () => {
         this.setState({
           fullName: await getFullName(),
-          doctorEmail: await getDoctorEmail()
+          doctorEmail: await getDoctorEmail(),
+          distance: await getDistance(),
+          decalage: await getDecalage()
         });
       }
     );
@@ -73,6 +70,10 @@ export default class MainMenu extends React.Component {
         >
           <Text style={common.actionButtonsText}>Réglages</Text>
         </TouchableOpacity>
+        <Button
+          title="current user results"
+          onPress={() => sendAllUsersResults()}
+        />
       </View>
     );
   }
