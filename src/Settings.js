@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { scale } from "react-native-size-matters";
 import { styles as common } from "./styles/common";
-import { setDistance, setTolerance } from "./util";
+import { getDistance, getTolerance, setDistance, setTolerance } from "./util";
 
 export default class Settings extends React.Component {
   constructor(props) {

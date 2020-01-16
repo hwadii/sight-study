@@ -1,14 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Button } from "react-native";
 import { styles as common } from "./styles/common";
-import {
-  getFullName,
-  getDoctorEmail,
-  getDistance,
-  getTolerance,
-  sendCurrentUserResults,
-  sendAllUsersResults
-} from "./util";
+import { getFullName, getDoctorEmail, getDistance, getTolerance } from "./util";
 import Help from "./Help";
 
 export default class MainMenu extends React.Component {
@@ -69,10 +62,6 @@ export default class MainMenu extends React.Component {
         >
           <Text style={common.actionButtonsText}>Réglages</Text>
         </TouchableOpacity>
-        <Button
-          title="current user results"
-          onPress={() => sendAllUsersResults()}
-        />
       </View>
     );
   }

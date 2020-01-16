@@ -34,39 +34,35 @@ export default class SetDoctor extends React.Component {
   }
 
   render() {
+    const { mail } = this.state;
     return (
       <View style={styles.container}>
         <Text style={styles.header}>Modification Mail Medecin</Text>
-        <Form
-          navigate={this.props.navigation.navigate}
-          handleChange={this.handleChangeField}
-          handleModifMedecin={this.handleModifMedecin}
-        />
+        <View style={styles.form}>
+          <Field
+            value={mail}
+            label="Mail"
+            handler={e => this.handleChangeField(e, "mail")}
+          />
+          <TouchableOpacity
+            style={styles.confirmButton}
+            onPress={() => this.handleModifMedecin()}
+          >
+            <Text style={styles.confirmButtonText}>CONFIRMER</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
 }
 
-function Form({ handleChange, handleModifMedecin }) {
-  return (
-    <View style={styles.form}>
-      <Field label="Mail" handler={e => handleChange(e, "mail")} />
-      <TouchableOpacity
-        style={styles.confirmButton}
-        onPress={() => handleModifMedecin()}
-      >
-        <Text style={styles.confirmButtonText}>CONFIRMER</Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
-
-function Field({ label, handler }) {
+function Field({ value, label, handler }) {
   return (
     <>
       <Text style={common.inputsLabels}>{label}</Text>
       <TextInput
         style={common.inputs}
+        defaultValue={value}
         autoCorrect={false}
         placeholder={`Entrez le ${label.toLowerCase()}`}
         onChange={handler}
