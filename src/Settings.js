@@ -7,7 +7,7 @@ export default class Settings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      distance: null, 
+      distance: null,
       tolerance: null
     };
     this.handleChangeField = this.handleChangeField.bind(this);
@@ -27,8 +27,15 @@ export default class Settings extends React.Component {
     navigate("SetUser");
   }
 
+  async componentDidMount() {
+    this.setState({
+      distance: await getDistance(),
+      tolerance: await getTolerance()
+    });
+  }
+
   render() {
-    const {distance, tolerance} = this.state;
+    const { distance, tolerance } = this.state;
     return (
       <View style={styles.container}>
         <Form
@@ -46,8 +53,16 @@ function Form({ values, handleChange, handleModifDistance }) {
   const [distance, tolerance] = values;
   return (
     <View style={styles.form}>
-      <Field value={distance} label="Distance" handler={e => handleChange(e, "distance")} />
-      <Field value={tolerance} label="Tolérance" handler={e => handleChange(e, "tolerance")} />
+      <Field
+        value={distance}
+        label="Distance"
+        handler={e => handleChange(e, "distance")}
+      />
+      <Field
+        value={tolerance}
+        label="Tolérance"
+        handler={e => handleChange(e, "tolerance")}
+      />
       <TouchableOpacity
         style={styles.confirmButton}
         onPress={() => handleModifDistance()}

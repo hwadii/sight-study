@@ -6,19 +6,9 @@
 
 # Install app (deploy)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-...
-=======
 1. `expo publish`
 2. `cd android && ./gradlew assembleRelease`
 3. `adb install -r app/build/outputs/apk/release/app-release.apk`
->>>>>>> voice
-=======
-1. `expo publish`
-2. `cd android && ./gradlew assembleRelease`
-3. `adb install -r app/build/outputs/apk/release/app-release.apk`
->>>>>>> f2e4cdf4b7c052ff78d4b263d6d113ccd227e880
 
 # Offline speech recognition
 

@@ -7,11 +7,18 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Text,
+<<<<<<< HEAD
   View,
   Alert
 } from "react-native";
 import * as User from "../service/db/User";
 import { setId, setUserName, getId } from "./util";
+=======
+  View
+} from "react-native";
+import * as User from "../service/db/User";
+import { setId, setUserName, getId, formatDate, showAlert } from "./util";
+>>>>>>> origin/master
 import { styles as common, colors } from "./styles/common";
 
 export default class SetUser extends React.Component {
@@ -52,6 +59,7 @@ export default class SetUser extends React.Component {
   async handleSelect(id, user) {
     await setId(id.toString());
     await setUserName(user);
+<<<<<<< HEAD
     Alert.alert(
       "Configuration de la tablette",
       `La tablette est configurée pour ${user.prenom} ${user.nom}.`,
@@ -61,11 +69,17 @@ export default class SetUser extends React.Component {
           onPress: () => this.setState({ currentUserId: id })
         }
       ]
+=======
+    showAlert(
+      `La tablette est configurée pour ${user.prenom} ${user.nom}.`,
+      () => this.setState({ currentUserId: id })
+>>>>>>> origin/master
     );
   }
 
   handleDelete(id, user) {
     const { users: oldUsersList } = this.state;
+<<<<<<< HEAD
     Alert.alert(
       "Configuration de la tablette",
       `Le patient ${user.prenom} ${user.nom} va être supprimé.`,
@@ -84,6 +98,17 @@ export default class SetUser extends React.Component {
           }
         }
       ]
+=======
+    showAlert(
+      `Le patient ${user.prenom} ${user.nom} va être supprimé.`,
+      () => {
+        User.removeUser(id);
+        this.setState({
+          users: oldUsersList.filter(user => user.id !== id)
+        });
+      },
+      [{ text: "Annuler" }]
+>>>>>>> origin/master
     );
   }
 
@@ -109,7 +134,13 @@ export default class SetUser extends React.Component {
             onPress={() => navigate("Settings")}
             style={styles.actionButtons}
           >
+<<<<<<< HEAD
             <Text style={common.actionButtonsText}>Paramètre de l'application</Text>
+=======
+            <Text style={common.actionButtonsText}>
+              Paramètre de l'application
+            </Text>
+>>>>>>> origin/master
           </TouchableOpacity>
         </View>
         <UsersList
@@ -168,7 +199,11 @@ function UserElement({ user, currentUserId, handleDelete, handleSelect }) {
   return (
     <TouchableHighlight
       underlayColor="#f5f5f5"
+<<<<<<< HEAD
       style={{ backgroundColor: isSelected ? "#f5f5f5" : "#fff" }}
+=======
+      style={{ backgroundColor: isSelected ? "#e8e8e8" : "#fff" }}
+>>>>>>> origin/master
       onPress={() => handleSelect(id, user)}
     >
       <View style={styles.userBox}>
@@ -179,7 +214,11 @@ function UserElement({ user, currentUserId, handleDelete, handleSelect }) {
           ({sex === "F" ? "Femme" : "Homme"})
         </Text>
         <Text style={{ fontSize: 18 }}>
+<<<<<<< HEAD
           {new Date(date_de_naissance).toLocaleDateString()}
+=======
+          {formatDate(new Date(date_de_naissance))}
+>>>>>>> origin/master
         </Text>
         <View style={styles.actions}>
           <Button title="Exporter" color={colors.PRIMARY} />
@@ -201,10 +240,13 @@ const styles = StyleSheet.create({
   noAccount: {
     flexDirection: "row",
     justifyContent: "center",
+<<<<<<< HEAD
     paddingBottom: 5
   },
   noAccountText: {
     fontSize: 20,
+=======
+>>>>>>> origin/master
     marginVertical: 10
   },
   actions: {
@@ -214,11 +256,19 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
+<<<<<<< HEAD
+=======
+    alignItems: "center",
+>>>>>>> origin/master
     padding: 18,
     paddingTop: 26,
     paddingBottom: 26,
     borderBottomWidth: 2,
+<<<<<<< HEAD
     borderBottomColor: "#f5f5f5"
+=======
+    borderBottomColor: "#e8e8e8"
+>>>>>>> origin/master
   },
   userText: {
     fontSize: 18,

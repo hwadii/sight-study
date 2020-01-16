@@ -1,9 +1,16 @@
 import React from "react";
+<<<<<<< HEAD
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles as common } from "./styles/common";
 import { getFullName, getDoctorEmail} from "./util";
 import Help from "./Help";
 import SystemSetting from 'react-native-system-setting'
+=======
+import { View, Text, TouchableOpacity, Button } from "react-native";
+import { styles as common } from "./styles/common";
+import { getFullName, getDoctorEmail, getDistance, getTolerance } from "./util";
+import Help from "./Help";
+>>>>>>> origin/master
 
 export default class MainMenu extends React.Component {
   static navigationOptions = {
@@ -24,19 +31,31 @@ export default class MainMenu extends React.Component {
     if (action === "TEST") this.props.navigation.navigate("Menu");
   }
 
+<<<<<<< HEAD
   componentDidMount() {
+=======
+  async componentDidMount() {
+>>>>>>> origin/master
     this.willFocusSub = this.props.navigation.addListener(
       "willFocus",
       async () => {
         this.setState({
           fullName: await getFullName(),
           doctorEmail: await getDoctorEmail(),
+<<<<<<< HEAD
           // distance: await getDistance(),
           // tolerance: await getTolerance()
         });
       }
     );
     SystemSetting.setVolume(1);
+=======
+          distance: await getDistance(),
+          tolerance: await getTolerance()
+        });
+      }
+    );
+>>>>>>> origin/master
   }
 
   componentWillUnmount() {
@@ -114,8 +133,13 @@ function Settings({ distance, tolerance }) {
       )}
       {tolerance ? (
         <Text style={common.important}>
+<<<<<<< HEAD
           Le tolerance est <Text style={{ fontWeight: "bold" }}>{tolerance}</Text>
           .
+=======
+          Le tolerance est{" "}
+          <Text style={{ fontWeight: "bold" }}>{tolerance}</Text>.
+>>>>>>> origin/master
         </Text>
       ) : (
         <Text style={common.important}>La tolerance n'est pas configurée.</Text>
