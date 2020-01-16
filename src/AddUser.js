@@ -5,21 +5,14 @@ import {
   View,
   Dimensions,
   DatePickerAndroid,
-<<<<<<< HEAD
-  Picker
-=======
   Picker,
   TouchableHighlight
->>>>>>> origin/master
 } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import * as User from "../service/db/User";
 import { styles as common } from "./styles/common";
-<<<<<<< HEAD
-=======
 import { formatDate } from "./util";
->>>>>>> origin/master
 
 export default class AddUser extends React.Component {
   constructor(props) {
@@ -50,16 +43,10 @@ export default class AddUser extends React.Component {
   }
 
   async showDatePickerAndSet() {
-<<<<<<< HEAD
-    try {
-      const { action, year, month, day } = await DatePickerAndroid.open({
-        date: new Date(1980, 4, 25)
-=======
     const { date } = this.state;
     try {
       const { action, year, month, day } = await DatePickerAndroid.open({
         date: date || new Date(1981, 1, 1)
->>>>>>> origin/master
       });
       if (action !== DatePickerAndroid.dismissedAction) {
         this.handleChangeField(new Date(year, month, day), "date");
@@ -106,13 +93,6 @@ function Form({ handleChange, userInfo, showDatePickerAndSet }) {
         label="Nom"
         handleOnChange={e => handleChange(e, "nom")}
       />
-<<<<<<< HEAD
-      <Field
-        label="Date de naissance"
-        value={date}
-        handleOnFocus={() => showDatePickerAndSet()}
-      />
-=======
       <Text style={common.inputsLabels}>Date de naissance</Text>
       <TouchableHighlight
         underlayColor="#fff"
@@ -120,7 +100,6 @@ function Form({ handleChange, userInfo, showDatePickerAndSet }) {
       >
         <Text style={common.inputViews}>{date && formatDate(date)}</Text>
       </TouchableHighlight>
->>>>>>> origin/master
       <Select
         label="Sexe"
         value={sex}
@@ -155,31 +134,19 @@ function Select({ label, handleOnChange, value, children }) {
   return (
     <>
       <Text style={common.inputsLabels}>{label}</Text>
-<<<<<<< HEAD
-      <Picker selectedValue={value} onValueChange={handleOnChange}>
-        {children}
-      </Picker>
-=======
       <View style={common.inputs}>
         <Picker selectedValue={value} onValueChange={handleOnChange}>
           {children}
         </Picker>
       </View>
->>>>>>> origin/master
     </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-<<<<<<< HEAD
-    flex: 1,
-    alignItems: "center",
-    marginTop: 15
-=======
     alignItems: "center",
     paddingBottom: 15
->>>>>>> origin/master
   },
   form: {
     width: scale(320),

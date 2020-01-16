@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-import { AsyncStorage } from "react-native";
-import base64 from "./base64";
-import { getUser as getUserFromDb } from "../../service/db/User";
-
-=======
 import { AsyncStorage, Alert } from "react-native";
 import base64 from "./base64";
 import { format } from "date-fns";
@@ -46,7 +40,6 @@ export function showAlert(
 }
 
 // AsyncStorage
->>>>>>> origin/master
 /**
  * Set current user name
  */
@@ -105,11 +98,7 @@ export async function getFullName() {
  */
 export async function setId(id) {
   try {
-<<<<<<< HEAD
-    await AsyncStorage.setItem("id", id);
-=======
     return await AsyncStorage.setItem("id", id);
->>>>>>> origin/master
   } catch (error) {
     console.log(error);
   }
@@ -131,11 +120,7 @@ export async function getId() {
 
 export async function clear() {
   try {
-<<<<<<< HEAD
-    await AsyncStorage.clear();
-=======
     return await AsyncStorage.clear();
->>>>>>> origin/master
   } catch {
     console.log("Unable to clear storage");
   }
@@ -143,11 +128,7 @@ export async function clear() {
 
 export async function setDoctorEmail(email) {
   try {
-<<<<<<< HEAD
-    await AsyncStorage.setItem("doctor_email", email);
-=======
     return await AsyncStorage.setItem("doctor_email", email);
->>>>>>> origin/master
   } catch {
     console.log("Error setting email");
   }
@@ -161,11 +142,6 @@ export async function getDoctorEmail() {
   }
 }
 
-<<<<<<< HEAD
-export async function sendMail(score) {
-  const to = await getDoctorEmail();
-  let name = await getFullName();
-=======
 export async function setDistance(distance) {
   try {
     return await AsyncStorage.setItem("distance", distance);
@@ -202,7 +178,6 @@ const mailApi = "https://api.mailjet.com/v3.1/send";
 const headers = _createHeaders();
 
 function _createHeaders() {
->>>>>>> origin/master
   const headers = new Headers();
   headers.set(
     "Authorization",
@@ -214,32 +189,6 @@ function _createHeaders() {
       )
   );
   headers.set("Content-Type", "application/json");
-<<<<<<< HEAD
-  const rawResponse = await fetch("https://api.mailjet.com/v3.1/send", {
-    method: "POST",
-    headers: headers,
-    body: JSON.stringify({
-      Messages: [
-        {
-          From: {
-            Email: "sightstudyapp@gmail.com",
-            Name: "Sight Study"
-          },
-          To: [
-            {
-              Email: to,
-              Name: name
-            }
-          ],
-          Subject: `Résultats de ${name}`,
-          HTMLPart: `Le patient ${name} vient d'obtenir le score de <b>${score}/50</b>.`
-        }
-      ]
-    })
-  });
-  return rawResponse.json();
-}
-=======
   return headers;
 }
 
@@ -346,4 +295,3 @@ export async function sendAllUsersResults() {
   );
   return _send(messageToSend);
 }
->>>>>>> origin/master

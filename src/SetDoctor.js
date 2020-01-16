@@ -3,11 +3,7 @@ import { StyleSheet, Text, View, Dimensions } from "react-native";
 import { scale } from "react-native-size-matters";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { styles as common } from "./styles/common";
-<<<<<<< HEAD
-import { setDoctorEmail } from "./util";
-=======
 import { setDoctorEmail, getDoctorEmail } from "./util";
->>>>>>> origin/master
 
 // IMPORTANT: remove this garbage and merge with addUser
 
@@ -22,13 +18,10 @@ export default class SetDoctor extends React.Component {
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
   }
 
-<<<<<<< HEAD
-=======
   async componentDidMount() {
     this.setState({ mail: await getDoctorEmail() });
   }
 
->>>>>>> origin/master
   handleChangeField(e, field) {
     this.setState({ [field]: e.nativeEvent.text });
   }
@@ -41,16 +34,6 @@ export default class SetDoctor extends React.Component {
   }
 
   render() {
-<<<<<<< HEAD
-    return (
-      <View style={styles.container}>
-        <Text style={styles.header}>Modification Mail Medecin</Text>
-        <Form
-          navigate={this.props.navigation.navigate}
-          handleChange={this.handleChangeField}
-          handleModifMedecin={this.handleModifMedecin}
-        />
-=======
     const { mail } = this.state;
     return (
       <View style={styles.container}>
@@ -68,40 +51,18 @@ export default class SetDoctor extends React.Component {
             <Text style={styles.confirmButtonText}>CONFIRMER</Text>
           </TouchableOpacity>
         </View>
->>>>>>> origin/master
       </View>
     );
   }
 }
 
-<<<<<<< HEAD
-function Form({ handleChange, handleModifMedecin }) {
-  return (
-    <View style={styles.form}>
-      <Field label="Mail" handler={e => handleChange(e, "mail")} />
-      <TouchableOpacity
-        style={styles.confirmButton}
-        onPress={() => handleModifMedecin()}
-      >
-        <Text style={styles.confirmButtonText}>CONFIRMER</Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
-
-function Field({ label, handler }) {
-=======
 function Field({ value, label, handler }) {
->>>>>>> origin/master
   return (
     <>
       <Text style={common.inputsLabels}>{label}</Text>
       <TextInput
         style={common.inputs}
-<<<<<<< HEAD
-=======
         defaultValue={value}
->>>>>>> origin/master
         autoCorrect={false}
         placeholder={`Entrez le ${label.toLowerCase()}`}
         onChange={handler}

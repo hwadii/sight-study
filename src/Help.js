@@ -49,11 +49,7 @@ class Help extends React.Component {
   toggleSpeak() {
     Speech.isSpeakingAsync().then(isSpeaking =>
       isSpeaking ? this.stop() : this.speak()
-<<<<<<< HEAD
     ).catch(console.error);
-=======
-    );
->>>>>>> origin/master
   }
 
   componentDidMount() {
