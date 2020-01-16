@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Button, StyleSheet, Text, View, PixelRatio, Image, PermissionsAndroid  } from "react-native";
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
+import * as Speech from "expo-speech";
 import * as Font from "expo-font";
 
 import { getDistance } from "../service/db/User";
@@ -55,7 +56,10 @@ export default class TestScreen extends Component {
     wrongEyeCount : 0,
     eye : '',
     timer: null,
-    counter: 0
+    counter: 0,
+    triggerTooClose: false,
+    triggerTooFar: false,
+    triggerWrongEye: false
   };
 
   constructor(props) {
@@ -101,7 +105,13 @@ export default class TestScreen extends Component {
     this.setState({
       counter: this.state.counter + 1
     });
-    if (this.state.counter >=2) this.setState({'indication' : "Veuillez vous placer devant l'écran", 'color' : 'black', 'wellPlaced' : false})
+    if (this.state.counter == 2){
+      this.setState({'indication' : "Veuillez vous placer devant l'écran", 'color' : 'black', 'wellPlaced' : false})
+      this.toggleSpeak("Veuillez vous placer devant l'écran")
+      this.state.triggerTooClose = false
+      this.state.triggerTooFar = false
+      this.state.triggerWrongEye = false
+    }
   }
 
   square = (x) => {
@@ -113,7 +123,6 @@ export default class TestScreen extends Component {
       var distance = this.state.distance[0].distance
       var eps = distance*0.05
 
-      console.log(distance)
       var limit = 0
       if (this.state.eye=='left') limit = Math.min(e.bounds.origin[0].y, e.bounds.origin[0].y, e.bounds.origin[0].y);
       else limit = Math.max(e.bounds.origin[0].y, e.bounds.origin[0].y, e.bounds.origin[0].y);
@@ -124,10 +133,31 @@ export default class TestScreen extends Component {
         tmp = tmp + Math.sqrt(this.square(e.bounds.origin[0].y - e.bounds.origin[2].y) + this.square(e.bounds.origin[0].x - e.bounds.origin[2].x))
         tmp = 7520/tmp
           
-        if (tmp-distance+eps<0) this.setState({'indication' : "Eloignez vous de\n" + parseInt(10*Math.abs(distance-tmp))/10. + " cm", 'wellPlaced' : false, 'wrongEyeCount' : 0, 'counter' : 0 })
+        if (tmp-distance+eps<0){
+          this.setState({'indication' : "Eloignez vous de\n" + parseInt(10*Math.abs(distance-tmp))/10. + " cm", 'wellPlaced' : false, 'wrongEyeCount' : 0, 'counter' : 0 })
+          if (!this.state.triggerTooClose){
+            this.toggleSpeak("Veuillez reculer")
+            this.state.triggerTooClose = true
+            this.state.triggerTooFar = false
+            this.state.triggerWrongEye = false
+          }
+        }
         else{
-          if (tmp-distance-eps>0) this.setState({'indication' : "Rapprochez vous de\n" + parseInt(10*Math.abs(distance-tmp))/10. + " cm", 'wellPlaced' : false, 'wrongEyeCount' : 0, 'counter' : 0 })
-          else this.setState({'indication' : "Parfait, ne bougez plus", 'wellPlaced' : true, 'wrongEyeCount' : 0, 'counter' : 0 })
+          if (tmp-distance-eps>0){
+            this.setState({'indication' : "Rapprochez vous de\n" + parseInt(10*Math.abs(distance-tmp))/10. + " cm", 'wellPlaced' : false, 'wrongEyeCount' : 0, 'counter' : 0 })
+            if (!this.state.triggerTooFar){
+              this.toggleSpeak("Veuillez vous rapprocher")
+              this.state.triggerTooClose = false
+              this.state.triggerTooFar = true
+              this.state.triggerWrongEye = false
+            }
+          }
+          else{
+            this.setState({'indication' : "Parfait, ne bougez plus", 'wellPlaced' : true, 'wrongEyeCount' : 0, 'counter' : 0 })
+            this.state.triggerTooClose = false
+            this.state.triggerTooFar = false
+            this.state.triggerWrongEye = false
+          }
         }
       }else{
         this.setState({'wrongEyeCount' : this.state.wrongEyeCount+1, 'counter' : 0 })
@@ -135,7 +165,30 @@ export default class TestScreen extends Component {
     }
     else console.log("pas bon qr code")
     
-    if (this.state.wrongEyeCount >= 4) this.setState({'indication' : "Veuillez tester le bon oeil", 'wellPlaced' : false})
+    if (this.state.wrongEyeCount >= 4){
+      this.setState({'indication' : "Veuillez tester le bon oeil", 'wellPlaced' : false})
+      if (!this.state.triggerWrongEye){
+        this.toggleSpeak("Veuillez mettre le cache sur le bon oeil")
+        this.state.triggerTooClose = false
+        this.state.triggerTooFar = false
+        this.state.triggerWrongEye = true
+      }
+    }
+  }
+
+  speak(sentence) {
+    Speech.speak(sentence, {
+      language: "fr"});
+  }
+
+  stop() {
+    Speech.stop();
+  }
+
+  toggleSpeak(sentence) {
+    Speech.isSpeakingAsync().then(isSpeaking =>
+      isSpeaking ? this.stop() : this.speak(sentence)
+    ).catch(console.error);
   }
 
 
@@ -342,6 +395,13 @@ export default class TestScreen extends Component {
     const { letter, lineSize, tests } = this.state;      
     return (
       <View style={styles.container}>
+        <QRCodeScanner
+          onRead={this.onSuccess}
+          vibrate={false}
+          reactivate={true}
+          containerStyle={{position: "absolute", opacity: 0}}
+          cameraType="front"
+        />
         <Text style={{ fontFamily: "optician-sans", fontSize: lineSize }}>
           {letter}
         </Text>
@@ -360,13 +420,7 @@ export default class TestScreen extends Component {
         <Text style={{ fontFamily: "optician-sans", fontSize: 30 }}>
           {this.state.indication}
         </Text>
-        <QRCodeScanner
-        onRead={this.onSuccess}
-        vibrate={false}
-        reactivate={true}
-        containerStyle={{position: "absolute", opacity: 0}}
-        cameraType="front"
-      />
+
       </View>
     );
   }
