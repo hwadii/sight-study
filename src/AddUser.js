@@ -22,10 +22,10 @@ export default class AddUser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      prenom: "John",
-      nom: "Doe",
+      prenom: "",
+      nom: "",
       date: "",
-      distance: "123",
+      distance: "",
       sex: "H"
     };
     this.handleChangeField = this.handleChangeField.bind(this);
