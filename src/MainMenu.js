@@ -23,7 +23,13 @@ export default class MainMenu extends React.Component {
   }
 
   async componentDidMount() {
-    SystemSetting.setVolume(1);
+    var vol = 0.5
+    var bright = 0.5
+
+    SystemSetting.setVolume(vol);
+    SystemSetting.setBrightnessForce(bright).then((success)=>{
+      !success && SystemSetting.grantWriteSettingPremission() && SystemSetting.setBrightnessForce(bright)
+    });
     this.willFocusSub = this.props.navigation.addListener(
       "willFocus",
       async () => {
