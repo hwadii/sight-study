@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Button, StyleSheet, Text, View, PixelRatio, Image, PermissionsAndroid  } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  PixelRatio,
+  Image,
+  PermissionsAndroid
+} from "react-native";
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
 import * as Speech from "expo-speech";
@@ -48,13 +56,13 @@ export default class TestScreen extends Component {
     tests: {
       hideButtons: false
     },
-    
+
     // for distance
-    id: '',
-    indication : ' ' ,
-    wellPlaced : false, 
-    wrongEyeCount : 0,
-    eye : '',
+    id: "",
+    indication: " ",
+    wellPlaced: false,
+    wrongEyeCount: 0,
+    eye: "",
     timer: null,
     counter: 0,
     triggerTooClose: false,
@@ -77,8 +85,12 @@ export default class TestScreen extends Component {
     const { status, expires, permissions } = await Permissions.askAsync(
       Permissions.AUDIO_RECORDING
     );
-    
-    const currentuser_id = await getId()
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
+    );
+    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+
+    const currentuser_id = await getId();
     // this.setNextLetterId = setInterval(
     //   () => this.setNextLetter(),
     //   timeBetweenLetters
@@ -86,99 +98,150 @@ export default class TestScreen extends Component {
     this.setNextLetter();
     // this._startRecognizing();
 
-    PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
-    );
-    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
     const { navigation } = this.props;
 
     this.setState({
       id: currentuser_id,
       distance: await getDistance(currentuser_id)
-    }); 
-    
-    let timer = setInterval(this.tick, 1000);
-    this.setState({timer, eye: navigation.getParam('eye')});
+    });
+
+    this.timer = setInterval(this.tick, 1000);
+    this.setState({ timer: this.timer, eye: navigation.getParam("eye") });
   }
 
-  tick =() => {
+  tick = () => {
     this.setState({
       counter: this.state.counter + 1
     });
-    if (this.state.counter == 2){
-      this.setState({'indication' : "Veuillez vous placer devant l'écran", 'color' : 'black', 'wellPlaced' : false})
-      this.toggleSpeak("Veuillez vous placer devant l'écran")
-      this.state.triggerTooClose = false
-      this.state.triggerTooFar = false
-      this.state.triggerWrongEye = false
+    if (this.state.counter == 2) {
+      this.setState({
+        indication: "Veuillez vous placer devant l'écran",
+        color: "black",
+        wellPlaced: false
+      });
+      this.toggleSpeak("Veuillez vous placer devant l'écran");
+      this.state.triggerTooClose = false;
+      this.state.triggerTooFar = false;
+      this.state.triggerWrongEye = false;
     }
-  }
+  };
 
-  square = (x) => {
-    return x*x
-  }
+  square = x => {
+    return x * x;
+  };
 
-  onSuccess = (e) => {
-    if (e.data == "sight-study"){
-      var distance = this.state.distance[0].distance
-      var eps = distance*0.05
+  onSuccess = e => {
+    if (e.data == "sight-study") {
+      var distance = this.state.distance[0].distance;
+      var eps = distance * 0.05;
 
-      var limit = 0
-      if (this.state.eye=='left') limit = Math.min(e.bounds.origin[0].y, e.bounds.origin[0].y, e.bounds.origin[0].y);
-      else limit = Math.max(e.bounds.origin[0].y, e.bounds.origin[0].y, e.bounds.origin[0].y);
+      var limit = 0;
+      if (this.state.eye == "left")
+        limit = Math.min(
+          e.bounds.origin[0].y,
+          e.bounds.origin[0].y,
+          e.bounds.origin[0].y
+        );
+      else
+        limit = Math.max(
+          e.bounds.origin[0].y,
+          e.bounds.origin[0].y,
+          e.bounds.origin[0].y
+        );
 
-      if ((limit < e.bounds.height/2 && this.state.eye=='left') || (limit > e.bounds.height/2 && this.state.eye=='right')){
-        var tmp = Math.sqrt(this.square(e.bounds.origin[1].y - e.bounds.origin[0].y) + this.square(e.bounds.origin[1].x - e.bounds.origin[0].x))
-        tmp = tmp + Math.sqrt(this.square(e.bounds.origin[2].y - e.bounds.origin[1].y) + this.square(e.bounds.origin[2].x - e.bounds.origin[1].x))
-        tmp = tmp + Math.sqrt(this.square(e.bounds.origin[0].y - e.bounds.origin[2].y) + this.square(e.bounds.origin[0].x - e.bounds.origin[2].x))
-        tmp = 7520/tmp
-          
-        if (tmp-distance+eps<0){
-          this.setState({'indication' : "Eloignez vous de\n" + parseInt(10*Math.abs(distance-tmp))/10. + " cm", 'wellPlaced' : false, 'wrongEyeCount' : 0, 'counter' : 0 })
-          if (!this.state.triggerTooClose){
-            this.toggleSpeak("Veuillez reculer")
-            this.state.triggerTooClose = true
-            this.state.triggerTooFar = false
-            this.state.triggerWrongEye = false
+      if (
+        (limit < e.bounds.height / 2 && this.state.eye == "left") ||
+        (limit > e.bounds.height / 2 && this.state.eye == "right")
+      ) {
+        var tmp = Math.sqrt(
+          this.square(e.bounds.origin[1].y - e.bounds.origin[0].y) +
+            this.square(e.bounds.origin[1].x - e.bounds.origin[0].x)
+        );
+        tmp =
+          tmp +
+          Math.sqrt(
+            this.square(e.bounds.origin[2].y - e.bounds.origin[1].y) +
+              this.square(e.bounds.origin[2].x - e.bounds.origin[1].x)
+          );
+        tmp =
+          tmp +
+          Math.sqrt(
+            this.square(e.bounds.origin[0].y - e.bounds.origin[2].y) +
+              this.square(e.bounds.origin[0].x - e.bounds.origin[2].x)
+          );
+        tmp = 7520 / tmp;
+
+        if (tmp - distance + eps < 0) {
+          this.setState({
+            indication:
+              "Eloignez vous de\n" +
+              parseInt(10 * Math.abs(distance - tmp)) / 10 +
+              " cm",
+            wellPlaced: false,
+            wrongEyeCount: 0,
+            counter: 0
+          });
+          if (!this.state.triggerTooClose) {
+            this.toggleSpeak("Veuillez reculer");
+            this.state.triggerTooClose = true;
+            this.state.triggerTooFar = false;
+            this.state.triggerWrongEye = false;
           }
-        }
-        else{
-          if (tmp-distance-eps>0){
-            this.setState({'indication' : "Rapprochez vous de\n" + parseInt(10*Math.abs(distance-tmp))/10. + " cm", 'wellPlaced' : false, 'wrongEyeCount' : 0, 'counter' : 0 })
-            if (!this.state.triggerTooFar){
-              this.toggleSpeak("Veuillez vous rapprocher")
-              this.state.triggerTooClose = false
-              this.state.triggerTooFar = true
-              this.state.triggerWrongEye = false
+        } else {
+          if (tmp - distance - eps > 0) {
+            this.setState({
+              indication:
+                "Rapprochez vous de\n" +
+                parseInt(10 * Math.abs(distance - tmp)) / 10 +
+                " cm",
+              wellPlaced: false,
+              wrongEyeCount: 0,
+              counter: 0
+            });
+            if (!this.state.triggerTooFar) {
+              this.toggleSpeak("Veuillez vous rapprocher");
+              this.state.triggerTooClose = false;
+              this.state.triggerTooFar = true;
+              this.state.triggerWrongEye = false;
             }
-          }
-          else{
-            this.setState({'indication' : "Parfait, ne bougez plus", 'wellPlaced' : true, 'wrongEyeCount' : 0, 'counter' : 0 })
-            this.state.triggerTooClose = false
-            this.state.triggerTooFar = false
-            this.state.triggerWrongEye = false
+          } else {
+            this.setState({
+              indication: "Parfait, ne bougez plus",
+              wellPlaced: true,
+              wrongEyeCount: 0,
+              counter: 0
+            });
+            this.state.triggerTooClose = false;
+            this.state.triggerTooFar = false;
+            this.state.triggerWrongEye = false;
           }
         }
-      }else{
-        this.setState({'wrongEyeCount' : this.state.wrongEyeCount+1, 'counter' : 0 })
+      } else {
+        this.setState({
+          wrongEyeCount: this.state.wrongEyeCount + 1,
+          counter: 0
+        });
+      }
+    } else console.log("pas bon qr code");
+
+    if (this.state.wrongEyeCount >= 4) {
+      this.setState({
+        indication: "Veuillez tester le bon oeil",
+        wellPlaced: false
+      });
+      if (!this.state.triggerWrongEye) {
+        this.toggleSpeak("Veuillez mettre le cache sur le bon oeil");
+        this.state.triggerTooClose = false;
+        this.state.triggerTooFar = false;
+        this.state.triggerWrongEye = true;
       }
     }
-    else console.log("pas bon qr code")
-    
-    if (this.state.wrongEyeCount >= 4){
-      this.setState({'indication' : "Veuillez tester le bon oeil", 'wellPlaced' : false})
-      if (!this.state.triggerWrongEye){
-        this.toggleSpeak("Veuillez mettre le cache sur le bon oeil")
-        this.state.triggerTooClose = false
-        this.state.triggerTooFar = false
-        this.state.triggerWrongEye = true
-      }
-    }
-  }
+  };
 
   speak(sentence) {
     Speech.speak(sentence, {
-      language: "fr"});
+      language: "fr"
+    });
   }
 
   stop() {
@@ -186,11 +249,10 @@ export default class TestScreen extends Component {
   }
 
   toggleSpeak(sentence) {
-    Speech.isSpeakingAsync().then(isSpeaking =>
-      isSpeaking ? this.stop() : this.speak(sentence)
-    ).catch(console.error);
+    Speech.isSpeakingAsync()
+      .then(isSpeaking => (isSpeaking ? this.stop() : this.speak(sentence)))
+      .catch(console.error);
   }
-
 
   // for tests
   randomize() {
@@ -212,7 +274,8 @@ export default class TestScreen extends Component {
 
   componentWillUnmount() {
     Voice.destroy().then(Voice.removeAllListeners);
-    if (this.setNextLetterId) clearInterval(this.setNextLetterId);
+    clearInterval(this.setNextLetterId);
+    clearInterval(this.timer);
   }
 
   nextEye() {
@@ -226,7 +289,6 @@ export default class TestScreen extends Component {
 
   endTest() {
     console.log("FIN");
-    // clearInterval(this.setNextLetterId);
   }
 
   checkResults() {}
@@ -392,14 +454,14 @@ export default class TestScreen extends Component {
   };
 
   render() {
-    const { letter, lineSize, tests } = this.state;      
+    const { letter, lineSize, tests } = this.state;
     return (
       <View style={styles.container}>
         <QRCodeScanner
           onRead={this.onSuccess}
           vibrate={false}
           reactivate={true}
-          containerStyle={{position: "absolute", opacity: 0}}
+          containerStyle={{ position: "absolute", opacity: 0 }}
           cameraType="front"
         />
         <Text style={{ fontFamily: "optician-sans", fontSize: lineSize }}>
@@ -420,7 +482,6 @@ export default class TestScreen extends Component {
         <Text style={{ fontFamily: "optician-sans", fontSize: 30 }}>
           {this.state.indication}
         </Text>
-
       </View>
     );
   }

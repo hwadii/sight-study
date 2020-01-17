@@ -1,7 +1,8 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { styles as common } from "./styles/common";
 import { getFullName, getDoctorEmail } from "./util";
+import { scale } from "react-native-size-matters";
 import Help from "./Help";
 import SystemSetting from "react-native-system-setting";
 
@@ -13,7 +14,7 @@ export default class MainMenu extends React.Component {
     super(props);
     this.state = {
       fullName: null,
-      doctorEmail: null,
+      doctorEmail: null
     };
   }
 
@@ -35,7 +36,7 @@ export default class MainMenu extends React.Component {
       async () => {
         this.setState({
           fullName: await getFullName(),
-          doctorEmail: await getDoctorEmail(),
+          doctorEmail: await getDoctorEmail()
         });
       }
     );
@@ -48,7 +49,14 @@ export default class MainMenu extends React.Component {
   render() {
     const { fullName, doctorEmail } = this.state;
     return (
-      <View style={common.containers}>
+      <View style={styles.container}>
+        <Image
+          style={{
+            width: scale(220),
+            height: scale(220),
+          }}
+          source={require("../assets/main-menu.png")}
+        />
         <UserConnected fullName={fullName} />
         <DoctorMail email={doctorEmail} />
         {/* <Settings distance={distance} tolerance={tolerance} /> */}
@@ -103,25 +111,9 @@ function DoctorMail({ email }) {
   );
 }
 
-// function Settings({ distance, tolerance }) {
-//   return (
-//     <View>
-//       {distance ? (
-//         <Text style={common.important}>
-//           La distance est <Text style={{ fontWeight: "bold" }}>{distance}</Text>
-//           .
-//         </Text>
-//       ) : (
-//         <Text style={common.important}>La distance n'est pas configurée.</Text>
-//       )}
-//       {tolerance ? (
-//         <Text style={common.important}>
-//           Le tolerance est{" "}
-//           <Text style={{ fontWeight: "bold" }}>{tolerance}</Text>.
-//         </Text>
-//       ) : (
-//         <Text style={common.important}>La tolerance n'est pas configurée.</Text>
-//       )}
-//     </View>
-//   );
-// }
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "column",
+    alignItems: "center"
+  }
+})

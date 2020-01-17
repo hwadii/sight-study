@@ -116,6 +116,11 @@ function Form({ handleChange, userInfo, showDatePickerAndSet }) {
       >
         <Text style={common.inputViews}>{date && formatDate(date)}</Text>
       </TouchableHighlight>
+      <Field
+        value={distance}
+        label="Distance"
+        handleOnChange={e => handleChange(e, "distance")}
+      />
       <Select
         label="Sexe"
         value={sex}
