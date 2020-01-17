@@ -40,6 +40,11 @@ export default class AddUser extends React.Component {
     this.setState({ [field]: e });
   }
 
+  handleDistanceTest() {
+    const { navigate } = this.props.navigation;
+    navigate("DistanceFinder");
+  }
+
   async handleAddUser() {
     const { goBack } = this.props.navigation;
     const { nom, prenom, sex, date, distance } = this.state;
@@ -71,6 +76,12 @@ export default class AddUser extends React.Component {
           handleChange={this.handleChangeField}
           showDatePickerAndSet={this.showDatePickerAndSet}
         />
+        <TouchableOpacity
+          style={{ ...styles.form, ...styles.confirmButton }}
+          onPress={() => this.handleDistanceTest()}
+        >
+          <Text style={styles.confirmButtonText}>TEST DE DISTANCE »</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={{ ...styles.form, ...styles.confirmButton }}
           onPress={() => this.handleAddUser()}
@@ -105,12 +116,6 @@ function Form({ handleChange, userInfo, showDatePickerAndSet }) {
       >
         <Text style={common.inputViews}>{date && formatDate(date)}</Text>
       </TouchableHighlight>
-      <Field
-        value={distance}
-        type="numeric"
-        label="Distance"
-        handleOnChange={e => handleChange(e, "distance")}
-      />
       <Select
         label="Sexe"
         value={sex}
