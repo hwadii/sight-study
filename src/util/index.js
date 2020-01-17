@@ -2,6 +2,53 @@ import { AsyncStorage } from "react-native";
 import base64 from "./base64";
 import { getUser as getUserFromDb } from "../../service/db/User";
 
+const lettersDict = {
+  n: ["n", "N", "Aisne", "haine", "and", "elle", "m", "M"],
+  c: ["c'est", "C'est", "C", "c", "se", "s'est", "seth"],
+  k: [
+    "cas",
+    "K",
+    "caca",
+    "CAC",
+    "K",
+    "quoi",
+    "quand",
+    "Quoi",
+    "Quand",
+    "corps",
+    "cours",
+    "a quoi",
+    "coi",
+    "COS",
+    "co",
+    "coco",
+    "car",
+    "carte",
+    "cars",
+    "Car",
+    "Cars",
+    "Cahors"
+  ],
+  z: ["z", "Z", "Zed", "Zedd", "ZI", "dead", "zèbre", "YZ"],
+  o: ["Oh", "eau", "au", "oh", "o", "O"],
+  r: ["air", "Air", "R", "aire", "r"],
+  h: ["H", "h", "Ash", "hache", "ash", "âge"],
+  s: ["s", "S", "est-ce", "Ace", "où est-ce"],
+  d: ["2", "de", "dès", "D", "d", "Dès", "b", "B", "bébé", "des", "the", "The"],
+  v: ["v", "V", "vais", "je vais", "VV"]
+};
+
+export function intersection(array, letter) {
+  console.log(letter);
+  // console.log(array);
+  for (let el of array) {
+    if (lettersDict[letter].includes(el)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * Set current user name
  */

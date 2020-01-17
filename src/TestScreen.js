@@ -2,17 +2,18 @@ import React, { Component } from "react";
 import { Button, StyleSheet, Text, View, PixelRatio } from "react-native";
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
-import * as Font from "expo-font";
+import * as Speech from "expo-speech";
+import { intersection } from "./util";
 
 const letters = "nckzorhsdv";
-const timeBetweenLetters = 4000;
-const screenFactor = 100 * PixelRatio.get() * 5 * 0.4;
+const timeBetweenLetters = 500;
+const screenFactor = 100 * PixelRatio.get();
 /**
  * Gets font size for current line
  * @param {number} lineCoefficient coefficient de ligne
  */
 const getLineLength = lineCoefficient =>
-  Math.floor(screenFactor * Math.tan(Math.pow(10, lineCoefficient) / 60));
+  Math.floor(screenFactor * 2.91 * Math.pow(10, -3) * 400 * lineCoefficient);
 
 export default class TestScreen extends Component {
   static navigationOptions = {
@@ -59,13 +60,6 @@ export default class TestScreen extends Component {
     const { status, expires, permissions } = await Permissions.askAsync(
       Permissions.AUDIO_RECORDING
     );
-    console.log(Font.isLoading("optician-sans"));
-    console.log(Font.isLoaded("optician-sans"));
-
-    // this.setNextLetterId = setInterval(
-    //   () => this.setNextLetter(),
-    //   timeBetweenLetters
-    // );
     this.setNextLetter();
     // this._startRecognizing();
   }
@@ -104,26 +98,24 @@ export default class TestScreen extends Component {
 
   endTest() {
     console.log("FIN");
-    // clearInterval(this.setNextLetterId);
+    clearInterval(this.setNextLetterId);
   }
 
-  checkResults() {}
+  checkResults(newResults) {
+    const { results, partialResults, letter } = this.state;
+    // const allResults = [...results, ...partialResults];
+    return intersection(newResults, letter);
+  }
 
-  getNewScore() {
+  getNewScore(newResults) {
     const { scores, whichEye } = this.state;
-    const gotResult = Math.random() < 0.8 ? true : false;
-    let newScore = gotResult ? scores[whichEye] + 1 : scores[whichEye];
+    const gotResult = this.checkResults(newResults);
+    const newScore = gotResult ? scores[whichEye] + 1 : scores[whichEye];
     return newScore;
   }
 
   setNextLetter() {
-    const {
-      letterCount,
-      lineNumber,
-      lineCoefficient,
-      whichEye,
-      scores
-    } = this.state;
+    const { letterCount, lineNumber, lineCoefficient } = this.state;
     const newLetterCount = letterCount + 1;
     let newLineNumber = lineNumber; // default is current line number
     let newLineCoefficient = lineCoefficient;
@@ -137,21 +129,12 @@ export default class TestScreen extends Component {
         letterCount: newLetterCount,
         lineNumber: newLineNumber,
         lineSize: getLineLength(newLineCoefficient),
-        lineCoefficient: newLineCoefficient,
-        scores: { ...scores, [whichEye]: this.getNewScore() }
+        lineCoefficient: newLineCoefficient
       },
       () => {
-        const {
-          lineNumber,
-          letterCount,
-          lineSize,
-          whichEye,
-          scores
-        } = this.state;
-        console.log(lineNumber, letterCount, lineSize, whichEye);
-        console.log(scores);
         if (letterCount === 25) this.nextEye();
         if (letterCount === 50) this.endTest();
+        this._startRecognizing();
       }
     );
   }
@@ -175,7 +158,6 @@ export default class TestScreen extends Component {
   onSpeechEnd = e => {
     // eslint-disable-next-line
     console.log("onSpeechEnd: ", e);
-    this.setNextLetter();
     // this._startRecognizing();
     this.setState({
       end: "√"
@@ -185,6 +167,16 @@ export default class TestScreen extends Component {
   onSpeechError = e => {
     // eslint-disable-next-line
     console.log("onSpeechError: ", e);
+    // no speech
+    if (e.error.message === "6/No speech input") {
+      this.setNextLetter();
+    }
+    // no match
+    if (e.error.message === "7/No match") {
+      this._destroyRecognizer();
+      Speech.speak("Bonjour", { language: "fr" });
+      this._startRecognizing();
+    }
     this.setState({
       error: JSON.stringify(e.error)
     });
@@ -193,9 +185,17 @@ export default class TestScreen extends Component {
   onSpeechResults = e => {
     // eslint-disable-next-line
     console.log("onSpeechResults: ", e);
-    this.setState({
-      results: e.value
-    });
+    const { scores, whichEye } = this.state;
+    const newResults = e.value;
+    this.setState(
+      {
+        results: newResults,
+        scores: { ...scores, [whichEye]: this.getNewScore(newResults) }
+      },
+      () => {
+        this.setNextLetter();
+      }
+    );
   };
 
   onSpeechPartialResults = e => {
