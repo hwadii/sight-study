@@ -110,19 +110,20 @@ export default class TestScreen extends Component {
   }
 
   tick = () => {
+    const { counter } = this.state;
     this.setState({
-      counter: this.state.counter + 1
+      counter: counter + 1
     });
     if (this.state.counter == 2) {
       this.setState({
         indication: "Veuillez vous placer devant l'écran",
         color: "black",
-        wellPlaced: false
+        wellPlaced: false,
+        triggerTooClose: false,
+        triggerTooFar: false,
+        triggerWrongEye: false
       });
       this.toggleSpeak("Veuillez vous placer devant l'écran");
-      this.state.triggerTooClose = false;
-      this.state.triggerTooFar = false;
-      this.state.triggerWrongEye = false;
     }
   };
 
@@ -134,7 +135,6 @@ export default class TestScreen extends Component {
     if (e.data == "sight-study") {
       var distance = this.state.distance[0].distance;
       var eps = distance * 0.05;
-
       var limit = 0;
       if (this.state.eye == "left")
         limit = Math.min(
@@ -172,11 +172,9 @@ export default class TestScreen extends Component {
         tmp = 7520 / tmp;
 
         if (tmp - distance + eps < 0) {
+          const amount = parseInt(10 * Math.abs(distance - tmp)) / 10;
           this.setState({
-            indication:
-              "Eloignez vous de\n" +
-              parseInt(10 * Math.abs(distance - tmp)) / 10 +
-              " cm",
+            indication: `Eloignez vous de\n${amount} cm`,
             wellPlaced: false,
             wrongEyeCount: 0,
             counter: 0
@@ -189,11 +187,9 @@ export default class TestScreen extends Component {
           }
         } else {
           if (tmp - distance - eps > 0) {
+            const amount = parseInt(10 * Math.abs(distance - tmp)) / 10;
             this.setState({
-              indication:
-                "Rapprochez vous de\n" +
-                parseInt(10 * Math.abs(distance - tmp)) / 10 +
-                " cm",
+              indication: `Rapprochez vous de\n${amount} cm`,
               wellPlaced: false,
               wrongEyeCount: 0,
               counter: 0
@@ -461,7 +457,8 @@ export default class TestScreen extends Component {
   };
 
   render() {
-    const { letter, lineSize, tests } = this.state;
+    const { letter, lineSize, tests, indication } = this.state;
+    const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
         <QRCodeScanner
@@ -476,19 +473,14 @@ export default class TestScreen extends Component {
         </Text>
         {!tests.hideButtons && (
           <>
-            <Button title="Start" onPress={() => this._startRecognizing()} />
-            <Button title="Stop" onPress={() => this._stopRecognizing()} />
-            <Button title="Destroy" onPress={() => this._destroyRecognizer()} />
-            <Button title="Randomize" onPress={() => this.randomize()} />
+            <Button title="Go back" onPress={() => navigate("Menu")} />
           </>
         )}
         <Button
           title={tests.hideButtons ? "Show" : "Hide"}
           onPress={() => this.toggleButtons()}
         />
-        <Text style={{ fontFamily: "optician-sans", fontSize: 30 }}>
-          {this.state.indication}
-        </Text>
+        <Text style={{ fontSize: 30 }}>{indication}</Text>
       </View>
     );
   }

@@ -15,7 +15,7 @@ import {
   ScrollView
 } from "react-native-gesture-handler";
 import * as User from "../service/db/User";
-import { styles as common } from "./styles/common";
+import { styles as common, colors } from "./styles/common";
 import { formatDate } from "./util";
 
 export default class AddUser extends React.Component {
@@ -32,7 +32,16 @@ export default class AddUser extends React.Component {
     this.showDatePickerAndSet = this.showDatePickerAndSet.bind(this);
   }
 
+  componentDidMount() {
+    this.willFocusSub = this.props.navigation.addListener("willFocus", () => {
+      const { getParam } = this.props.navigation;
+      const distance = getParam("distance", "");
+      this.setState({ distance: distance.toString() });
+    });
+  }
+
   componentWillUnmount() {
+    this.willFocusSub.remove();
     this.setState({ prenom: "", nom: "", date: "", distance: null });
   }
 
@@ -77,16 +86,21 @@ export default class AddUser extends React.Component {
           showDatePickerAndSet={this.showDatePickerAndSet}
         />
         <TouchableOpacity
-          style={{ ...styles.form, ...styles.confirmButton }}
+          style={{
+            ...styles.form,
+            ...styles.confirmButton,
+            backgroundColor: colors.SECONDARY,
+            borderColor: colors.SECONDARY
+          }}
           onPress={() => this.handleDistanceTest()}
         >
-          <Text style={styles.confirmButtonText}>TEST DE DISTANCE »</Text>
+          <Text style={styles.confirmButtonText}>🔎 TEST DE DISTANCE 🔎</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{ ...styles.form, ...styles.confirmButton }}
           onPress={() => this.handleAddUser()}
         >
-          <Text style={styles.confirmButtonText}>CONFIRMER</Text>
+          <Text style={styles.confirmButtonText}>CONFIRMER ✅</Text>
         </TouchableOpacity>
       </ScrollView>
     );

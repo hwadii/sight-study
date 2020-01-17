@@ -4,6 +4,7 @@ export const colors = {
   DANGER: "#dc3545",
   SUCESS: "#28a745",
   PRIMARY: "#007bff",
+  SECONDARY: "#6c757d",
   DISABLED: "#6c757d"
 };
 

@@ -1,31 +1,30 @@
 import React, { Component } from "react";
-import { Image, View } from "react-native";
+import { Image, View, Button } from "react-native";
 import { PermissionsAndroid } from "react-native";
 import { StyleSheet, Text } from "react-native";
-
 import QRCodeScanner from "react-native-qrcode-scanner";
 
-import { setDistance } from "../service/db/User";
-import { getId } from "./util";
+function getTmpDistance(bounds) {
+  const { origin } = bounds;
+  const d = (x, y) => x * x + y * y;
+  let tmp = Math.sqrt(d(origin[1].x - origin[0].x, origin[1].y - origin[0].y));
+  tmp += Math.sqrt(d(origin[2].x - origin[1].x, origin[2].y - origin[1].y));
+  tmp += Math.sqrt(d(origin[0].x - origin[2].x, origin[0].y - origin[2].y));
+  return 7520 / tmp;
+}
 
-export default class distanceFinder extends Component {
+export default class DistanceFinder extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: 0,
-      indication: " ",
       wellPlacedCount: 0,
       distance: 0,
       timer: null,
       counter: 1,
       img: require("../assets/asterix1.png")
     };
-    this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
+    this.handleOnOk = this.handleOnOk.bind(this);
   }
-
-  square = x => {
-    return x * x;
-  };
 
   onSuccess = e => {
     var wellPlacedInaRow = 10;
@@ -33,28 +32,9 @@ export default class distanceFinder extends Component {
 
     if (this.state.wellPlacedCount >= wellPlacedInaRow) {
       this.setState({ distance: parseInt(10 * this.state.distance) / 10 });
-      setDistance(this.state.id, this.state.distance);
     } else {
-      if (e.data == "sight-study") {
-        var tmp = Math.sqrt(
-          this.square(e.bounds.origin[1].y - e.bounds.origin[0].y) +
-            this.square(e.bounds.origin[1].x - e.bounds.origin[0].x)
-        );
-        tmp =
-          tmp +
-          Math.sqrt(
-            this.square(e.bounds.origin[2].y - e.bounds.origin[1].y) +
-              this.square(e.bounds.origin[2].x - e.bounds.origin[1].x)
-          );
-        tmp =
-          tmp +
-          Math.sqrt(
-            this.square(e.bounds.origin[0].y - e.bounds.origin[2].y) +
-              this.square(e.bounds.origin[0].x - e.bounds.origin[2].x)
-          );
-        tmp = 7520 / tmp;
-        console.log(tmp);
-
+      if (e.data === "sight-study") {
+        const tmp = getTmpDistance(e.bounds);
         if (Math.abs(this.state.distance - tmp) < eps)
           this.setState({ wellPlacedCount: this.state.wellPlacedCount + 1 });
         else this.setState({ distance: tmp, wellPlacedCount: 0 });
@@ -62,7 +42,7 @@ export default class distanceFinder extends Component {
     }
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
     );
@@ -73,19 +53,10 @@ export default class distanceFinder extends Component {
       counter: (Math.floor(Math.random() * 10) % 4) + 1
     });
     this.tick();
-    this.willFocusSub = this.props.navigation.addListener(
-      "willFocus",
-      async () => {
-        this.setState({
-          id: await getId()
-        });
-      }
-    );
   }
 
   componentWillUnmount() {
     clearInterval(this.timer);
-    this.willFocusSub.remove();
   }
 
   tick = () => {
@@ -96,8 +67,14 @@ export default class distanceFinder extends Component {
     });
   };
 
+  handleOnOk() {
+    const { distance } = this.state;
+    const { navigate } = this.props.navigation;
+    navigate("AddUser", { distance });
+  }
+
   render() {
-    const { img } = this.state;
+    const { img, distance, wellPlacedCount } = this.state;
     return (
       <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
         <QRCodeScanner
@@ -107,8 +84,11 @@ export default class distanceFinder extends Component {
           containerStyle={{ opacity: 0 }}
           cameraType="front"
         />
-        <Text style={styles.buttonText}>{this.state.indication}</Text>
-        <ImageTest img={img} />
+        {wellPlacedCount < 10 ? (
+          <ImageTest img={img} />
+        ) : (
+          <OnCalculated distance={distance} handleOnOk={this.handleOnOk} />
+        )}
       </View>
     );
   }
@@ -130,29 +110,22 @@ function ImageTest({ img }) {
   );
 }
 
+function OnCalculated({ distance, handleOnOk }) {
+  return (
+    <View style={styles.marker}>
+      <Text style={{ fontSize: 22 }}>
+        La distance de lecture idéale calculée est{" "}
+        <Text style={{ fontWeight: "bold" }}>{distance} cm</Text>
+      </Text>
+      <Button title="OK" onPress={() => handleOnOk()} />
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  centerText: {
-    flex: 1,
-    fontSize: 18,
-    padding: 32,
-    color: "#777"
-  },
-  textBold: {
-    fontWeight: "500",
-    color: "#000"
-  },
-  buttonText: {
-    position: "relative",
-    fontSize: 21,
-    color: "rgb(0,0,0)",
-    textAlign: "center"
-  },
-  buttonTouchable: {
-    padding: 16
-  },
   marker: {
-    backgroundColor: "transparent",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    position: "absolute"
   }
 });
