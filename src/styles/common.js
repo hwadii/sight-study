@@ -51,6 +51,13 @@ export const styles = StyleSheet.create({
     paddingRight: 5,
     marginBottom: 6
   },
+  get inputsDisabled() {
+    return {
+      ...this.inputs,
+      backgroundColor: "#f5f5f5",
+      textAlignVertical: "center",
+    };
+  },
   get inputViews() {
     return {
       ...this.inputs,

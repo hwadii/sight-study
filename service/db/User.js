@@ -5,31 +5,23 @@ const db = SQLite.openDatabase("sigthstudy.db");
 /**
  * Initialize database.
  */
-export function initDB() {
+export async function initDB() {
   // table users
-  db.transaction(tx => {
-    tx.executeSql(
-      "create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(25), prenom VARCHAR(25), derniere_connexion DATE, sex VARCHAR(25), date_de_naissance DATE);"
-    );
-  });
+  await _executeSql(
+    "create table if not exists user (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, nom VARCHAR(25), prenom VARCHAR(25), sex VARCHAR(25), date_de_naissance DATE, distance FLOAT);"
+  );
   // table score
-  db.transaction(tx => {
-    tx.executeSql(
-      "create table if not exists score (id_user INTEGER, date DATE, oeil_gauche INTEGER, oeil_droit INTEGER);"
-    );
-  });
+  await _executeSql(
+    "create table if not exists score (id_user INTEGER, date DATE, oeil_gauche INTEGER, oeil_droit INTEGER);"
+  );
 }
 
 /**
  * Drops database.
  */
-export function dropDB() {
-  db.transaction(tx => {
-    tx.executeSql("drop table user");
-  });
-  db.transaction(tx => {
-    tx.executeSql("drop table score");
-  });
+export async function dropDB() {
+  await _executeSql("drop table user");
+  await _executeSql("drop table score");
 }
 
 /**
@@ -38,7 +30,7 @@ export function dropDB() {
  * @param {Array} params SQL query parameters
  * @returns {Promise} Promise which resolves to the result of the query.
  */
-async function _executeSql(sqlStatement, params = []) {
+function _executeSql(sqlStatement, params = []) {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
@@ -67,7 +59,7 @@ export function resetDB() {
  * @returns {Promise} Promise reolving to user id or null if user does not exist.
  */
 export async function getUser(nom, prenom) {
-  if (!nom || !prenom) return null;
+  if (!nom || !prenom) return null; // return early if null
   const usersWithId = await _executeSql(
     "select id from user where nom=? and prenom=?;",
     [nom, prenom]
@@ -81,8 +73,32 @@ export async function getUser(nom, prenom) {
  * @param {number} id user id.
  * @returns {Promise} Promise resolving to an array of users.
  */
-export function getUserById(id) {
+export async function getUserById(id) {
   return _executeSql("select * from user where id=?;", [id]);
+}
+
+/**
+ * Gets distance by id.
+ *
+ * @param {number} id user id.
+ * @returns {Promise} Promise resolving to an array of users.
+ */
+export async function getDistance(id) {
+  return _executeSql("select distance from user where id=?;", [id]);
+}
+
+/**
+ * Set distance for a user.
+ *
+ * @param {number} id_user user id.
+ * @param {number} distance left eye score.
+ * @returns {Promise} Promise resolving to true if successful.
+ */
+export async function setDistance(id_user, distance) {
+  return _executeSql("update user set distance=? where id=(?);", [
+    distance,
+    id_user
+  ]);
 }
 
 /**
@@ -97,17 +113,17 @@ export function getUsersLike(recherche) {
       const recherche1 = recherche.split(" ")[0];
       const recherche2 = recherche.split(" ")[1];
       return _executeSql(
-        "select id, nom, prenom, sex from user where (nom=? and prenom like ?) or (nom like ? and prenom=?) order by prenom ASC;",
+        "select * from user where (nom=? and prenom like ?) or (nom like ? and prenom=?) order by prenom ASC;",
         [recherche1, recherche2 + "%", recherche2 + "%", recherche1]
       );
     } else {
       return _executeSql(
-        "select id, nom, prenom, sex from user where nom like ? or prenom like ?;",
+        "select * from user where nom like ? or prenom like ? order by prenom ASC;",
         [recherche + "%", recherche + "%"]
       );
     }
   } else {
-    return _executeSql("select id, nom, prenom, sex from user;", []);
+    return _executeSql("select * from user order by prenom ASC;", []);
   }
 }
 
@@ -118,7 +134,7 @@ export function getUsersLike(recherche) {
  */
 export function getUsers() {
   return _executeSql(
-    "select id, nom, prenom, sex, date_de_naissance from user order by prenom ASC;",
+    "select * from user order by prenom ASC;",
     []
   );
 }
@@ -131,10 +147,10 @@ export function getUsers() {
  * @param {string} sex user's sex.
  * @param {string} date_de_naissance user's date of birth.
  */
-export function addUser(nom, prenom, sex, date_de_naissance) {
-  _executeSql(
-    "insert into user (nom, prenom, sex, date_de_naissance) values (?,?,?,?);",
-    [nom, prenom, sex, date_de_naissance]
+export function addUser(nom, prenom, sex, date_de_naissance, distance) {
+  return _executeSql(
+    "insert into user (nom, prenom, sex, date_de_naissance, distance) values (?,?,?,?,?);",
+    [nom, prenom, sex, date_de_naissance, distance]
   );
 }
 
@@ -142,9 +158,10 @@ export function addUser(nom, prenom, sex, date_de_naissance) {
  * Removes user by id.
  *
  * @param {number} id user id.
+ * @returns {Promise}
  */
 export function removeUser(id) {
-  _executeSql("delete from user where id=?;", [id]);
+  return _executeSql("delete from user where id=?;", [id]);
 }
 
 /**
