@@ -79,6 +79,7 @@
       android:name=".MainActivity"
       android:launchMode="singleTask"
       android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
+      android:screenOrientation="portrait"      
       android:theme="@style/Theme.Exponent.Splash"
       android:windowSoftInputMode="adjustResize">
       <intent-filter>
@@ -109,7 +110,7 @@
       android:name=".experience.TvActivity"
       android:label="@string/app_name"
       android:theme="@style/Theme.Exponent.Light"
-      android:screenOrientation="landscape">
+      android:screenOrientation="portrait">
      <intent-filter>
        <action android:name="android.intent.action.MAIN" />
        <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
