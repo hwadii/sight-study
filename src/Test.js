@@ -8,15 +8,16 @@ import QRCodeScanner from "react-native-qrcode-scanner";
 
 export default class Test extends Component {
   constructor(props) {
-    super(props)
-    this.state = { indication : ' ' ,
-                   color : 'black', 
-                   wellPlacedCount : 0, 
-                   wrongEyeCount : 0,
-                   eye : '',
-                   distance: 0,
-                   decalage: 0
-    }
+    super(props);
+    this.state = {
+      indication: " ",
+      color: "black",
+      wellPlacedCount: 0,
+      wrongEyeCount: 0,
+      eye: "",
+      distance: 0,
+      decalage: 0
+    };
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
   }
 
@@ -28,19 +29,19 @@ export default class Test extends Component {
         this.setState({
           distance: await getDistance(),
           decalage: await getTolerance(),
-          'eye': navigation.getParam('eye')
+          eye: navigation.getParam("eye")
         });
       }
-    );  
+    );
   }
-  
+
   componentWillUnmount() {
     this.willFocusSub.remove();
   }
 
-  square = (x) => {
-    return x*x
-  }
+  square = x => {
+    return x * x;
+  };
 
   // colorCalcul = (limit, distance, target) => {
   //   var x = Math.abs(target-distance)
@@ -52,47 +53,104 @@ export default class Test extends Component {
   //   else this.setState({'color' : "rgb(0,0,255)"})
   // }
 
-  onSuccess = (e) => {
-    if (e.data == "sight-study"){
-      var distance = this.state.distance
-      var eps = this.state.decalage
-      var wellPlacedInaRow = 10
-      var limit = 0
-      if (this.state.eye=='left') limit = Math.min(e.bounds.origin[0].y, e.bounds.origin[0].y, e.bounds.origin[0].y);
-      else limit = Math.max(e.bounds.origin[0].y, e.bounds.origin[0].y, e.bounds.origin[0].y);
+  onSuccess = e => {
+    if (e.data == "sight-study") {
+      var distance = this.state.distance;
+      var eps = this.state.decalage;
+      var wellPlacedInaRow = 10;
+      var limit = 0;
+      if (this.state.eye == "left")
+        limit = Math.min(
+          e.bounds.origin[0].y,
+          e.bounds.origin[0].y,
+          e.bounds.origin[0].y
+        );
+      else
+        limit = Math.max(
+          e.bounds.origin[0].y,
+          e.bounds.origin[0].y,
+          e.bounds.origin[0].y
+        );
 
-      if ((limit < e.bounds.height/2 && this.state.eye=='left') || (limit > e.bounds.height/2 && this.state.eye=='right')){
-        var tmp = Math.sqrt(this.square(e.bounds.origin[1].y - e.bounds.origin[0].y) + this.square(e.bounds.origin[1].x - e.bounds.origin[0].x))
-        tmp = tmp + Math.sqrt(this.square(e.bounds.origin[2].y - e.bounds.origin[1].y) + this.square(e.bounds.origin[2].x - e.bounds.origin[1].x))
-        tmp = tmp + Math.sqrt(this.square(e.bounds.origin[0].y - e.bounds.origin[2].y) + this.square(e.bounds.origin[0].x - e.bounds.origin[2].x))
-        tmp = 7520/tmp
-        console.log(tmp-distance-eps)
-        console.log(tmp-distance-eps>0)
+      if (
+        (limit < e.bounds.height / 2 && this.state.eye == "left") ||
+        (limit > e.bounds.height / 2 && this.state.eye == "right")
+      ) {
+        var tmp = Math.sqrt(
+          this.square(e.bounds.origin[1].y - e.bounds.origin[0].y) +
+            this.square(e.bounds.origin[1].x - e.bounds.origin[0].x)
+        );
+        tmp =
+          tmp +
+          Math.sqrt(
+            this.square(e.bounds.origin[2].y - e.bounds.origin[1].y) +
+              this.square(e.bounds.origin[2].x - e.bounds.origin[1].x)
+          );
+        tmp =
+          tmp +
+          Math.sqrt(
+            this.square(e.bounds.origin[0].y - e.bounds.origin[2].y) +
+              this.square(e.bounds.origin[0].x - e.bounds.origin[2].x)
+          );
+        tmp = 7520 / tmp;
+        console.log(tmp - distance - eps);
+        console.log(tmp - distance - eps > 0);
 
-        if (tmp<distance-eps) this.setState({'indication' : "Eloignez vous de\n" + parseInt(10*Math.abs(distance-tmp))/10. + " cm", 'color' : 'black', 'wellPlacedCount' : 0, 'wrongEyeCount' : 0 })
-        else{
-          if (tmp-distance-eps>0) this.setState({'indication' : "Rapprochez vous de\n" + parseInt(10*Math.abs(distance-tmp))/10. + " cm", 'color' : 'black', 'wellPlacedCount' : 0, 'wrongEyeCount' : 0})
-          else this.setState({'indication' : "Parfait, ne bougez plus", 'wellPlacedCount' : this.state.wellPlacedCount+1, 'color' : 'green', 'wrongEyeCount' : 0})
+        if (tmp < distance - eps)
+          this.setState({
+            indication:
+              "Eloignez vous de\n" +
+              parseInt(10 * Math.abs(distance - tmp)) / 10 +
+              " cm",
+            color: "black",
+            wellPlacedCount: 0,
+            wrongEyeCount: 0
+          });
+        else {
+          if (tmp - distance - eps > 0)
+            this.setState({
+              indication:
+                "Rapprochez vous de\n" +
+                parseInt(10 * Math.abs(distance - tmp)) / 10 +
+                " cm",
+              color: "black",
+              wellPlacedCount: 0,
+              wrongEyeCount: 0
+            });
+          else
+            this.setState({
+              indication: "Parfait, ne bougez plus",
+              wellPlacedCount: this.state.wellPlacedCount + 1,
+              color: "green",
+              wrongEyeCount: 0
+            });
         }
       } else {
         this.setState({ wrongEyeCount: this.state.wrongEyeCount + 1 });
       }
     } else console.log("pas bon qr code");
 
-    if (this.state.wrongEyeCount >= 4) this.setState({'indication' : "Veuillez tester le bon oeuil", 'color' : 'black', 'wellPlacedCount' : 0})
-    if (this.state.wellPlacedCount >= wellPlacedInaRow) this.props.navigation.replace('TestScreen', {eye: this.state.eye})
-  }
+    if (this.state.wrongEyeCount >= 4)
+      this.setState({
+        indication: "Veuillez tester le bon oeuil",
+        color: "black",
+        wellPlacedCount: 0
+      });
+    if (this.state.wellPlacedCount >= wellPlacedInaRow)
+      this.props.navigation.replace("TestScreen", { eye: this.state.eye });
+  };
 
   render() {
-      PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
-      );
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
-      const { navigation } = this.props;
-      const { color } = this.state;
-      var img
-      if (navigation.getParam('eye') == 'left') img = require('../assets/imgleft.png')
-      else img = require('../assets/imgright.png')
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
+    );
+    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+    const { navigation } = this.props;
+    const { color } = this.state;
+    var img;
+    if (navigation.getParam("eye") == "left")
+      img = require("../assets/imgleft.png");
+    else img = require("../assets/imgright.png");
     return (
       <QRCodeScanner
         onRead={this.onSuccess}
@@ -134,7 +192,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 21,
     color: "rgb(255,255,255)",
-    textAlign: 'center'
+    textAlign: "center"
   },
   buttonTouchable: {
     padding: 16
@@ -142,6 +200,6 @@ const styles = StyleSheet.create({
   marker: {
     backgroundColor: "transparent",
     justifyContent: "center",
-    alignItems: "center",
+    alignItems: "center"
   }
 });
