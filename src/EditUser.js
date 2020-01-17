@@ -15,35 +15,47 @@ import {
   ScrollView
 } from "react-native-gesture-handler";
 import * as User from "../service/db/User";
-import { styles as common } from "./styles/common";
-import { formatDate } from "./util";
+import { styles as common, colors } from "./styles/common";
+import { formatDate, showAlert } from "./util";
 
 export default class AddUser extends React.Component {
   constructor(props) {
     super(props);
+    const user = props.navigation.getParam("user", undefined);
+    const { id, prenom, nom, date_de_naissance, distance, sex } = user;
     this.state = {
-      prenom: "John",
-      nom: "Doe",
-      date: "",
-      distance: "123",
-      sex: "H"
+      id,
+      prenom,
+      nom,
+      date: new Date(date_de_naissance),
+      distance: distance.toString(),
+      sex
     };
     this.handleChangeField = this.handleChangeField.bind(this);
     this.showDatePickerAndSet = this.showDatePickerAndSet.bind(this);
-  }
-
-  componentWillUnmount() {
-    this.setState({ prenom: "", nom: "", date: "", distance: null });
   }
 
   handleChangeField(e, field) {
     this.setState({ [field]: e });
   }
 
-  async handleAddUser() {
+  handleDelete() {
+    const { id, prenom, nom } = this.state;
     const { goBack } = this.props.navigation;
-    const { nom, prenom, sex, date, distance } = this.state;
-    await User.addUser(nom, prenom, sex, date.toISOString(), distance);
+    showAlert(
+      `Le patient ${prenom} ${nom} va être supprimé.`,
+      async () => {
+        await User.removeUser(id);
+        goBack();
+      },
+      [{ text: "Annuler" }]
+    );
+  }
+
+  async handleEdit() {
+    const { goBack } = this.props.navigation;
+    const { id, distance } = this.state;
+    await User.setDistance(id, distance);
     goBack();
   }
 
@@ -65,17 +77,22 @@ export default class AddUser extends React.Component {
     const { prenom, nom, sex, date, distance } = this.state;
     return (
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.header}>Nouveau patient</Text>
+        <Text style={styles.header}>Éditer un patient</Text>
         <Form
           userInfo={{ prenom, nom, date, sex, distance }}
           handleChange={this.handleChangeField}
-          showDatePickerAndSet={this.showDatePickerAndSet}
         />
         <TouchableOpacity
           style={{ ...styles.form, ...styles.confirmButton }}
-          onPress={() => this.handleAddUser()}
+          onPress={() => this.handleEdit()}
         >
           <Text style={styles.confirmButtonText}>CONFIRMER</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{ ...styles.form, ...styles.deleteButton }}
+          onPress={() => this.handleDelete()}
+        >
+          <Text style={styles.confirmButtonText}>SUPPRIMER</Text>
         </TouchableOpacity>
       </ScrollView>
     );
@@ -88,34 +105,24 @@ function Form({ handleChange, userInfo, showDatePickerAndSet }) {
   const { prenom, nom, sex, date, distance } = userInfo;
   return (
     <View style={styles.form}>
-      <Field
-        value={prenom}
-        label="Prénom"
-        handleOnChange={e => handleChange(e, "prenom")}
-      />
-      <Field
-        value={nom}
-        label="Nom"
-        handleOnChange={e => handleChange(e, "nom")}
-      />
+      <Field value={prenom} label="Prénom" editable={false} />
+      <Field value={nom} label="Nom" editable={false} />
       <Text style={common.inputsLabels}>Date de naissance</Text>
       <TouchableHighlight
         underlayColor="#fff"
         onPress={() => showDatePickerAndSet()}
+        disabled={true}
       >
-        <Text style={common.inputViews}>{date && formatDate(date)}</Text>
+        <Text style={common.inputsDisabled}>{date && formatDate(date)}</Text>
       </TouchableHighlight>
       <Field
         value={distance}
         type="numeric"
         label="Distance"
         handleOnChange={e => handleChange(e, "distance")}
+        editable={true}
       />
-      <Select
-        label="Sexe"
-        value={sex}
-        handleOnChange={e => handleChange(e, "sex")}
-      >
+      <Select label="Sexe" value={sex}>
         <Picker.Item label="Homme" value="H" />
         <Picker.Item label="Femme" value="F" />
       </Select>
@@ -123,14 +130,15 @@ function Form({ handleChange, userInfo, showDatePickerAndSet }) {
   );
 }
 
-function Field({ label, value, type, handleOnChange }) {
+function Field({ label, editable, value, type, handleOnChange }) {
   return (
     <>
       <Text style={common.inputsLabels}>{label}</Text>
       <TextInput
         value={typeof value === "object" ? formatDate(value) : value}
         keyboardType={type === "numeric" ? "numeric" : "default"}
-        style={common.inputs}
+        editable={editable}
+        style={editable ? common.inputs : common.inputsDisabled}
         maxLength={20}
         autoCorrect={false}
         placeholder={label}
@@ -144,8 +152,12 @@ function Select({ label, handleOnChange, value, children }) {
   return (
     <>
       <Text style={common.inputsLabels}>{label}</Text>
-      <View style={common.inputs}>
-        <Picker selectedValue={value} onValueChange={handleOnChange}>
+      <View style={common.inputsDisabled}>
+        <Picker
+          selectedValue={value}
+          enabled={false}
+          onValueChange={handleOnChange}
+        >
           {children}
         </Picker>
       </View>
@@ -174,9 +186,17 @@ const styles = StyleSheet.create({
     padding: 15,
     marginTop: 7
   },
+  deleteButton: {
+    borderWidth: 1,
+    borderColor: colors.DANGER,
+    backgroundColor: colors.DANGER,
+    padding: 15,
+    marginTop: 7
+  },
   confirmButtonText: {
     color: "#FFFFFF",
     fontSize: 20,
     textAlign: "center"
   }
 });
+

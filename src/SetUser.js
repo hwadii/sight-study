@@ -21,7 +21,7 @@ export default class SetUser extends React.Component {
       users: []
     };
     this.handleSearch = this.handleSearch.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
   }
 
@@ -48,7 +48,8 @@ export default class SetUser extends React.Component {
   }
 
   // TODO: Add alert in util
-  async handleSelect(id, user) {
+  async handleSelect(user) {
+    const id = user.id;
     await setId(id.toString());
     await setUserName(user);
     showAlert(
@@ -57,18 +58,11 @@ export default class SetUser extends React.Component {
     );
   }
 
-  handleDelete(id, user) {
-    const { users: oldUsersList } = this.state;
-    showAlert(
-      `Le patient ${user.prenom} ${user.nom} va être supprimé.`,
-      () => {
-        User.removeUser(id);
-        this.setState({
-          users: oldUsersList.filter(user => user.id !== id)
-        });
-      },
-      [{ text: "Annuler" }]
-    );
+  handleEdit(user) {
+    const { navigate } = this.props.navigation;
+    navigate("EditUser", {
+      user
+    });
   }
 
   render() {
@@ -101,7 +95,7 @@ export default class SetUser extends React.Component {
         <UsersList
           users={users}
           currentUserId={currentUserId}
-          handlers={[this.handleSearch, this.handleSelect, this.handleDelete]}
+          handlers={[this.handleSearch, this.handleSelect, this.handleEdit]}
         />
       </View>
     );
@@ -125,7 +119,7 @@ function SearchBar({ handleSearch }) {
  * List of users
  */
 function UsersList({ users, currentUserId, handlers }) {
-  const [handleSearch, handleSelect, handleDelete] = handlers;
+  const [handleSearch, handleSelect, handleEdit] = handlers;
   return (
     <View style={styles.usersList}>
       <FlatList
@@ -136,7 +130,7 @@ function UsersList({ users, currentUserId, handlers }) {
           <UserElement
             user={item}
             currentUserId={currentUserId}
-            handleDelete={handleDelete}
+            handleEdit={handleEdit}
             handleSelect={handleSelect}
           />
         )}
@@ -148,32 +142,32 @@ function UsersList({ users, currentUserId, handlers }) {
 /**
  * A row of the users list
  */
-function UserElement({ user, currentUserId, handleDelete, handleSelect }) {
-  const { id, nom, prenom, sex, date_de_naissance } = user;
-  const isSelected = id === currentUserId;
+function UserElement({ user, currentUserId, handleEdit, handleSelect }) {
+  const isSelected = user.id === currentUserId;
   return (
     <TouchableHighlight
       underlayColor="#f5f5f5"
       style={{ backgroundColor: isSelected ? "#e8e8e8" : "#fff" }}
-      onPress={() => handleSelect(id, user)}
+      onPress={() => handleSelect(user)}
     >
       <View style={styles.userBox}>
         <Text style={styles.userText}>
-          {prenom} {nom}
+          {user.prenom} {user.nom}
         </Text>
         <Text style={styles.userTextMore}>
-          ({sex === "F" ? "Femme" : "Homme"})
+          ({user.sex === "F" ? "Femme" : "Homme"})
         </Text>
+        <Text style={{ fontSize: 18 }}>{user.distance} cm</Text>
         <Text style={{ fontSize: 18 }}>
-          {formatDate(new Date(date_de_naissance))}
+          {formatDate(new Date(user.date_de_naissance))}
         </Text>
         <View style={styles.actions}>
-          <Button title="Exporter" color={colors.PRIMARY} />
           <Button
-            title="Supprimer"
-            color={colors.DANGER}
-            onPress={() => handleDelete(id, user)}
+            title="Éditer"
+            color={colors.SUCESS}
+            onPress={() => handleEdit(user)}
           />
+          <Button title="Exporter" color={colors.PRIMARY} />
         </View>
       </View>
     </TouchableHighlight>
