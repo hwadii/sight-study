@@ -3,6 +3,7 @@ import { Image, View, Button } from "react-native";
 import { PermissionsAndroid } from "react-native";
 import { StyleSheet, Text } from "react-native";
 import QRCodeScanner from "react-native-qrcode-scanner";
+import { roundToNearestMinutesWithOptions } from "date-fns/esm/fp";
 
 function getTmpDistance(bounds) {
   const { origin } = bounds;
@@ -20,7 +21,8 @@ export default class DistanceFinder extends Component {
       wellPlacedCount: 0,
       distance: 0,
       timer: null,
-      counter: 1,
+      counter: 0,
+      lastTime: -2,
       img: require("../assets/asterix1.png")
     };
     this.handleOnOk = this.handleOnOk.bind(this);
@@ -30,14 +32,12 @@ export default class DistanceFinder extends Component {
     var wellPlacedInaRow = 10;
     var eps = 1;
 
-    if (this.state.wellPlacedCount >= wellPlacedInaRow) {
-      this.setState({ distance: parseInt(10 * this.state.distance) / 10 });
-    } else {
+    if (this.state.wellPlacedCount < wellPlacedInaRow) {
       if (e.data === "sight-study") {
         const tmp = getTmpDistance(e.bounds);
         if (Math.abs(this.state.distance - tmp) < eps)
-          this.setState({ wellPlacedCount: this.state.wellPlacedCount + 1 });
-        else this.setState({ distance: tmp, wellPlacedCount: 0 });
+          this.setState({ wellPlacedCount: this.state.wellPlacedCount + 1, lastTime: this.state.counter });
+        else this.setState({ distance: parseInt(10 * tmp) / 10, wellPlacedCount: 0, lastTime: this.state.counter });
       } else console.log("pas bon qr code");
     }
   };
@@ -47,10 +47,9 @@ export default class DistanceFinder extends Component {
       PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
     );
     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
-    this.timer = setInterval(this.tick, 10000);
+    this.timer = setInterval(this.tick, 1000);
     this.setState({
-      timer: this.timer,
-      counter: (Math.floor(Math.random() * 10) % 4) + 1
+      timer: this.timer
     });
     this.tick();
   }
@@ -60,9 +59,9 @@ export default class DistanceFinder extends Component {
   }
 
   tick = () => {
-    var c = ((this.state.counter - 1 + 1) % 4) + 1;
+    var c = parseInt(this.state.counter/10)%4+1
     this.setState({
-      counter: c,
+      counter: this.state.counter+1,
       img: images[c]
     });
   };
@@ -81,7 +80,8 @@ export default class DistanceFinder extends Component {
           onRead={this.onSuccess}
           vibrate={false}
           reactivate={true}
-          containerStyle={{ opacity: 0 }}
+          // containerStyle={{ width:"10%", height:"10%" }}
+          cameraStyle={this.state.counter-this.state.lastTime>=2 ? qr("red") : qr("green")}
           cameraType="front"
         />
         {wellPlacedCount < 10 ? (
@@ -89,6 +89,9 @@ export default class DistanceFinder extends Component {
         ) : (
           <OnCalculated distance={distance} handleOnOk={this.handleOnOk} />
         )}
+        <Text style={styles.indication}>
+          {this.state.counter-this.state.lastTime>=2 ? "Veuillez vous placer devant l'écran" : ""}
+        </Text>
       </View>
     );
   }
@@ -122,10 +125,30 @@ function OnCalculated({ distance, handleOnOk }) {
   );
 }
 
+qr = function(color) {
+  return {
+    borderStyle: "solid", 
+    borderColor: color, 
+    borderWidth: 6,
+    height: "22%", 
+    marginBottom: "90%", 
+    marginLeft: "10%", 
+    width: "20%"
+  }
+}
+
 const styles = StyleSheet.create({
   marker: {
     justifyContent: "center",
     alignItems: "center",
     position: "absolute"
+  },
+  indication:{
+    flex: 1,
+    position: "absolute",
+    justifyContent: "center",
+    top: "70%",
+    fontWeight: "bold",
+    fontSize: 22
   }
 });
