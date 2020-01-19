@@ -2,6 +2,7 @@ import React from "react";
 import {
   StyleSheet,
   Text,
+  ScrollView,
   View,
   Dimensions,
   TextInput,
@@ -63,7 +64,9 @@ export default class Settings extends React.Component {
     const { tableau } = this.state
 
     return (
+      <ScrollView>
       <View style={styles.container}>
+        <Text style={styles.header}>valeurs des acuités visuels a tester</Text>
         <Form
           tableau={tableau}
           navigate={this.props.navigation.navigate}
@@ -71,13 +74,23 @@ export default class Settings extends React.Component {
           handleChangeAcuite={this.handleChangeAcuite}
         />
       </View>
+      </ScrollView>
     );
   }
 }
 
 function Form({ tableau, HandleSetAcuites, handleChangeAcuite }) {
   return (
+    
     <View style={styles.form}>
+      <View style={styles.board}>
+        <View style={{ flex: 1, alignSelf: 'stretch',alignItems:'center', justifyContent: 'center'}}>
+          <Text style={styles.label}> Echelle EDTRS St-Joseph</Text>
+        </View>
+        <View style={{ flex: 1, alignSelf: 'stretch' }}>
+          <Text style={styles.label}>Acuité Visuel (décimal)</Text>
+        </View>
+      </View>
       <Board tableau={tableau} handleChangeAcuite={handleChangeAcuite}></Board>
       <TouchableOpacity
         style={styles.confirmButton}
@@ -91,15 +104,15 @@ function Form({ tableau, HandleSetAcuites, handleChangeAcuite }) {
 
 function Field({ value, label, handler }) {
   return (
-    <View style={styles.noAccount}>
-      <View style={{ paddingTop: 10, paddingVertical: 10 }}>
+    <View style={styles.board}>
+      <View style={{ flex: 1, alignSelf: 'stretch',alignItems:'center', justifyContent: 'center'}}>
         <Text style={styles.label}>{label}</Text>
       </View>
-      <View style={{ textAlignVertical: 'center',  paddingTop: 10, paddingLeft: 10 }}>
+      <View style={{ flex: 1, alignSelf: 'stretch' }}>
         <TextInput
           defaultValue={value}
-          //style={common.inputs}
-          style={styles.input}
+          style={styles.inputs}
+          //style={styles.input}
           autoCorrect={false}
           defaultValue={value}
           onChange={handler}
@@ -113,19 +126,18 @@ function Field({ value, label, handler }) {
 function Board({ tableau, handleChangeAcuite }) {
   return (
     <>
-      <Text style={styles.header}>valeurs des acuités visuels a tester</Text>
-      <Field value={tableau[0]} label=" 1 acuité" handler={(e) => handleChangeAcuite(e, 0)}></Field>
-      <Field value={tableau[1]} label=" 2 acuité" handler={(e) => handleChangeAcuite(e, 1)}></Field>
-      <Field value={tableau[2]} label=" 3 acuité" handler={(e) => handleChangeAcuite(e, 2)}></Field>
-      <Field value={tableau[3]} label=" 4 acuité" handler={(e) => handleChangeAcuite(e, 3)}></Field>
-      <Field value={tableau[4]} label=" 5 acuité" handler={(e) => handleChangeAcuite(e, 4)}></Field>
-      <Field value={tableau[5]} label=" 6 acuité" handler={(e) => handleChangeAcuite(e, 5)}></Field>
-      <Field value={tableau[6]} label=" 7 acuité" handler={(e) => handleChangeAcuite(e, 6)}></Field>
-      <Field value={tableau[7]} label=" 8 acuité" handler={(e) => handleChangeAcuite(e, 7)}></Field>
-      <Field value={tableau[8]} label=" 9 acuité" handler={(e) => handleChangeAcuite(e, 8)}></Field>
-      <Field value={tableau[9]} label=" 10 acuité" handler={(e) => handleChangeAcuite(e, 9)}></Field>
-      <Field value={tableau[10]} label=" 11 acuité" handler={(e) => handleChangeAcuite(e, 10)}></Field>
-      <Field value={tableau[11]} label=" 12 acuité" handler={(e) => handleChangeAcuite(e, 11)}></Field>
+      <Field value={tableau[0]} label=" 4/40" handler={(e) => handleChangeAcuite(e, 0)}></Field>
+      <Field value={tableau[1]} label=" 4/32" handler={(e) => handleChangeAcuite(e, 1)}></Field>
+      <Field value={tableau[2]} label=" 4/25" handler={(e) => handleChangeAcuite(e, 2)}></Field>
+      <Field value={tableau[3]} label=" 4/20" handler={(e) => handleChangeAcuite(e, 3)}></Field>
+      <Field value={tableau[4]} label=" 4/16" handler={(e) => handleChangeAcuite(e, 4)}></Field>
+      <Field value={tableau[5]} label=" 4/12,5" handler={(e) => handleChangeAcuite(e, 5)}></Field>
+      <Field value={tableau[6]} label=" 4/10" handler={(e) => handleChangeAcuite(e, 6)}></Field>
+      <Field value={tableau[7]} label=" 4/8" handler={(e) => handleChangeAcuite(e, 7)}></Field>
+      <Field value={tableau[8]} label=" 4/6,3" handler={(e) => handleChangeAcuite(e, 8)}></Field>
+      <Field value={tableau[9]} label=" 4/5" handler={(e) => handleChangeAcuite(e, 9)}></Field>
+      <Field value={tableau[10]} label=" 4/4" handler={(e) => handleChangeAcuite(e, 10)}></Field>
+      <Field value={tableau[11]} label=" 3/4" handler={(e) => handleChangeAcuite(e, 11)}></Field>
     </>
   )
 }
@@ -145,10 +157,11 @@ const styles = StyleSheet.create({
   board: {
     flexDirection: "row",
     justifyContent: "center",
-    marginVertical: 10
+    marginVertical: 10,
+    alignItems:'center'
   },
   header: {
-    fontSize: 32,
+    fontSize: 30,
     fontWeight: "bold",
     margin: 10
   },
@@ -156,8 +169,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#007BFF",
     backgroundColor: "#007BFF",
-    padding: 15,
-    marginTop: 7
+    padding: 10,
+    marginTop: 3
   },
   confirmButtonText: {
     color: "#FFFFFF",
@@ -170,20 +183,20 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     textAlignVertical: 'center'
   },
-  input:{
+  inputs: {
     borderColor: "#CCCCCC",
     borderWidth: 1,
     borderRadius: 3,
     fontSize: 25,
-    height: 40,
+    height: 50,
     paddingLeft: 5,
     paddingRight: 5,
     marginBottom: 6,
-    width: 50
+    width:200
   },
   label:{
     fontSize: 25,
-    marginTop: 7,
+    marginTop: 3,
     justifyContent: 'center',
     alignItems: 'center'
   }
