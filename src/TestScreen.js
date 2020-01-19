@@ -3,17 +3,23 @@ import { Button, StyleSheet, Text, View, PixelRatio } from "react-native";
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
 import * as Speech from "expo-speech";
-import { intersection } from "./util";
+import { intersection, defaultEtdrsScale } from "./util";
 
 const letters = "nckzorhsdv";
-const timeBetweenLetters = 500;
+const timeBetweenLetters = 200;
 const screenFactor = 100 * PixelRatio.get();
 /**
  * Gets font size for current line
- * @param {number} lineCoefficient coefficient de ligne
+ * @param {number} lineCoefficient acuité visuelle
+ * @param {number} d distance en cm
  */
-const getLineLength = lineCoefficient =>
-  Math.floor(screenFactor * 2.91 * Math.pow(10, -3) * 400 * lineCoefficient);
+const getLineLength = (lineCoefficient, d) =>
+  Math.floor(
+    (screenFactor * 5 * 2.91 * Math.pow(10, -3) * d) / lineCoefficient
+  );
+const vs = Object.values(defaultEtdrsScale);
+const lineSizes = vs.map(v => getLineLength(v, 40));
+const targetLines = 12;
 
 export default class TestScreen extends Component {
   static navigationOptions = {
@@ -30,9 +36,8 @@ export default class TestScreen extends Component {
 
     letter: "",
     letterCount: 0,
-    lineSize: getLineLength(1),
+    lineSize: lineSizes[0],
     lineNumber: 0,
-    lineCoefficient: 1,
     whichEye: "left",
     scores: {
       left: 0,
@@ -61,7 +66,19 @@ export default class TestScreen extends Component {
       Permissions.AUDIO_RECORDING
     );
     this.setNextLetter();
-    // this._startRecognizing();
+    this.willBlurSub = this.props.navigation.addListener("willBlur", () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    });
+    this.intervalId = setInterval(
+      () => this.setNextLetter(),
+      timeBetweenLetters
+    );
+  }
+
+  componentWillUnmount() {
+    Voice.destroy().then(Voice.removeAllListeners);
+    this.willBlurSub.remove();
+    clearInterval(this.intervalId);
   }
 
   // for tests
@@ -82,28 +99,21 @@ export default class TestScreen extends Component {
   }
   // !for tests
 
-  componentWillUnmount() {
-    Voice.destroy().then(Voice.removeAllListeners);
-    if (this.setNextLetterId) clearInterval(this.setNextLetterId);
-  }
-
   nextEye() {
+    const { lineNumber } = this.state;
+    console.log(`After next eye: ${lineSizes[lineNumber % targetLines]}`);
     this.setState({
-      letter: letters.random(),
-      lineCoefficient: 1,
-      lineSize: getLineLength(1),
       whichEye: "right"
     });
   }
 
   endTest() {
     console.log("FIN");
-    clearInterval(this.setNextLetterId);
+    clearInterval(this.intervalId);
   }
 
   checkResults(newResults) {
-    const { results, partialResults, letter } = this.state;
-    // const allResults = [...results, ...partialResults];
+    const { letter } = this.state;
     return intersection(newResults, letter);
   }
 
@@ -115,26 +125,35 @@ export default class TestScreen extends Component {
   }
 
   setNextLetter() {
-    const { letterCount, lineNumber, lineCoefficient } = this.state;
+    const { letterCount, lineNumber } = this.state;
     const newLetterCount = letterCount + 1;
     let newLineNumber = lineNumber; // default is current line number
-    let newLineCoefficient = lineCoefficient;
     if (letterCount % 5 === 0) {
       newLineNumber += 1; // +1 if it's a fifth letter
-      newLineCoefficient -= 0.1;
     }
+    const newIdx = (newLineNumber - 1) % targetLines;
     this.setState(
       {
         letter: letters.random(),
         letterCount: newLetterCount,
         lineNumber: newLineNumber,
-        lineSize: getLineLength(newLineCoefficient),
-        lineCoefficient: newLineCoefficient
+        lineSize: lineSizes[newIdx]
       },
       () => {
-        if (letterCount === 25) this.nextEye();
-        if (letterCount === 50) this.endTest();
-        this._startRecognizing();
+        const {
+          letter,
+          letterCount,
+          lineNumber,
+          whichEye,
+          lineSize
+        } = this.state;
+        console.log(
+          `${letter} => ${letterCount}:${lineNumber} ${targetLines *
+            5} with height ${lineSize} and idx ${newIdx} -> ${whichEye}`
+        );
+        if (letterCount === targetLines * 5) this.nextEye();
+        if (letterCount === targetLines * 10) this.endTest();
+        // this._startRecognizing();
       }
     );
   }
@@ -158,7 +177,6 @@ export default class TestScreen extends Component {
   onSpeechEnd = e => {
     // eslint-disable-next-line
     console.log("onSpeechEnd: ", e);
-    // this._startRecognizing();
     this.setState({
       end: "√"
     });
@@ -173,9 +191,10 @@ export default class TestScreen extends Component {
     }
     // no match
     if (e.error.message === "7/No match") {
-      this._destroyRecognizer();
-      Speech.speak("Bonjour", { language: "fr" });
-      this._startRecognizing();
+      Speech.speak("Je ne vous ai pas entendu. Veuillez répéter.", {
+        language: "fr",
+        onDone: () => this._startRecognizing()
+      });
     }
     this.setState({
       error: JSON.stringify(e.error)
@@ -184,9 +203,9 @@ export default class TestScreen extends Component {
 
   onSpeechResults = e => {
     // eslint-disable-next-line
-    console.log("onSpeechResults: ", e);
-    const { scores, whichEye } = this.state;
-    const newResults = e.value;
+    const { partialResults, scores, whichEye } = this.state;
+    const newResults = [...e.value, ...partialResults];
+    console.log("onSpeechResults: ", newResults);
     this.setState(
       {
         results: newResults,
@@ -203,14 +222,6 @@ export default class TestScreen extends Component {
     console.log("onSpeechPartialResults: ", e);
     this.setState({
       partialResults: e.value
-    });
-  };
-
-  onSpeechVolumeChanged = e => {
-    // eslint-disable-next-line
-    // console.log("onSpeechVolumeChanged: ", e);
-    this.setState({
-      pitch: e.value
     });
   };
 
@@ -271,23 +282,14 @@ export default class TestScreen extends Component {
 
   render() {
     const { letter, lineSize, tests } = this.state;
+    const { goBack } = this.props.navigation;
     return (
       <View style={styles.container}>
         <Text style={{ fontFamily: "optician-sans", fontSize: lineSize }}>
           {letter}
         </Text>
-        {!tests.hideButtons && (
-          <>
-            <Button title="Start" onPress={() => this._startRecognizing()} />
-            <Button title="Stop" onPress={() => this._stopRecognizing()} />
-            <Button title="Destroy" onPress={() => this._destroyRecognizer()} />
-            <Button title="Randomize" onPress={() => this.randomize()} />
-          </>
-        )}
-        <Button
-          title={tests.hideButtons ? "Show" : "Hide"}
-          onPress={() => this.toggleButtons()}
-        />
+        <Button title="Next" onPress={() => this.setNextLetter()} />
+        <Button title="Quit" onPress={() => goBack()} />
       </View>
     );
   }

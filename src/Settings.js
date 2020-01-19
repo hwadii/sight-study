@@ -8,7 +8,7 @@ export default class Settings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      distance: null, 
+      distance: null,
       tolerance: null
     };
     this.handleChangeField = this.handleChangeField.bind(this);
