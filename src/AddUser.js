@@ -84,24 +84,24 @@ export default class AddUser extends React.Component {
           userInfo={{ prenom, nom, date, sex, distance }}
           handleChange={this.handleChangeField}
           showDatePickerAndSet={this.showDatePickerAndSet}
-        />
-        <TouchableOpacity
-          style={{
-            ...styles.form,
-            ...styles.confirmButton,
-            backgroundColor: colors.SECONDARY,
-            borderColor: colors.SECONDARY
-          }}
-          onPress={() => this.handleDistanceTest()}
         >
-          <Text style={styles.confirmButtonText}>🔎 TEST DE DISTANCE 🔎</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{ ...styles.form, ...styles.confirmButton }}
-          onPress={() => this.handleAddUser()}
-        >
-          <Text style={styles.confirmButtonText}>CONFIRMER ✅</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              ...common.actionButtons,
+              backgroundColor: colors.SECONDARY,
+              borderColor: colors.SECONDARY
+            }}
+            onPress={() => this.handleDistanceTest()}
+          >
+            <Text style={common.actionButtonsText}>🔎 TEST DE DISTANCE 🔎</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ ...styles.form, ...common.actionButtons }}
+            onPress={() => this.handleAddUser()}
+          >
+            <Text style={common.actionButtonsText}>CONFIRMER ✅</Text>
+          </TouchableOpacity>
+        </Form>
       </ScrollView>
     );
   }
@@ -109,7 +109,7 @@ export default class AddUser extends React.Component {
 
 // TODO: Put this in frequently used components
 
-function Form({ handleChange, userInfo, showDatePickerAndSet }) {
+function Form({ children, handleChange, userInfo, showDatePickerAndSet }) {
   const { prenom, nom, sex, date, distance } = userInfo;
   return (
     <View style={styles.form}>
@@ -143,6 +143,7 @@ function Form({ handleChange, userInfo, showDatePickerAndSet }) {
         <Picker.Item label="Homme" value="H" />
         <Picker.Item label="Femme" value="F" />
       </Select>
+      {children}
     </View>
   );
 }
@@ -190,17 +191,5 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
     margin: 10
-  },
-  confirmButton: {
-    borderWidth: 1,
-    borderColor: "#007BFF",
-    backgroundColor: "#007BFF",
-    padding: 15,
-    marginTop: 7
-  },
-  confirmButtonText: {
-    color: "#FFFFFF",
-    fontSize: 20,
-    textAlign: "center"
   }
 });

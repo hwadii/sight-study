@@ -1,10 +1,23 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Dimensions,
+  Image
+} from "react-native";
 import { styles as common } from "./styles/common";
-import { getFullName, getDoctorEmail } from "./util";
-import { scale } from "react-native-size-matters";
+import {
+  getFullName,
+  getDoctorEmail,
+  setAcuites,
+  getAcuites,
+  defaultEtdrsScale
+} from "./util";
 import Help from "./Help";
 import SystemSetting from "react-native-system-setting";
+import { scale } from "react-native-size-matters";
 
 export default class MainMenu extends React.Component {
   static navigationOptions = {
@@ -24,13 +37,19 @@ export default class MainMenu extends React.Component {
   }
 
   async componentDidMount() {
-    var vol = 0.5
-    var bright = 0.5
+    var vol = 0.5;
+    var bright = 0.5;
 
     SystemSetting.setVolume(vol);
-    SystemSetting.setBrightnessForce(bright).then((success)=>{
-      !success && SystemSetting.grantWriteSettingPremission() && SystemSetting.setBrightnessForce(bright)
+    SystemSetting.setBrightnessForce(bright).then(success => {
+      !success &&
+        SystemSetting.grantWriteSettingPremission() &&
+        SystemSetting.setBrightnessForce(bright);
     });
+    const tableau = await getAcuites();
+    if (tableau === null) {
+      await setAcuites(defaultEtdrsScale);
+    }
     this.willFocusSub = this.props.navigation.addListener(
       "willFocus",
       async () => {
@@ -53,23 +72,22 @@ export default class MainMenu extends React.Component {
         <Image
           style={{
             width: scale(220),
-            height: scale(220),
+            height: scale(220)
           }}
           source={require("../assets/main-menu.png")}
         />
         <UserConnected fullName={fullName} />
         <DoctorMail email={doctorEmail} />
-        {/* <Settings distance={distance} tolerance={tolerance} /> */}
         {fullName === null ? null : (
           <TouchableOpacity
-            style={common.actionButtons}
+            style={styles.actionButtons}
             onPress={() => this.handleAction("TEST")}
           >
             <Text style={common.actionButtonsText}>Aller au test</Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity
-          style={common.actionButtons}
+          style={styles.actionButtons}
           onPress={() => this.handleAction("REGLAGES")}
         >
           <Text style={common.actionButtonsText}>Réglages</Text>
@@ -115,5 +133,12 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     alignItems: "center"
+  },
+  actionButtons: {
+    ...common.actionButtons,
+    maxWidth:
+      Dimensions.get("window").width < 400
+        ? Dimensions.get("window").width
+        : 400
   }
-})
+});

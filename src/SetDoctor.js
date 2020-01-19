@@ -45,10 +45,10 @@ export default class SetDoctor extends React.Component {
             handler={e => this.handleChangeField(e, "mail")}
           />
           <TouchableOpacity
-            style={styles.confirmButton}
+            style={common.actionButtons}
             onPress={() => this.handleModifMedecin()}
           >
-            <Text style={styles.confirmButtonText}>CONFIRMER</Text>
+            <Text style={common.actionButtonsText}>CONFIRMER</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -85,17 +85,5 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "bold",
     margin: 10
-  },
-  confirmButton: {
-    borderWidth: 1,
-    borderColor: "#007BFF",
-    backgroundColor: "#007BFF",
-    padding: 15,
-    marginTop: 7
-  },
-  confirmButtonText: {
-    color: "#FFFFFF",
-    fontSize: 20,
-    textAlign: "center"
   }
 });

@@ -18,15 +18,11 @@ export const styles = StyleSheet.create({
   actionButtons: {
     borderWidth: 1,
     width: "100%",
-    maxWidth:
-      Dimensions.get("window").width < 400
-        ? Dimensions.get("window").width
-        : 400,
     borderColor: "#007BFF",
     backgroundColor: "#007BFF",
-    padding: 15,
+    borderRadius: 5,
     marginTop: 7,
-    borderRadius: 5
+    padding: 20
   },
   actionButtonsText: {
     color: "#FFFFFF",
@@ -56,7 +52,7 @@ export const styles = StyleSheet.create({
     return {
       ...this.inputs,
       backgroundColor: "#f5f5f5",
-      textAlignVertical: "center",
+      textAlignVertical: "center"
     };
   },
   get inputViews() {
