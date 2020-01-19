@@ -2,102 +2,131 @@ import React from "react";
 import {
   StyleSheet,
   Text,
-  ScrollView,
   View,
   Dimensions,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator
 } from "react-native";
 import { scale } from "react-native-size-matters";
-import { styles as common } from "./styles/common";
-import { setAcuites, getAcuites } from "./util";
+import { setAcuites, getAcuites, defaultEtdrsScale } from "./util";
+import { colors } from "./styles/common";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default class Settings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      1: "",
-      2: "",
-      3: "",
-      4: "",
-      tableau: []
+      acuites: {}
     };
     this.handleChangeField = this.handleChangeField.bind(this);
-    this.handleModifDistance = this.handleModifDistance.bind(this);
-    this.handleChangeAcuite = this.handleChangeAcuite.bind(this)
-    this.HandleSetAcuites = this.HandleSetAcuites.bind(this)
+    this.handleChangeAcuite = this.handleChangeAcuite.bind(this);
+    this.handleSetAcuites = this.handleSetAcuites.bind(this);
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
-
+    this.reinitAcuites = this.reinitAcuites.bind(this);
   }
 
   handleChangeField(e, field) {
     this.setState({ [field]: e.nativeEvent.text });
   }
 
-  async HandleSetAcuites() {
-    const { tableau } = this.state
-    console.log(tableau)
-    await setAcuites(tableau);
-    const { navigate } = this.props.navigation;
-    navigate("SetUser");
+  async handleSetAcuites() {
+    const { acuites } = this.state;
+    const { goBack } = this.props.navigation;
+    await setAcuites(acuites);
+    goBack();
   }
 
   handleChangeAcuite(e, i) {
-    let { tableau } = this.state
-    tableau[i] = e.nativeEvent.text
-    this.setState({ tableau: tableau })
-  }
-
-  async handleModifDistance() {
-    const { navigate } = this.props.navigation;
-    navigate("SetUser");
+    let { acuites } = this.state;
+    acuites[i] = e.nativeEvent.text;
+    this.setState({ acuites });
   }
 
   async componentDidMount() {
-
     this.setState({
-      tableau: await getAcuites(),
+      acuites: await getAcuites()
+    });
+  }
+
+  reinitAcuites() {
+    this.setState({
+      acuites: defaultEtdrsScale
     });
   }
 
   render() {
-    const { tableau } = this.state
-
+    const { acuites } = this.state;
     return (
-      <ScrollView>
-      <View style={styles.container}>
-        <Text style={styles.header}>valeurs des acuités visuels a tester</Text>
+      <ScrollView
+        contentContainerStyle={styles.container}
+      >
+        <Text style={styles.header}>
+          Valeurs des acuités visuelles à tester
+        </Text>
         <Form
-          tableau={tableau}
-          navigate={this.props.navigation.navigate}
-          HandleSetAcuites={this.HandleSetAcuites}
+          acuites={acuites}
+          reinitAcuites={this.reinitAcuites}
+          handleSetAcuites={this.handleSetAcuites}
           handleChangeAcuite={this.handleChangeAcuite}
         />
-      </View>
       </ScrollView>
     );
   }
 }
 
-function Form({ tableau, HandleSetAcuites, handleChangeAcuite }) {
+// TODO: Implement Keyboard not covering inputs
+function Form({
+  acuites,
+  reinitAcuites,
+  handleSetAcuites,
+  handleChangeAcuite
+}) {
+  const acuitesEntries = Object.entries(acuites);
   return (
-    
     <View style={styles.form}>
       <View style={styles.board}>
-        <View style={{ flex: 1, alignSelf: 'stretch',alignItems:'center', justifyContent: 'center'}}>
-          <Text style={styles.label}> Echelle EDTRS St-Joseph</Text>
+        <View
+          style={{
+            flex: 1,
+            alignSelf: "stretch",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          <Text style={styles.label}>Échelle EDTRS St-Joseph</Text>
         </View>
-        <View style={{ flex: 1, alignSelf: 'stretch' }}>
+        <View style={{ flex: 1, alignSelf: "stretch" }}>
           <Text style={styles.label}>Acuité Visuel (décimal)</Text>
         </View>
       </View>
-      <Board tableau={tableau} handleChangeAcuite={handleChangeAcuite}></Board>
-      <TouchableOpacity
-        style={styles.confirmButton}
-        onPress={() => HandleSetAcuites()}
-      >
-        <Text style={styles.confirmButtonText}>CONFIRMER</Text>
-      </TouchableOpacity>
+      {acuitesEntries.map(([etdrs, acuite]) => (
+        <Field
+          key={etdrs}
+          value={acuite.toString()}
+          label={etdrs}
+          handler={e => handleChangeAcuite(e, etdrs)}
+        />
+      ))}
+      <ActivityIndicator
+        size="large"
+        color="#0000ff"
+        animating={acuitesEntries.length === 0}
+      />
+      <View style={{ justifyContent: "center", flexDirection: "row" }}>
+        <TouchableOpacity
+          style={styles.confirmButton}
+          onPress={() => handleSetAcuites()}
+        >
+          <Text style={styles.confirmButtonText}>CONFIRMER</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.reinitButton}
+          onPress={() => reinitAcuites()}
+        >
+          <Text style={styles.confirmButtonText}>RÉINITIALISER 🔄</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -105,16 +134,24 @@ function Form({ tableau, HandleSetAcuites, handleChangeAcuite }) {
 function Field({ value, label, handler }) {
   return (
     <View style={styles.board}>
-      <View style={{ flex: 1, alignSelf: 'stretch',alignItems:'center', justifyContent: 'center'}}>
+      <View
+        style={{
+          flex: 1,
+          alignSelf: "stretch",
+          alignItems: "center",
+          justifyContent: "center"
+        }}
+      >
         <Text style={styles.label}>{label}</Text>
       </View>
-      <View style={{ flex: 1, alignSelf: 'stretch' }}>
+      <View style={{ flex: 1, alignSelf: "stretch" }}>
         <TextInput
           defaultValue={value}
           style={styles.inputs}
-          //style={styles.input}
           autoCorrect={false}
           defaultValue={value}
+          keyboardType="number-pad"
+          textContentType="none"
           onChange={handler}
         />
       </View>
@@ -122,43 +159,20 @@ function Field({ value, label, handler }) {
   );
 }
 
-
-function Board({ tableau, handleChangeAcuite }) {
-  return (
-    <>
-      <Field value={tableau[0]} label=" 4/40" handler={(e) => handleChangeAcuite(e, 0)}></Field>
-      <Field value={tableau[1]} label=" 4/32" handler={(e) => handleChangeAcuite(e, 1)}></Field>
-      <Field value={tableau[2]} label=" 4/25" handler={(e) => handleChangeAcuite(e, 2)}></Field>
-      <Field value={tableau[3]} label=" 4/20" handler={(e) => handleChangeAcuite(e, 3)}></Field>
-      <Field value={tableau[4]} label=" 4/16" handler={(e) => handleChangeAcuite(e, 4)}></Field>
-      <Field value={tableau[5]} label=" 4/12,5" handler={(e) => handleChangeAcuite(e, 5)}></Field>
-      <Field value={tableau[6]} label=" 4/10" handler={(e) => handleChangeAcuite(e, 6)}></Field>
-      <Field value={tableau[7]} label=" 4/8" handler={(e) => handleChangeAcuite(e, 7)}></Field>
-      <Field value={tableau[8]} label=" 4/6,3" handler={(e) => handleChangeAcuite(e, 8)}></Field>
-      <Field value={tableau[9]} label=" 4/5" handler={(e) => handleChangeAcuite(e, 9)}></Field>
-      <Field value={tableau[10]} label=" 4/4" handler={(e) => handleChangeAcuite(e, 10)}></Field>
-      <Field value={tableau[11]} label=" 3/4" handler={(e) => handleChangeAcuite(e, 11)}></Field>
-    </>
-  )
-}
-
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
     marginTop: 15
   },
-  form: {
-    width: scale(320),
+  form: { width: scale(320),
     maxWidth: Dimensions.get("window").width
   },
   board: {
     flexDirection: "row",
     justifyContent: "center",
     marginVertical: 10,
-    alignItems:'center'
+    alignItems: "center"
   },
   header: {
     fontSize: 30,
@@ -167,10 +181,21 @@ const styles = StyleSheet.create({
   },
   confirmButton: {
     borderWidth: 1,
-    borderColor: "#007BFF",
-    backgroundColor: "#007BFF",
+    borderColor: colors.PRIMARY,
+    backgroundColor: colors.PRIMARY,
     padding: 10,
-    marginTop: 3
+    marginHorizontal: 8,
+    width: 300,
+    maxWidth: 400
+  },
+  reinitButton: {
+    borderWidth: 1,
+    borderColor: colors.SECONDARY,
+    backgroundColor: colors.SECONDARY,
+    padding: 10,
+    marginHorizontal: 8,
+    width: 200,
+    maxWidth: 400
   },
   confirmButtonText: {
     color: "#FFFFFF",
@@ -181,7 +206,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     marginVertical: 10,
-    textAlignVertical: 'center'
+    textAlignVertical: "center"
   },
   inputs: {
     borderColor: "#CCCCCC",
@@ -192,12 +217,12 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingRight: 5,
     marginBottom: 6,
-    width:200
+    width: 200
   },
-  label:{
+  label: {
     fontSize: 25,
     marginTop: 3,
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center"
   }
 });
