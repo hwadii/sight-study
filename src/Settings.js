@@ -91,7 +91,7 @@ function Form({tableau, HandleSetAcuites, handleChangeAcuite }) {
 
 function Field({ value, label, handler }) {
   return (
-    <>
+    <View style={styles.noAccount}>
       <Text style={common.inputsLabels}>{label}</Text>
       <TextInput
         defaultValue={value}
@@ -100,7 +100,7 @@ function Field({ value, label, handler }) {
         defaultValue={value}
         onChange={handler}
       />
-    </>
+    </View>
   );
 }
 
@@ -158,5 +158,10 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 20,
     textAlign: "center"
+  },
+  noAccount: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginVertical: 10
   }
 });
