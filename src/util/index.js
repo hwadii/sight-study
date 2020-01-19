@@ -1,7 +1,61 @@
-import { AsyncStorage } from "react-native";
+import { AsyncStorage, Alert } from "react-native";
 import base64 from "./base64";
-import { getUser as getUserFromDb } from "../../service/db/User";
+import { format } from "date-fns";
+import {
+  getUser as getUserFromDb,
+  getScore,
+  getIds,
+  getScores
+} from "../../service/db/User";
 
+// Constants
+export const defaultEtdrsScale = {
+  "4/40": 0.1,
+  "4/32": 0.13,
+  "4/25": 0.16,
+  "4/20": 0.2,
+  "4/16": 0.25,
+  "4/12.5": 0.32,
+  "4/10": 0.4,
+  "4/8": 0.5,
+  "4/6.3": 0.63,
+  "4/5": 0.8,
+  "4/4": 1,
+  "3/4": 1.33
+};
+
+// General
+/**
+ * Returns formatted date
+ * @param {Date} date a date
+ * @returns {string} the formatted date in the specified format
+ */
+export const formatDate = date => format(date, "dd/MM/yyyy");
+
+/**
+ * Shows alert
+ *
+ * @param {string} message the message of the alert.
+ * @param {Function} onPress function called when Ok is pressed
+ * @param {string} title the title of the alert
+ * @param {Array} moreButtons more buttons if needed
+ */
+export function showAlert(
+  message,
+  onPress,
+  moreButtons = [],
+  title = "Configuration de la tablette"
+) {
+  Alert.alert(title, message, [
+    ...moreButtons,
+    {
+      text: "OK",
+      onPress
+    }
+  ]);
+}
+
+// AsyncStorage
 const lettersDict = {
   n: ["n", "N", "Aisne", "haine", "and", "elle", "m", "M"],
   c: ["c'est", "C'est", "C", "c", "se", "s'est", "seth"],
@@ -38,10 +92,9 @@ const lettersDict = {
   v: ["v", "V", "vais", "je vais", "VV"]
 };
 
+// TODO: le faire en bon js...
 export function intersection(array, letter) {
-  console.log(letter);
-  // console.log(array);
-  for (let el of array) {
+  for (const el of array) {
     if (lettersDict[letter].includes(el)) {
       return true;
     }
@@ -107,7 +160,7 @@ export async function getFullName() {
  */
 export async function setId(id) {
   try {
-    await AsyncStorage.setItem("id", id);
+    return await AsyncStorage.setItem("id", id);
   } catch (error) {
     console.log(error);
   }
@@ -129,7 +182,7 @@ export async function getId() {
 
 export async function clear() {
   try {
-    await AsyncStorage.clear();
+    return await AsyncStorage.clear();
   } catch {
     console.log("Unable to clear storage");
   }
@@ -137,7 +190,7 @@ export async function clear() {
 
 export async function setDoctorEmail(email) {
   try {
-    await AsyncStorage.setItem("doctor_email", email);
+    return await AsyncStorage.setItem("doctor_email", email);
   } catch {
     console.log("Error setting email");
   }
@@ -151,41 +204,10 @@ export async function getDoctorEmail() {
   }
 }
 
-export async function setDistance(distance) {
-  try {
-    await AsyncStorage.setItem("distance", distance);
-  } catch {
-    console.log("Error setting distance");
-  }
-}
+const mailApi = "https://api.mailjet.com/v3.1/send";
+const headers = _createHeaders();
 
-export async function getDistance() {
-  try {
-    return await AsyncStorage.getItem("distance");
-  } catch {
-    console.log("Error getting distance");
-  }
-}
-
-export async function setTolerance(decalage) {
-  try {
-    await AsyncStorage.setItem("decalage", decalage);
-  } catch {
-    console.log("Error setting decalage");
-  }
-}
-
-export async function getTolerance() {
-  try {
-    return await AsyncStorage.getItem("decalage");
-  } catch {
-    console.log("Error getting decalage");
-  }
-}
-
-export async function sendMail(score) {
-  const to = await getDoctorEmail();
-  let name = await getFullName();
+function _createHeaders() {
   const headers = new Headers();
   headers.set(
     "Authorization",
@@ -197,27 +219,125 @@ export async function sendMail(score) {
       )
   );
   headers.set("Content-Type", "application/json");
-  const rawResponse = await fetch("https://api.mailjet.com/v3.1/send", {
+  return headers;
+}
+
+// TODO: check if results did not get sent.
+async function _send(message) {
+  const rawResponse = await fetch(mailApi, {
     method: "POST",
-    headers: headers,
-    body: JSON.stringify({
-      Messages: [
-        {
-          From: {
-            Email: "sightstudyapp@gmail.com",
-            Name: "Sight Study"
-          },
-          To: [
-            {
-              Email: to,
-              Name: name
-            }
-          ],
-          Subject: `Résultats de ${name}`,
-          HTMLPart: `Le patient ${name} vient d'obtenir le score de <b>${score}/50</b>.`
-        }
-      ]
-    })
+    headers,
+    body: message
   });
   return rawResponse.json();
+}
+
+function _createAttachement(fileName, CSVContent) {
+  if (!CSVContent) return [];
+  return [
+    {
+      ContentType: "text/csv",
+      Filename: `${fileName}.csv`,
+      Base64Content: base64.encode(CSVContent)
+    }
+  ];
+}
+
+async function _createMessage(
+  Subject,
+  HTMLPart,
+  CSVContent = "",
+  fileName = ""
+) {
+  const to = await getDoctorEmail();
+  const message = {
+    Messages: [
+      {
+        From: {
+          Email: "sightstudyapp@gmail.com",
+          Name: "Sight Study"
+        },
+        To: [
+          {
+            Email: to,
+            Name: "Médecin"
+          }
+        ],
+        Subject,
+        HTMLPart,
+        Attachments: _createAttachement(fileName, CSVContent)
+      }
+    ]
+  };
+  return JSON.stringify(message);
+}
+
+export async function sendWarningEmail(score) {
+  const name = await getFullName();
+  const message = await _createMessage(
+    `Résultats de ${name}`,
+    `Le patient ${name} vient d'obtenir le score de <b>${score}/50</b>.`
+  );
+  return _send(message);
+}
+
+function _buildCsvOne(scores) {
+  let csvContent = "Date,Oeil droit,Oeil gauche\r\n";
+  for (const row of scores) {
+    const { date, oeil_droit, oeil_gauche } = row;
+    csvContent += `${date},${oeil_droit},${oeil_gauche}\r\n`;
+  }
+  return csvContent;
+}
+
+function _buildCsvAll(scores) {
+  let csvContent = "Patient,Oeil droit,Oeil gauche,Date\r\n";
+  for (const row of scores) {
+    const { nom, prenom, oeil_droit, oeil_gauche, date } = row;
+    csvContent += `${prenom} ${nom},${oeil_droit},${oeil_gauche},${date}\r\n`;
+  }
+  console.log(csvContent);
+  return csvContent;
+}
+
+export async function setAcuites(acuites) {
+  try {
+    return await AsyncStorage.setItem("acuites", JSON.stringify(acuites));
+  } catch {
+    console.log("Error setting acuites");
+  }
+}
+
+export async function getAcuites() {
+  try {
+    return JSON.parse(await AsyncStorage.getItem("acuites"));
+  } catch {
+    console.log("Error getting acuites");
+  }
+}
+
+export async function sendSelectedUserResults(userId, fullName) {
+  const scoresObtained = await getScore(userId);
+  const csvToSend = _buildCsvOne(scoresObtained);
+  const fileName = fullName.split(" ").join("");
+  const messageToSend = await _createMessage(
+    `Résultats de ${fullName}`,
+    `Voici tous les résultats de ${fullName}.`,
+    csvToSend,
+    fileName
+  );
+  return _send(messageToSend);
+}
+
+// TODO: le csv doit former autant d'entetes que necessaire
+export async function sendAllUsersResults() {
+  const allScores = await getScores();
+  const csvToSend = _buildCsvAll(allScores);
+  const messageToSend = await _createMessage(
+    `Tous les résultats`,
+    `Voici les résultats de tous les utilisateurs.`,
+    csvToSend,
+    "tous-les-resultats"
+  );
+  return _send(messageToSend);
 }
