@@ -3,7 +3,7 @@ import { Image, View, Button } from "react-native";
 import { PermissionsAndroid } from "react-native";
 import { StyleSheet, Text } from "react-native";
 import QRCodeScanner from "react-native-qrcode-scanner";
-import { roundToNearestMinutesWithOptions } from "date-fns/esm/fp";
+import * as Speech from "expo-speech";
 
 function getTmpDistance(bounds) {
   const { origin } = bounds;
@@ -36,8 +36,16 @@ export default class DistanceFinder extends Component {
       if (e.data === "sight-study") {
         const tmp = getTmpDistance(e.bounds);
         if (Math.abs(this.state.distance - tmp) < eps)
-          this.setState({ wellPlacedCount: this.state.wellPlacedCount + 1, lastTime: this.state.counter });
-        else this.setState({ distance: parseInt(10 * tmp) / 10, wellPlacedCount: 0, lastTime: this.state.counter });
+          this.setState({
+            wellPlacedCount: this.state.wellPlacedCount + 1,
+            lastTime: this.state.counter
+          });
+        else
+          this.setState({
+            distance: parseInt(10 * tmp) / 10,
+            wellPlacedCount: 0,
+            lastTime: this.state.counter
+          });
       } else console.log("pas bon qr code");
     }
   };
@@ -52,6 +60,7 @@ export default class DistanceFinder extends Component {
       timer: this.timer
     });
     this.tick();
+    Speech.speak("Veuillez vous placer confortablement devant l'écran.", { language: "fr" });
   }
 
   componentWillUnmount() {
@@ -59,9 +68,9 @@ export default class DistanceFinder extends Component {
   }
 
   tick = () => {
-    var c = parseInt(this.state.counter/10)%4+1
+    var c = (parseInt(this.state.counter / 10) % 4) + 1;
     this.setState({
-      counter: this.state.counter+1,
+      counter: this.state.counter + 1,
       img: images[c]
     });
   };
@@ -73,7 +82,7 @@ export default class DistanceFinder extends Component {
   }
 
   render() {
-    const { img, distance, wellPlacedCount } = this.state;
+    const { img, distance, wellPlacedCount, counter, lastTime } = this.state;
     return (
       <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
         <QRCodeScanner
@@ -81,17 +90,23 @@ export default class DistanceFinder extends Component {
           vibrate={false}
           reactivate={true}
           // containerStyle={{ width:"10%", height:"10%" }}
-          cameraStyle={this.state.counter-this.state.lastTime>=2 ? qr("red") : qr("green")}
+          cameraStyle={
+            counter - lastTime >= 2 ? styles.qr("red") : styles.qr("green")
+          }
           cameraType="front"
         />
+        <ImageTest img={img} />
         {wellPlacedCount < 10 ? (
-          <ImageTest img={img} />
+          <>
+            <Text style={styles.indication}>
+              {counter - lastTime >= 2
+                ? "Veuillez vous placer confortablement devant l'écran"
+                : null}
+            </Text>
+          </>
         ) : (
           <OnCalculated distance={distance} handleOnOk={this.handleOnOk} />
         )}
-        <Text style={styles.indication}>
-          {this.state.counter-this.state.lastTime>=2 ? "Veuillez vous placer devant l'écran" : ""}
-        </Text>
       </View>
     );
   }
@@ -115,7 +130,7 @@ function ImageTest({ img }) {
 
 function OnCalculated({ distance, handleOnOk }) {
   return (
-    <View style={styles.marker}>
+    <View style={styles.indication}>
       <Text style={{ fontSize: 22 }}>
         La distance de lecture idéale calculée est{" "}
         <Text style={{ fontWeight: "bold" }}>{distance} cm</Text>
@@ -125,30 +140,22 @@ function OnCalculated({ distance, handleOnOk }) {
   );
 }
 
-qr = function(color) {
-  return {
-    borderStyle: "solid", 
-    borderColor: color, 
-    borderWidth: 6,
-    height: "22%", 
-    marginBottom: "90%", 
-    marginLeft: "10%", 
-    width: "20%"
-  }
-}
-
 const styles = StyleSheet.create({
-  marker: {
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute"
-  },
-  indication:{
+  indication: {
     flex: 1,
     position: "absolute",
     justifyContent: "center",
     top: "70%",
     fontWeight: "bold",
     fontSize: 22
-  }
+  },
+  qr: color => ({
+    borderStyle: "solid",
+    borderColor: color,
+    borderWidth: 6,
+    height: "22%",
+    marginBottom: "90%",
+    marginLeft: "10%",
+    width: "20%"
+  })
 });
