@@ -238,6 +238,22 @@ function _buildCsvAll(scores) {
   return csvContent;
 }
 
+export async function setAcuites(acuites){
+  try {
+    return await AsyncStorage.setItem("acuites", JSON.stringify(acuites));
+  } catch {
+    console.log("Error setting acuites");
+  }
+}
+
+export async function getAcuites(){
+  try {
+    return JSON.parse(await AsyncStorage.getItem("acuites"));
+  } catch {
+    console.log("Error getting acuites");
+  }
+}
+
 export async function sendSelectedUserResults(userId, fullName) {
   const scoresObtained = await getScore(userId);
   const csvToSend = _buildCsvOne(scoresObtained);

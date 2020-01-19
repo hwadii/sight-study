@@ -9,17 +9,42 @@ import {
 } from "react-native";
 import { scale } from "react-native-size-matters";
 import { styles as common } from "./styles/common";
+import { setAcuites, getAcuites } from "./util";
 
 export default class Settings extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      1 :"",
+      2 :"",
+      3 :"",
+      4 :"",
+      tableau :["0","0","0","0"]
+    };
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleModifDistance = this.handleModifDistance.bind(this);
+    this.handleChangeAcuite = this.handleChangeAcuite.bind(this)
+    this.HandleSetAcuites = this.HandleSetAcuites.bind(this)
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
+    
   }
 
   handleChangeField(e, field) {
     this.setState({ [field]: e.nativeEvent.text });
+  }
+
+  async HandleSetAcuites(){
+    const {tableau} = this.state
+    console.log(tableau)
+    await setAcuites(tableau);
+    const { navigate } = this.props.navigation;
+    navigate("SetUser");
+  }
+
+  handleChangeAcuite(e, i){
+    let {tableau} = this.state
+    tableau[i] = e.nativeEvent.text
+    this.setState({tableau: tableau})
   }
 
   async handleModifDistance() {
@@ -27,27 +52,37 @@ export default class Settings extends React.Component {
     navigate("SetUser");
   }
 
-  async componentDidMount() {}
+  async componentDidMount() {
+
+      this.setState({
+        tableau: await getAcuites(),
+      });
+  }
 
   render() {
+    const {tableau} = this.state
+
     return (
       <View style={styles.container}>
         <Form
+          tableau= {tableau}
           navigate={this.props.navigation.navigate}
-          handleChange={this.handleChangeField}
-          handleModifDistance={this.handleModifDistance}
+          HandleSetAcuites={this.HandleSetAcuites}
+          handleChangeAcuite={this.handleChangeAcuite}
         />
       </View>
     );
   }
 }
 
-function Form({ values, handleChange, handleModifDistance }) {
+function Form({tableau, HandleSetAcuites, handleChangeAcuite }) {
   return (
     <View style={styles.form}>
+      <Text>{tableau}</Text>
+      <Board tableau={tableau} handleChangeAcuite={handleChangeAcuite}></Board>
       <TouchableOpacity
         style={styles.confirmButton}
-        onPress={() => handleModifDistance()}
+        onPress={() => HandleSetAcuites()}
       >
         <Text style={styles.confirmButtonText}>CONFIRMER</Text>
       </TouchableOpacity>
@@ -63,12 +98,27 @@ function Field({ value, label, handler }) {
         defaultValue={value}
         style={common.inputs}
         autoCorrect={false}
-        placeholder={label}
+        defaultValue={value}
         onChange={handler}
       />
     </>
   );
 }
+
+
+function Board ({tableau,handleChangeAcuite}){
+  return(
+    <>
+      <Text>valeurs des acuités visuels a tester</Text>
+      <Field value={tableau[0]} label=" premiere acuité" handler={(e)=>handleChangeAcuite(e,0)}></Field>
+      <Field value={tableau[1]} label=" 2 acuité" handler={(e)=>handleChangeAcuite(e,1)}></Field>
+      <Field value={tableau[2]} label=" 3 acuité" handler={(e)=>handleChangeAcuite(e,2)}></Field>
+      <Field value={tableau[3]} label=" 4 acuité" handler={(e)=>handleChangeAcuite(e,3)}></Field>
+    </>
+  )
+}
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -79,6 +129,11 @@ const styles = StyleSheet.create({
   form: {
     width: scale(320),
     maxWidth: Dimensions.get("window").width
+  },
+  board:{
+    flexDirection: "row",
+    justifyContent: "center",
+    marginVertical: 10
   },
   header: {
     fontSize: 32,

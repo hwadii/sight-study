@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFullName, getDoctorEmail } from "./util";
+import { getFullName, getDoctorEmail, setAcuites, getAcuites } from "./util";
 import Help from "./Help";
 
 export default class MainMenu extends React.Component {
@@ -22,6 +22,10 @@ export default class MainMenu extends React.Component {
   }
 
   async componentDidMount() {
+    let tableau = await getAcuites()
+    if(tableau==null){
+      tableau["1","2","3","4"]
+    }
     this.willFocusSub = this.props.navigation.addListener(
       "willFocus",
       async () => {
