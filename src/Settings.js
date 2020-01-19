@@ -19,7 +19,7 @@ export default class Settings extends React.Component {
       2 :"",
       3 :"",
       4 :"",
-      tableau :["0","0","0","0"]
+      tableau :[]
     };
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleModifDistance = this.handleModifDistance.bind(this);
@@ -78,7 +78,6 @@ export default class Settings extends React.Component {
 function Form({tableau, HandleSetAcuites, handleChangeAcuite }) {
   return (
     <View style={styles.form}>
-      <Text>{tableau}</Text>
       <Board tableau={tableau} handleChangeAcuite={handleChangeAcuite}></Board>
       <TouchableOpacity
         style={styles.confirmButton}
@@ -110,10 +109,18 @@ function Board ({tableau,handleChangeAcuite}){
   return(
     <>
       <Text>valeurs des acuités visuels a tester</Text>
-      <Field value={tableau[0]} label=" premiere acuité" handler={(e)=>handleChangeAcuite(e,0)}></Field>
+      <Field value={tableau[0]} label=" 1 acuité" handler={(e)=>handleChangeAcuite(e,0)}></Field>
       <Field value={tableau[1]} label=" 2 acuité" handler={(e)=>handleChangeAcuite(e,1)}></Field>
       <Field value={tableau[2]} label=" 3 acuité" handler={(e)=>handleChangeAcuite(e,2)}></Field>
       <Field value={tableau[3]} label=" 4 acuité" handler={(e)=>handleChangeAcuite(e,3)}></Field>
+      <Field value={tableau[4]} label=" 5 acuité" handler={(e)=>handleChangeAcuite(e,4)}></Field>
+      <Field value={tableau[5]} label=" 6 acuité" handler={(e)=>handleChangeAcuite(e,5)}></Field>
+      <Field value={tableau[6]} label=" 7 acuité" handler={(e)=>handleChangeAcuite(e,6)}></Field>
+      <Field value={tableau[7]} label=" 8 acuité" handler={(e)=>handleChangeAcuite(e,7)}></Field>
+      <Field value={tableau[8]} label=" 9 acuité" handler={(e)=>handleChangeAcuite(e,8)}></Field>
+      <Field value={tableau[9]} label=" 10 acuité" handler={(e)=>handleChangeAcuite(e,9)}></Field>
+      <Field value={tableau[10]} label=" 11 acuité" handler={(e)=>handleChangeAcuite(e,10)}></Field>
+      <Field value={tableau[11]} label=" 12 acuité" handler={(e)=>handleChangeAcuite(e,11)}></Field>
     </>
   )
 }
