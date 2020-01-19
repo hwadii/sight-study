@@ -88,7 +88,7 @@ export default class SetUser extends React.Component {
             style={styles.actionButtons}
           >
             <Text style={common.actionButtonsText}>
-              Paramètre de l'application
+              Échelle EDTRS et acuités
             </Text>
           </TouchableOpacity>
         </View>
@@ -210,6 +210,7 @@ const styles = StyleSheet.create({
     ...common.actionButtons,
     flex: 1,
     alignContent: "space-around",
-    marginHorizontal: 5
+    marginHorizontal: 5,
+    padding: 20
   }
 });

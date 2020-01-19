@@ -8,6 +8,22 @@ import {
   getScores
 } from "../../service/db/User";
 
+// Constants
+export const defaultEtdrsScale = {
+  "4/40": 0.1,
+  "4/32": 0.13,
+  "4/25": 0.16,
+  "4/20": 0.2,
+  "4/16": 0.25,
+  "4/12.5": 0.32,
+  "4/10": 0.4,
+  "4/8": 0.5,
+  "4/6.3": 0.63,
+  "4/5": 0.8,
+  "4/4": 1,
+  "3/4": 1.33
+};
+
 // General
 /**
  * Returns formatted date
@@ -238,7 +254,7 @@ function _buildCsvAll(scores) {
   return csvContent;
 }
 
-export async function setAcuites(acuites){
+export async function setAcuites(acuites) {
   try {
     return await AsyncStorage.setItem("acuites", JSON.stringify(acuites));
   } catch {
@@ -246,7 +262,7 @@ export async function setAcuites(acuites){
   }
 }
 
-export async function getAcuites(){
+export async function getAcuites() {
   try {
     return JSON.parse(await AsyncStorage.getItem("acuites"));
   } catch {
