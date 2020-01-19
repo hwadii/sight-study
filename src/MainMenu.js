@@ -24,7 +24,7 @@ export default class MainMenu extends React.Component {
   async componentDidMount() {
     let tableau = await getAcuites()
     if(tableau==null){
-      tableau["1","2","3","4"]
+      await setAcuites(["1","2","3","4"])
     }
     this.willFocusSub = this.props.navigation.addListener(
       "willFocus",
