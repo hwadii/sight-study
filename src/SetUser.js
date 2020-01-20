@@ -106,11 +106,20 @@ export default class SetUser extends React.Component {
  */
 function SearchBar({ handleSearch }) {
   return (
-    <TextInput
-      style={{ marginHorizontal: 10, ...common.inputs }}
-      placeholder="Rechercher un patient"
-      onChange={handleSearch}
-    />
+    <>
+      <TextInput
+        style={{ marginHorizontal: 10, ...common.inputs }}
+        placeholder="Rechercher un patient"
+        onChange={handleSearch}
+      />
+      <View style={styles.userBox}>
+        <Text style={styles.tableHeader}>Patient</Text>
+        <Text style={styles.tableHeader}>Sexe</Text>
+        <Text style={styles.tableHeader}>Distance</Text>
+        <Text style={styles.tableHeader}>Naissance</Text>
+        <Text style={styles.tableHeader}>Actions</Text>
+      </View>
+    </>
   );
 }
 
@@ -199,6 +208,10 @@ const styles = StyleSheet.create({
   userText: {
     fontSize: 18,
     fontWeight: "bold"
+  },
+  tableHeader: {
+    fontSize: 16,
+    fontStyle: "italic"
   },
   userTextMore: {
     fontSize: 14,
