@@ -27,9 +27,7 @@ export default class MainMenu extends React.Component {
     super(props);
     this.state = {
       fullName: null,
-      doctorEmail: null,
-      volume: 100,
-      brightness: 100
+      doctorEmail: null
     };
   }
 
@@ -81,7 +79,7 @@ export default class MainMenu extends React.Component {
             style={styles.actionButtons}
             onPress={() => this.handleAction("TEST")}
           >
-            <Text style={common.actionButtonsText}>{brightness}</Text>
+            <Text style={common.actionButtonsText}>{"Aller au test"}</Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity
