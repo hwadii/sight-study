@@ -56,7 +56,7 @@ export default class Etdrs extends React.Component {
   render() {
     const { acuites } = this.state;
     return (
-      <View>
+      <View style={{ marginBottom: 20 }}>
         <Text style={styles.header}>
           Valeurs des acuités visuelles à tester
         </Text>
@@ -80,20 +80,9 @@ function Form({
   const acuitesEntries = Object.entries(acuites);
   return (
     <View style={styles.form}>
-      <View style={styles.board}>
-        <View
-          style={{
-            flex: 1,
-            alignSelf: "stretch",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
-        >
-          <Text style={styles.label}>Échelle EDTRS St-Joseph</Text>
-        </View>
-        <View style={{ flex: 1, alignSelf: "stretch" }}>
-          <Text style={styles.label}>Acuité Visuelle (décimale)</Text>
-        </View>
+      <View style={styles.table}>
+        <Text style={styles.label}>Échelle EDTRS St-Joseph</Text>
+        <Text style={styles.label}>Acuité Visuelle (décimale)</Text>
       </View>
       {acuitesEntries.map(([etdrs, acuite]) => (
         <Field
@@ -108,12 +97,17 @@ function Form({
         color="#0000ff"
         animating={acuitesEntries.length === 0}
       />
-      <View style={{ justifyContent: "center", flexDirection: "row" }}>
+      <View
+        style={{
+          justifyContent: "center",
+          flexDirection: "row"
+        }}
+      >
         <TouchableOpacity
           style={styles.confirmButton}
           onPress={() => handleSetAcuites()}
         >
-          <Text style={styles.confirmButtonText}>CONFIRMER</Text>
+          <Text style={styles.confirmButtonText}>CONFIRMER ✅</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.reinitButton}
@@ -128,13 +122,11 @@ function Form({
 
 function Field({ value, label, handler }) {
   return (
-    <View style={styles.board}>
+    <View style={styles.table}>
       <View
         style={{
           flex: 1,
-          alignSelf: "stretch",
-          alignItems: "center",
-          justifyContent: "center"
+          alignSelf: "stretch"
         }}
       >
         <Text style={styles.label}>{label}</Text>
@@ -155,35 +147,36 @@ function Field({ value, label, handler }) {
 }
 
 const styles = StyleSheet.create({
-  form: { width: scale(320), maxWidth: Dimensions.get("window").width },
+  form: { width: scale(320), marginBottom: 30 },
   board: {
     flexDirection: "row",
     justifyContent: "center",
-    marginVertical: 10,
+    marginVertical: 5,
     alignItems: "center"
   },
   header: {
     fontSize: 30,
     fontWeight: "bold",
-    margin: 10
+    margin: 10,
+    textAlign: "center"
+  },
+  table: {
+    justifyContent: "space-around",
+    flexDirection: "row"
   },
   confirmButton: {
-    borderWidth: 1,
+    ...common.actionButtons,
     borderColor: colors.PRIMARY,
     backgroundColor: colors.PRIMARY,
-    padding: 10,
-    marginHorizontal: 8,
     width: 300,
     maxWidth: 400
   },
   reinitButton: {
-    borderWidth: 1,
+    ...common.actionButtons,
     borderColor: colors.SECONDARY,
     backgroundColor: colors.SECONDARY,
-    padding: 10,
-    marginHorizontal: 8,
-    width: 200,
-    maxWidth: 400
+    maxWidth: 400,
+    width: 220
   },
   confirmButtonText: {
     color: "#FFFFFF",
@@ -193,7 +186,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 25,
     marginTop: 3,
-    justifyContent: "center",
-    alignItems: "center"
+    textAlign: "center"
   }
 });
