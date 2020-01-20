@@ -11,7 +11,7 @@ function getTmpDistance(bounds) {
   let tmp = Math.sqrt(d(origin[1].x - origin[0].x, origin[1].y - origin[0].y));
   tmp += Math.sqrt(d(origin[2].x - origin[1].x, origin[2].y - origin[1].y));
   tmp += Math.sqrt(d(origin[0].x - origin[2].x, origin[0].y - origin[2].y));
-  return 7520 / tmp;
+  return 3030/tmp;
 }
 
 export default class DistanceFinder extends Component {
@@ -20,6 +20,7 @@ export default class DistanceFinder extends Component {
     this.state = {
       wellPlacedCount: 0,
       distance: 0,
+      lastDistance: 0,
       timer: null,
       counter: 0,
       lastTime: -2,
@@ -35,14 +36,20 @@ export default class DistanceFinder extends Component {
     if (this.state.wellPlacedCount < wellPlacedInaRow) {
       if (e.data === "sight-study") {
         const tmp = getTmpDistance(e.bounds);
-        if (Math.abs(this.state.distance - tmp) < eps)
+
+        var centre = e.bounds.width/2 - (parseFloat(e.bounds.origin[0].x) + parseFloat(e.bounds.origin[1].x) + parseFloat(e.bounds.origin[2].x))/3
+        var h = tmp*Math.sin(Math.PI*35.84*centre/(e.bounds.width/2*180))
+        var dis = Math.sqrt(12.5*12.5+tmp*tmp-2*12.5*h)
+        this.setState({lastDistance: parseInt(10 * dis) / 10})
+
+        if (Math.abs(this.state.distance - dis) < eps)
           this.setState({
             wellPlacedCount: this.state.wellPlacedCount + 1,
             lastTime: this.state.counter
           });
         else
           this.setState({
-            distance: parseInt(10 * tmp) / 10,
+            distance: parseInt(10 * dis) / 10,
             wellPlacedCount: 0,
             lastTime: this.state.counter
           });
@@ -82,7 +89,7 @@ export default class DistanceFinder extends Component {
   }
 
   render() {
-    const { img, distance, wellPlacedCount, counter, lastTime } = this.state;
+    const { img, lastDistance, wellPlacedCount, counter, lastTime } = this.state;
     return (
       <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
         <QRCodeScanner
@@ -105,7 +112,7 @@ export default class DistanceFinder extends Component {
             </Text>
           </>
         ) : (
-          <OnCalculated distance={distance} handleOnOk={this.handleOnOk} />
+          <OnCalculated distance={lastDistance} handleOnOk={this.handleOnOk} />
         )}
       </View>
     );

@@ -59,6 +59,7 @@ export default class TestScreen extends Component {
 
     // for distance
     id: "",
+    distance: 0,
     indication: " ",
     wellPlaced: false,
     wrongEyeCount: 0,
@@ -169,10 +170,13 @@ export default class TestScreen extends Component {
             this.square(e.bounds.origin[0].y - e.bounds.origin[2].y) +
               this.square(e.bounds.origin[0].x - e.bounds.origin[2].x)
           );
-        tmp = 7520 / tmp;
+        tmp = 3030*e.bounds.width / (640*tmp);
+        var centre = e.bounds.width/2 - (parseFloat(e.bounds.origin[0].x) + parseFloat(e.bounds.origin[1].x) + parseFloat(e.bounds.origin[2].x))/3
+        var h = tmp*Math.sin(Math.PI*35.84*centre/(e.bounds.width/2*180))
+        var dis = Math.sqrt(12.5*12.5+tmp*tmp-2*12.5*h)
 
-        if (tmp - distance + eps < 0) {
-          const amount = parseInt(10 * Math.abs(distance - tmp)) / 10;
+        if (dis - distance + eps < 0) {
+          const amount = parseInt(10 * Math.abs(distance - dis)) / 10;
           this.setState({
             indication: `Eloignez vous de\n${amount} cm`,
             wellPlaced: false,
@@ -186,8 +190,8 @@ export default class TestScreen extends Component {
             this.state.triggerWrongEye = false;
           }
         } else {
-          if (tmp - distance - eps > 0) {
-            const amount = parseInt(10 * Math.abs(distance - tmp)) / 10;
+          if (dis - distance - eps > 0) {
+            const amount = parseInt(10 * Math.abs(distance - dis)) / 10;
             this.setState({
               indication: `Rapprochez vous de\n${amount} cm`,
               wellPlaced: false,
