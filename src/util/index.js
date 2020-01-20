@@ -107,8 +107,10 @@ export function intersection(array, letter) {
  */
 export async function setUserName({ prenom: firstName, nom: lastName }) {
   try {
-    await AsyncStorage.setItem("firstName", firstName);
-    await AsyncStorage.setItem("lastName", lastName);
+    await AsyncStorage.multiSet([
+      ["firstName", firstName],
+      ["lastName", lastName]
+    ]);
   } catch (error) {
     console.log(error);
   }
@@ -201,6 +203,69 @@ export async function getDoctorEmail() {
     return await AsyncStorage.getItem("doctor_email");
   } catch {
     console.log("Error getting email");
+  }
+}
+
+export async function setAdminPin(pin) {
+  try {
+    return await AsyncStorage.setItem("admin_pin", pin);
+  } catch {
+    console.log("Error setting pin");
+  }
+}
+
+export async function getAdminPin() {
+  try {
+    return await AsyncStorage.getItem("admin_pin");
+  } catch {
+    console.log("Error getting pin");
+  }
+}
+
+export async function setVolume(volume) {
+  try {
+    return await AsyncStorage.setItem("volume", volume);
+  } catch {
+    console.log("Error setting volume");
+  }
+}
+
+async function _getVolume() {
+  try {
+    const newVolume = await AsyncStorage.getItem("volume");
+    return parseFloat(newVolume);
+  } catch {
+    console.log("Error getting volume");
+  }
+}
+
+export async function setBrightness(brightness) {
+  try {
+    return await AsyncStorage.setItem("brightness", brightness);
+  } catch {
+    console.log("Error setting brightness");
+  }
+}
+
+export async function getAllSettings() {
+  try {
+    return {
+      volume: await _getVolume(),
+      brightness: await _getBrightness(),
+      mail: await getDoctorEmail(),
+      pin: await getAdminPin()
+    };
+  } catch {
+    console.log("Error getting all settings");
+  }
+}
+
+async function _getBrightness() {
+  try {
+    const newBrightness = await AsyncStorage.getItem("brightness");
+    return parseFloat(newBrightness);
+  } catch {
+    console.log("Error getting brightness");
   }
 }
 

@@ -7,12 +7,10 @@ import Score from "./src/Score";
 import Test from "./src/Test";
 import TestScreen from "./src/TestScreen";
 import Menu from "./src/Menu";
-import Settings from "./src/Settings"
-import MenuLeftRight from "./src/MenuLeftRigth"
-import Jeu from "./src/Jeu"
+import Settings from "./src/Settings";
 import MainMenu from "./src/MainMenu";
-import SetDoctor from "./src/SetDoctor";
 import DistanceFinder from "./src/DistanceFinder";
+import Etdrs from "./src/Etdrs";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import * as Font from "expo-font";
@@ -26,13 +24,11 @@ const Routes = {
   TestScreen,
   Menu,
   Settings,
-  MenuLeftRight,
-  Jeu,
   MainMenu,
-  SetDoctor,
   DistanceFinder,
   Settings,
-  EditUser
+  EditUser,
+  Etdrs
 };
 
 const MainNavigator = createStackNavigator(

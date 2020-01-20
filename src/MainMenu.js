@@ -5,7 +5,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
-  Image
+  Image,
+  ActivityIndicator
 } from "react-native";
 import { styles as common } from "./styles/common";
 import {
@@ -13,10 +14,9 @@ import {
   getDoctorEmail,
   setAcuites,
   getAcuites,
-  defaultEtdrsScale
+  defaultEtdrsScale,
 } from "./util";
 import Help from "./Help";
-import SystemSetting from "react-native-system-setting";
 import { scale } from "react-native-size-matters";
 
 export default class MainMenu extends React.Component {
@@ -28,8 +28,7 @@ export default class MainMenu extends React.Component {
     this.state = {
       fullName: null,
       doctorEmail: null,
-      volume: 100,
-      brightness: 100
+      isLoaded: false
     };
   }
 
@@ -39,22 +38,16 @@ export default class MainMenu extends React.Component {
   }
 
   async componentDidMount() {
-
-    SystemSetting.setVolume(0.5);
-    SystemSetting.setAppBrightness(0.5)
-
     const tableau = await getAcuites();
     if (tableau === null) {
       await setAcuites(defaultEtdrsScale);
     }
 
+    await this.getLoggedState();
     this.willFocusSub = this.props.navigation.addListener(
       "willFocus",
       async () => {
-        this.setState({
-          fullName: await getFullName(),
-          doctorEmail: await getDoctorEmail()
-        });
+        await this.getLoggedState();
       }
     );
   }
@@ -63,8 +56,16 @@ export default class MainMenu extends React.Component {
     this.willFocusSub.remove();
   }
 
+  async getLoggedState() {
+    this.setState({
+      fullName: await getFullName(),
+      doctorEmail: await getDoctorEmail(),
+      isLoaded: true
+    });
+  }
+
   render() {
-    const { fullName, doctorEmail } = this.state;
+    const { fullName, doctorEmail, isLoaded } = this.state;
     return (
       <View style={styles.container}>
         <Image
@@ -74,14 +75,20 @@ export default class MainMenu extends React.Component {
           }}
           source={require("../assets/main-menu.png")}
         />
-        <UserConnected fullName={fullName} />
-        <DoctorMail email={doctorEmail} />
+        {isLoaded ? (
+          <>
+            <UserConnected fullName={fullName} />
+            <DoctorMail email={doctorEmail} />
+          </>
+        ) : (
+          <ActivityIndicator size="large" color="#0000ff" />
+        )}
         {fullName === null ? null : (
           <TouchableOpacity
             style={styles.actionButtons}
             onPress={() => this.handleAction("TEST")}
           >
-            <Text style={common.actionButtonsText}>{brightness}</Text>
+            <Text style={common.actionButtonsText}>Aller au test</Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity

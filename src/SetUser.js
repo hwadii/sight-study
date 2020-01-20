@@ -47,7 +47,6 @@ export default class SetUser extends React.Component {
     });
   }
 
-  // TODO: Add alert in util
   async handleSelect(user) {
     const id = user.id;
     await setId(id.toString());
@@ -78,17 +77,17 @@ export default class SetUser extends React.Component {
             <Text style={common.actionButtonsText}>Ajouter un patient</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigate("SetDoctor")}
-            style={styles.actionButtons}
-          >
-            <Text style={common.actionButtonsText}>Email du médecin</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
             onPress={() => navigate("Settings")}
             style={styles.actionButtons}
           >
+            <Text style={common.actionButtonsText}>Paramètres généraux</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigate("Etdrs")}
+            style={styles.actionButtons}
+          >
             <Text style={common.actionButtonsText}>
-              Échelle EDTRS et acuités
+              Échelle ETDRS et acuités
             </Text>
           </TouchableOpacity>
         </View>
