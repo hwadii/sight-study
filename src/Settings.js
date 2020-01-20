@@ -12,7 +12,8 @@ import {
   setBrightness,
   setAdminPin,
   setVolume,
-  getAllSettings
+  getAllSettings,
+  setTargetLines
 } from "./util";
 import { styles as common } from "./styles/common";
 import SystemSetting from "react-native-system-setting";
@@ -24,6 +25,7 @@ export default class Settings extends React.Component {
     this.state = {
       pin: "",
       mail: "",
+      targetLines: null,
       volume: null,
       brightness: null
     };
@@ -38,10 +40,17 @@ export default class Settings extends React.Component {
   async componentDidMount() {
     const currentVolume = await SystemSetting.getVolume();
     const currentBrightness = await SystemSetting.getAppBrightness();
-    const { volume, brightness, mail, pin } = await getAllSettings();
+    const {
+      volume,
+      brightness,
+      mail,
+      pin,
+      targetLines
+    } = await getAllSettings();
     this.setState({
       pin,
       mail,
+      targetLines: targetLines ? targetLines.toString() : "",
       volume: volume || currentVolume,
       brightness: brightness || currentBrightness
     });
@@ -85,19 +94,20 @@ export default class Settings extends React.Component {
   }
 
   async handleOnOk() {
-    const { mail, volume, brightness, pin } = this.state;
+    const { mail, volume, brightness, pin, targetLines } = this.state;
     const { goBack } = this.props.navigation;
     await Promise.all([
       setDoctorEmail(mail),
       setVolume(volume.toString()),
       setBrightness(brightness.toString()),
-      setAdminPin(pin)
+      setAdminPin(pin),
+      setTargetLines(targetLines)
     ]);
     goBack();
   }
 
   render() {
-    const { volume, brightness, pin, mail } = this.state;
+    const { volume, brightness, pin, mail, targetLines } = this.state;
     return (
       <View style={styles.container}>
         <View>
@@ -128,6 +138,13 @@ export default class Settings extends React.Component {
             label="Email du médecin"
             value={mail}
             handleOnChange={e => this.handleChangeField(e, "mail")}
+          />
+          <Field
+            label="Nombre de lignes du test"
+            value={targetLines}
+            maxLength={2}
+            type="numeric"
+            handleOnChange={e => this.handleChangeField(e, "targetLines")}
           />
         </View>
         <View>

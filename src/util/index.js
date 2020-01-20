@@ -222,6 +222,24 @@ export async function getAdminPin() {
   }
 }
 
+export async function setTargetLines(targetLines) {
+  try {
+    return await AsyncStorage.setItem("target_lines", targetLines);
+  } catch {
+    console.log("Error setting target lines");
+  }
+}
+
+export async function getTargetLines() {
+  try {
+    const targetLines = await AsyncStorage.getItem("target_lines");
+    if (targetLines !== null) return parseInt(targetLines);
+    return targetLines;
+  } catch {
+    console.log("Error getting target lines");
+  }
+}
+
 export async function setVolume(volume) {
   try {
     return await AsyncStorage.setItem("volume", volume);
@@ -253,7 +271,8 @@ export async function getAllSettings() {
       volume: await _getVolume(),
       brightness: await _getBrightness(),
       mail: await getDoctorEmail(),
-      pin: await getAdminPin()
+      pin: await getAdminPin(),
+      targetLines: await getTargetLines()
     };
   } catch {
     console.log("Error getting all settings");
