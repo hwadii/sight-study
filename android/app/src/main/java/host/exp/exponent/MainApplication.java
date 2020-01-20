@@ -15,12 +15,8 @@ import com.rnfs.RNFSPackage;
 
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
-import com.feelrobotics.beeptone.RNBeepTonePackage;
-import com.reactlibrary.RNReactNativeABeepPackage;
 import com.ninty.system.setting.SystemSettingPackage;
-import com.robinpowered.react.ScreenBrightness.ScreenBrightnessPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
-import com.horcrux.svg.SvgPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import org.reactnative.camera.RNCameraPackage;
 
@@ -41,13 +37,9 @@ public class MainApplication extends ExpoApplication implements AppLoaderPackage
 
         // Needed for `react-native link`
         // new MainReactPackage(),
-            new RNBeepTonePackage(),
-            new RNReactNativeABeepPackage(),
-            new SystemSettingPackage(),
-            new ScreenBrightnessPackage(),
-            new RNPermissionsPackage(),
-            // new SvgPackage(),
-            new RNCameraPackage()
+        new SystemSettingPackage(),
+        new RNPermissionsPackage(),
+        new RNCameraPackage()
     );
   }
 
