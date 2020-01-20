@@ -18,6 +18,8 @@
     "react": "16.8.3",
     "react-dom": "16.8.3",
     "react-native": "https://github.com/expo/react-native/archive/sdk-35.0.0.tar.gz",
+    "react-native-a-beep": "^1.0.6",
+    "react-native-beep-tone": "^1.0.2",
     "react-native-camera": "^3.15.1",
     "react-native-chart-kit": "^3.13.0",
     "react-native-fs": "^2.16.2",

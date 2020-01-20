@@ -15,6 +15,8 @@ import com.rnfs.RNFSPackage;
 
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
+import com.feelrobotics.beeptone.RNBeepTonePackage;
+import com.reactlibrary.RNReactNativeABeepPackage;
 import com.ninty.system.setting.SystemSettingPackage;
 import com.robinpowered.react.ScreenBrightness.ScreenBrightnessPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
@@ -39,6 +41,8 @@ public class MainApplication extends ExpoApplication implements AppLoaderPackage
 
         // Needed for `react-native link`
         // new MainReactPackage(),
+            new RNBeepTonePackage(),
+            new RNReactNativeABeepPackage(),
             new SystemSettingPackage(),
             new ScreenBrightnessPackage(),
             new RNPermissionsPackage(),

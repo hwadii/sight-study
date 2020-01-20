@@ -6,18 +6,24 @@ import {
   Dimensions,
   TextInput,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  Slider,
+  Button 
 } from "react-native";
 import { scale } from "react-native-size-matters";
 import { setAcuites, getAcuites, defaultEtdrsScale } from "./util";
 import { colors } from "./styles/common";
 import { ScrollView } from "react-native-gesture-handler";
+import SystemSetting from "react-native-system-setting";
+import * as Speech from "expo-speech";
 
 export default class Settings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      acuites: {}
+      acuites: {},
+      brightnessvalue: 0,
+      volumevalue: 0
     };
     this.handleChangeField = this.handleChangeField.bind(this);
     this.handleChangeAcuite = this.handleChangeAcuite.bind(this);
@@ -44,10 +50,64 @@ export default class Settings extends React.Component {
   }
 
   async componentDidMount() {
+    SystemSetting.getVolume().then((volume)=>{
+      this.setState({volumevalue: volume});
+    });
+    SystemSetting.getAppBrightness().then((brightness)=>{
+      this.setState({brightnessvalue: brightness});
+    })    
     this.setState({
       acuites: await getAcuites()
+    })
+  }
+
+  changeBrightness(value) {
+    SystemSetting.setAppBrightness(value)
+    
+    clearTimeout(this.sliderTimeoutId)
+    this.sliderTimeoutId = setTimeout(() => {
+      this.setState(() => {
+        return {
+          brightnessvalue: value,
+        };
+      });
+    }, 100)
+
+  }
+
+  changeSound(value) {
+    SystemSetting.setVolume(value)
+    
+    clearTimeout(this.sliderTimeoutId)
+    this.sliderTimeoutId = setTimeout(() => {
+      this.setState(() => {
+        return {
+          volumevalue: parseFloat(value),
+        };
+      });
+    }, 100)
+  }
+
+  speak(sentence) {
+    Speech.speak(sentence, {
+      language: "fr"
     });
   }
+
+  stop(sentence) {
+    Speech.stop();
+    this.speak(sentence)
+  }
+
+  toggleSpeak(sentence) {
+    Speech.isSpeakingAsync()
+      .then(isSpeaking => (isSpeaking ? this.stop(sentence) : this.speak(sentence)))
+      .catch(console.error);
+  }
+
+  volumeRelease(value) {
+    this.toggleSpeak("ceci est un essai du volume sonore")
+  }  
 
   reinitAcuites() {
     this.setState({
@@ -56,11 +116,28 @@ export default class Settings extends React.Component {
   }
 
   render() {
-    const { acuites } = this.state;
+    const { acuites, brightnessvalue } = this.state;
     return (
       <ScrollView
         contentContainerStyle={styles.container}
       >
+        <View style={styles.form}>
+        <Text style={styles.label}>{"Régler la luminosité"}</Text>
+        <Slider
+          step={0.01}
+          maximumValue={1}
+          onValueChange={this.changeBrightness.bind(this)}
+          value={brightnessvalue}
+        />
+        <Text style={styles.label}>{"Régler le volume"}</Text>
+        <Slider
+          step={0.01}
+          maximumValue={1}
+          onValueChange={this.changeSound.bind(this)}
+          onSlidingComplete={this.volumeRelease.bind(this)}
+          value={this.state.volumevalue}
+        />
+        </View>
         <Text style={styles.header}>
           Valeurs des acuités visuelles à tester
         </Text>
@@ -224,5 +301,8 @@ const styles = StyleSheet.create({
     marginTop: 3,
     justifyContent: "center",
     alignItems: "center"
+  },
+  texte: {
+    fontSize: 16
   }
 });

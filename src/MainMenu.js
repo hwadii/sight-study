@@ -27,7 +27,9 @@ export default class MainMenu extends React.Component {
     super(props);
     this.state = {
       fullName: null,
-      doctorEmail: null
+      doctorEmail: null,
+      volume: 100,
+      brightness: 100
     };
   }
 
@@ -37,19 +39,15 @@ export default class MainMenu extends React.Component {
   }
 
   async componentDidMount() {
-    var vol = 0.5;
-    var bright = 0.5;
 
-    SystemSetting.setVolume(vol);
-    SystemSetting.setBrightnessForce(bright).then(success => {
-      !success &&
-        SystemSetting.grantWriteSettingPremission() &&
-        SystemSetting.setBrightnessForce(bright);
-    });
+    SystemSetting.setVolume(0.5);
+    SystemSetting.setAppBrightness(0.5)
+
     const tableau = await getAcuites();
     if (tableau === null) {
       await setAcuites(defaultEtdrsScale);
     }
+
     this.willFocusSub = this.props.navigation.addListener(
       "willFocus",
       async () => {
@@ -83,7 +81,7 @@ export default class MainMenu extends React.Component {
             style={styles.actionButtons}
             onPress={() => this.handleAction("TEST")}
           >
-            <Text style={common.actionButtonsText}>Aller au test</Text>
+            <Text style={common.actionButtonsText}>{brightness}</Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity
