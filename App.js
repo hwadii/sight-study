@@ -74,19 +74,6 @@ String.prototype.random = function() {
   return this[idx];
 };
 
-/**
- * check if letter is in array
- * exemple: ["A", "Ah", "As"].lenientIncludes("a") => true
- *          needs to accept "Ah" too (maybe?)
- */
-Array.prototype.lenientIncludes = function(letter) {
-  return (
-    this.includes(letter) ||
-    this.includes(letter.toUpperCase()) ||
-    this.some(el => el[0] === letter)
-  );
-};
-
 export default App;
 
 const styles = StyleSheet.create({
