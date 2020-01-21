@@ -5,7 +5,7 @@ export const colors = {
   SUCESS: "#28a745",
   PRIMARY: "#007bff",
   DISABLED: "#6c757d"
-}
+};
 
 export const styles = StyleSheet.create({
   containers: {
@@ -17,7 +17,10 @@ export const styles = StyleSheet.create({
   actionButtons: {
     borderWidth: 1,
     width: "100%",
-    maxWidth: Dimensions.get("window").width < 400 ? Dimensions.get("window").width : 400,
+    maxWidth:
+      Dimensions.get("window").width < 400
+        ? Dimensions.get("window").width
+        : 400,
     borderColor: "#007BFF",
     backgroundColor: "#007BFF",
     padding: 15,
@@ -36,7 +39,7 @@ export const styles = StyleSheet.create({
     textAlign: "center"
   },
   important: {
-    fontSize: 20
+    fontSize: 18
   },
   inputs: {
     borderTopWidth: 1,
@@ -51,5 +54,5 @@ export const styles = StyleSheet.create({
   inputsLabels: {
     fontSize: 18,
     marginTop: 7
-  },
+  }
 });
