@@ -160,7 +160,7 @@ export default class Settings extends React.Component {
   }
 }
 
-function Field({ label, value, type, handleOnChange, maxLength = 20 }) {
+function Field({ label, value, type, handleOnChange, maxLength = 50 }) {
   return (
     <>
       <Text style={common.inputsLabels}>{label}</Text>
