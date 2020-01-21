@@ -10,15 +10,16 @@ import java.util.List;
 import expo.loaders.provider.interfaces.AppLoaderPackagesProviderInterface;
 import host.exp.exponent.generated.BasePackageList;
 import okhttp3.OkHttpClient;
-import com.wenkesj.voice.VoicePackage;
-import com.rnfs.RNFSPackage;
 
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
 import com.ninty.system.setting.SystemSettingPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
+import com.horcrux.svg.SvgPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import org.reactnative.camera.RNCameraPackage;
+import com.wenkesj.voice.VoicePackage;
+import com.rnfs.RNFSPackage;
 
 public class MainApplication extends ExpoApplication implements AppLoaderPackagesProviderInterface<ReactPackage> {
 
@@ -37,9 +38,10 @@ public class MainApplication extends ExpoApplication implements AppLoaderPackage
 
         // Needed for `react-native link`
         // new MainReactPackage(),
-        new SystemSettingPackage(),
-        new RNPermissionsPackage(),
-        new RNCameraPackage()
+            new SystemSettingPackage(),
+            new RNPermissionsPackage(),
+            // new SvgPackage(),
+            new RNCameraPackage()
     );
   }
 

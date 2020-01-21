@@ -13,7 +13,7 @@ import Etdrs from "./src/Etdrs";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import * as Font from "expo-font";
-import { initDB, resetDB } from "./service/db/User";
+import { initDB } from "./service/db/User";
 
 const Routes = {
   SetUser,
