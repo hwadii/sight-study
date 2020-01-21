@@ -6,7 +6,8 @@ import {
   View,
   PixelRatio,
   Image,
-  PermissionsAndroid
+  PermissionsAndroid,
+  Dimensions
 } from "react-native";
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
@@ -173,7 +174,8 @@ export default class TestScreen extends Component {
         tmp = 3030*e.bounds.width / (640*tmp);
         var centre = e.bounds.width/2 - (parseFloat(e.bounds.origin[0].x) + parseFloat(e.bounds.origin[1].x) + parseFloat(e.bounds.origin[2].x))/3
         var h = tmp*Math.sin(Math.PI*35.84*centre/(e.bounds.width/2*180))
-        var dis = Math.sqrt(12.5*12.5+tmp*tmp-2*12.5*h)
+        var letterToCamera = 2.54*Dimensions.get('window').height/(Dimensions.get('window').scale*160)
+        var dis = Math.sqrt(letterToCamera*letterToCamera+tmp*tmp-2*12.5*h)
 
         if (dis - distance + eps < 0) {
           const amount = parseInt(10 * Math.abs(distance - dis)) / 10;

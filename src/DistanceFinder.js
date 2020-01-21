@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Image, View, Button } from "react-native";
+import { Image, View, Button, Dimensions } from "react-native";
 import { PermissionsAndroid } from "react-native";
 import { StyleSheet, Text } from "react-native";
 import QRCodeScanner from "react-native-qrcode-scanner";
@@ -39,7 +39,8 @@ export default class DistanceFinder extends Component {
 
         var centre = e.bounds.width/2 - (parseFloat(e.bounds.origin[0].x) + parseFloat(e.bounds.origin[1].x) + parseFloat(e.bounds.origin[2].x))/3
         var h = tmp*Math.sin(Math.PI*35.84*centre/(e.bounds.width/2*180))
-        var dis = Math.sqrt(12.5*12.5+tmp*tmp-2*12.5*h)
+        var letterToCamera = 2.54*Dimensions.get('window').height/(Dimensions.get('window').scale*160)
+        var dis = Math.sqrt(letterToCamera*letterToCamera+tmp*tmp-2*12.5*h)
         this.setState({lastDistance: parseInt(10 * dis) / 10})
 
         if (Math.abs(this.state.distance - dis) < eps)
