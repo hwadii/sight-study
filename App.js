@@ -4,7 +4,6 @@ import SetUser from "./src/SetUser";
 import AddUser from "./src/AddUser";
 import EditUser from "./src/EditUser";
 import Score from "./src/Score";
-import Test from "./src/Test";
 import TestScreen from "./src/TestScreen";
 import Menu from "./src/Menu";
 import Settings from "./src/Settings";
@@ -20,7 +19,6 @@ const Routes = {
   SetUser,
   AddUser,
   Score,
-  Test,
   TestScreen,
   Menu,
   Settings,
