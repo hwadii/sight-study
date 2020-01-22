@@ -22,6 +22,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#007BFF",
     borderRadius: 5,
     marginTop: 7,
+    marginHorizontal: 4,
     padding: 20
   },
   actionButtonsText: {

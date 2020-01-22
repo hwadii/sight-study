@@ -102,20 +102,19 @@ export default class Settings extends React.Component {
   verifyField() {
     const { mail, pin, targetLines, qrSize } = this.state;
     const show = str => showAlert(str, null, [], "Erreur de saisie");
-
-    if (!mail.includes("@")) {
+    if (mail && !mail.includes("@")) {
       show("Veuillez renseigner une adresse valide");
       return false;
     }
-    if (pin.length !== 4) {
+    if (pin && pin.length !== 4) {
       show("Le code PIN doit contenir 4 caractères");
       return false;
     }
-    if (targetLines.length === 0) {
+    if (targetLines && targetLines.length === 0) {
       show("Veuillez renseigner le nombre de lignes du test");
       return false;
     }
-    if (parseFloat(qrSize) !== qrSize) {
+    if (parseFloat(qrSize) != qrSize) {
       show("La taille du QR code doit être en décimal");
       return false;
     }
@@ -143,57 +142,53 @@ export default class Settings extends React.Component {
     const { volume, brightness, pin, mail, targetLines, qrSize } = this.state;
     return (
       <View style={styles.container}>
-        <View>
-          <Text style={styles.header}>Paramètres généraux</Text>
-          <Text style={common.inputsLabels}>Luminosité</Text>
-          <Slider
-            step={0.1}
-            maximumValue={1}
-            onValueChange={this.changeBrightness.bind(this)}
-            value={brightness}
-          />
-          <Text style={common.inputsLabels}>Volume</Text>
-          <Slider
-            step={0.1}
-            maximumValue={1}
-            onValueChange={this.changeSound.bind(this)}
-            onSlidingComplete={this.volumeRelease.bind(this)}
-            value={volume}
-          />
-          <Field
-            label="PIN"
-            maxLength={4}
-            value={pin}
-            type="numeric"
-            handleOnChange={e => this.handleChangeField(e, "pin")}
-          />
-          <Field
-            label="Email du médecin"
-            value={mail}
-            handleOnChange={e => this.handleChangeField(e, "mail")}
-          />
-          <Field
-            label="Nombre de lignes du test"
-            value={targetLines}
-            maxLength={2}
-            type="numeric"
-            handleOnChange={e => this.handleChangeField(e, "targetLines")}
-          />
-          <Field
-            label="Taille du QR code (en cm)"
-            value={qrSize}
-            maxLength={4}
-            handleOnChange={e => this.handleChangeField(e, "qrSize")}
-          />
-        </View>
-        <View>
-          <TouchableOpacity
-            style={{ ...styles.form, ...common.actionButtons }}
-            onPress={() => this.handleOnOk()}
-          >
-            <Text style={common.actionButtonsText}>CONFIRMER ✅</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.header}>Paramètres généraux</Text>
+        <Text style={common.inputsLabels}>Luminosité</Text>
+        <Slider
+          step={0.1}
+          maximumValue={1}
+          onValueChange={this.changeBrightness.bind(this)}
+          value={brightness}
+        />
+        <Text style={common.inputsLabels}>Volume</Text>
+        <Slider
+          step={0.1}
+          maximumValue={1}
+          onValueChange={this.changeSound.bind(this)}
+          onSlidingComplete={this.volumeRelease.bind(this)}
+          value={volume}
+        />
+        <Field
+          label="PIN"
+          maxLength={4}
+          value={pin}
+          type="numeric"
+          handleOnChange={e => this.handleChangeField(e, "pin")}
+        />
+        <Field
+          label="Email du médecin"
+          value={mail}
+          handleOnChange={e => this.handleChangeField(e, "mail")}
+        />
+        <Field
+          label="Nombre de lignes du test"
+          value={targetLines}
+          maxLength={2}
+          type="numeric"
+          handleOnChange={e => this.handleChangeField(e, "targetLines")}
+        />
+        <Field
+          label="Taille du QR code (en cm)"
+          value={qrSize}
+          maxLength={4}
+          handleOnChange={e => this.handleChangeField(e, "qrSize")}
+        />
+        <TouchableOpacity
+          style={common.actionButtons}
+          onPress={() => this.handleOnOk()}
+        >
+          <Text style={common.actionButtonsText}>CONFIRMER ✅</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -218,9 +213,7 @@ function Field({ label, value, type, handleOnChange, maxLength = 50 }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    margin: 15,
-    justifyContent: "space-between"
+    margin: 15
   },
   form: {},
   header: {
