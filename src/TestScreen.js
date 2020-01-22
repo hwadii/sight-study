@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import {
   Button,
   StyleSheet,
@@ -7,12 +7,19 @@ import {
   PixelRatio,
   Image,
   PermissionsAndroid,
-  Dimensions
+  Dimensions,
+  TouchableOpacity
 } from "react-native";
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
 import * as Speech from "expo-speech";
-import { intersection } from "./util";
+import {
+  intersection,
+  defaultEtdrsScale,
+  getTargetLines,
+  getAcuites
+} from "./util";
+import { styles as common } from "./styles/common";
 
 import { getDistance } from "../service/db/User";
 import { getId } from "./util";
@@ -20,14 +27,17 @@ import { getId } from "./util";
 import QRCodeScanner from "react-native-qrcode-scanner";
 
 const letters = "nckzorhsdv";
-const timeBetweenLetters = 500;
-const screenFactor = 100 * PixelRatio.get();
+const screenFactor = (160 * PixelRatio.get()) / 2.54;
 /**
  * Gets font size for current line
- * @param {number} lineCoefficient coefficient de ligne
+ * @param {number} lineCoefficient acuité visuelle
+ * @param {number} d distance en m
  */
-const getLineLength = lineCoefficient =>
-  Math.floor(screenFactor * 2.91 * Math.pow(10, -3) * 400 * lineCoefficient);
+const getLineLength = (lineCoefficient, d) =>
+  Math.floor((screenFactor * 5 * 0.291 * d) / (10 * lineCoefficient));
+// const vs = Object.values(defaultEtdrsScale);
+// const lineSizes = vs.map(v => getLineLength(v, 0.4));
+// const targetLines = 1;
 
 export default class TestScreen extends Component {
   static navigationOptions = {
@@ -42,30 +52,31 @@ export default class TestScreen extends Component {
     results: [],
     partialResults: [],
 
+    id: null,
+    distance: null,
+
+    // flow
+    hasPressedStart: false,
+    hasStarted: false,
+    hasEnded: false,
+    isPaused: false,
+
+    // test
     letter: "",
     letterCount: 0,
-    lineSize: getLineLength(1),
+    lineSize: null,
     lineNumber: 0,
-    lineCoefficient: 1,
     whichEye: "left",
+    targetLines: null,
     scores: {
       left: 0,
       right: 0
     },
 
-    // for tests
-    tests: {
-      hideButtons: false
-    },
-
     // for distance
-    id: "",
-    distance: 0,
-    indication: " ",
+    indication: "",
     wellPlaced: false,
     wrongEyeCount: 0,
-    eye: "",
-    timer: null,
     counter: 0,
     triggerTooClose: false,
     triggerTooFar: false,
@@ -92,27 +103,31 @@ export default class TestScreen extends Component {
     );
     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
 
-    const currentuser_id = await getId();
-    // this.setNextLetterId = setInterval(
-    //   () => this.setNextLetter(),
-    //   timeBetweenLetters
-    // );
-    this.setNextLetter();
-    // this._startRecognizing();
-
-    const { navigation } = this.props;
-
+    const userId = await getId();
+    const savedEtdrsScale = await getAcuites();
+    const savedDistance = await getDistance(userId);
+    const vs = Object.values(savedEtdrsScale);
+    this.lineSizes = vs.map(v => getLineLength(v, savedDistance / 100)); // distance en m
     this.setState({
-      id: currentuser_id,
-      distance: await getDistance(currentuser_id)
+      id: userId,
+      distance: savedDistance,
+      targetLines: await getTargetLines(),
+      etdrsScale: savedEtdrsScale,
+      lineSizes: this.lineSizes[0]
     });
 
     this.timer = setInterval(this.tick, 1000);
-    this.setState({ timer: this.timer, eye: navigation.getParam("eye") });
+    // this.setState({ timer: this.timer, eye: navigation.getParam("eye") });
+  }
+
+  componentWillUnmount() {
+    Voice.destroy().then(Voice.removeAllListeners);
+    clearInterval(this.setNextLetterId);
+    clearInterval(this.timer);
   }
 
   tick = () => {
-    const { counter } = this.state;
+    const { counter, wellPlaced } = this.state;
     this.setState({
       counter: counter + 1
     });
@@ -127,6 +142,21 @@ export default class TestScreen extends Component {
       });
       this.toggleSpeak("Veuillez vous placer devant l'écran");
     }
+    if (!wellPlaced) {
+      this.setState(
+        {
+          isPaused: true
+        },
+        () => this._destroyRecognizer()
+      );
+    } else {
+      this.setState(
+        {
+          isPaused: false
+        },
+        () => this.setNextLetter()
+      );
+    }
   };
 
   square = x => {
@@ -135,10 +165,10 @@ export default class TestScreen extends Component {
 
   onSuccess = e => {
     if (e.data == "sight-study") {
-      var distance = this.state.distance[0].distance;
-      var eps = distance * 0.05;
-      var limit = 0;
-      if (this.state.eye == "left")
+      const { distance } = this.state;
+      const eps = distance * 0.05;
+      let limit = 0;
+      if (this.state.whichEye === "left")
         limit = Math.min(
           e.bounds.origin[0].y,
           e.bounds.origin[0].y,
@@ -152,8 +182,8 @@ export default class TestScreen extends Component {
         );
 
       if (
-        (limit < e.bounds.height / 2 && this.state.eye == "left") ||
-        (limit > e.bounds.height / 2 && this.state.eye == "right")
+        (limit < e.bounds.height / 2 && this.state.whichEye === "left") ||
+        (limit > e.bounds.height / 2 && this.state.whichEye === "right")
       ) {
         var tmp = Math.sqrt(
           this.square(e.bounds.origin[1].y - e.bounds.origin[0].y) +
@@ -171,11 +201,22 @@ export default class TestScreen extends Component {
             this.square(e.bounds.origin[0].y - e.bounds.origin[2].y) +
               this.square(e.bounds.origin[0].x - e.bounds.origin[2].x)
           );
-        tmp = 3030*e.bounds.width / (640*tmp);
-        var centre = e.bounds.width/2 - (parseFloat(e.bounds.origin[0].x) + parseFloat(e.bounds.origin[1].x) + parseFloat(e.bounds.origin[2].x))/3
-        var h = tmp*Math.sin(Math.PI*35.84*centre/(e.bounds.width/2*180))
-        var letterToCamera = 2.54*Dimensions.get('window').height/(Dimensions.get('window').scale*160)
-        var dis = Math.sqrt(letterToCamera*letterToCamera+tmp*tmp-2*12.5*h)
+        tmp = (3030 * e.bounds.width) / (640 * tmp);
+        var centre =
+          e.bounds.width / 2 -
+          (parseFloat(e.bounds.origin[0].x) +
+            parseFloat(e.bounds.origin[1].x) +
+            parseFloat(e.bounds.origin[2].x)) /
+            3;
+        var h =
+          tmp *
+          Math.sin((Math.PI * 35.84 * centre) / ((e.bounds.width / 2) * 180));
+        var letterToCamera =
+          (2.54 * Dimensions.get("window").height) /
+          (Dimensions.get("window").scale * 160);
+        var dis = Math.sqrt(
+          letterToCamera * letterToCamera + tmp * tmp - 2 * 12.5 * h
+        );
 
         if (dis - distance + eps < 0) {
           const amount = parseInt(10 * Math.abs(distance - dis)) / 10;
@@ -187,9 +228,11 @@ export default class TestScreen extends Component {
           });
           if (!this.state.triggerTooClose) {
             this.toggleSpeak("Veuillez reculer");
-            this.state.triggerTooClose = true;
-            this.state.triggerTooFar = false;
-            this.state.triggerWrongEye = false;
+            this.setState({
+              triggerTooClose: true,
+              triggerTooFar: false,
+              triggerWrongEye: false
+            });
           }
         } else {
           if (dis - distance - eps > 0) {
@@ -202,20 +245,22 @@ export default class TestScreen extends Component {
             });
             if (!this.state.triggerTooFar) {
               this.toggleSpeak("Veuillez vous rapprocher");
-              this.state.triggerTooClose = false;
-              this.state.triggerTooFar = true;
-              this.state.triggerWrongEye = false;
+              this.setState({
+                triggerTooClose: false,
+                triggerTooFar: true,
+                triggerWrongEye: false
+              });
             }
           } else {
             this.setState({
               indication: "Parfait, ne bougez plus",
               wellPlaced: true,
               wrongEyeCount: 0,
-              counter: 0
+              counter: 0,
+              triggerTooClose: false,
+              triggerTooFar: false,
+              triggerWrongEye: false
             });
-            this.state.triggerTooClose = false;
-            this.state.triggerTooFar = false;
-            this.state.triggerWrongEye = false;
           }
         }
       } else {
@@ -240,9 +285,10 @@ export default class TestScreen extends Component {
     }
   };
 
-  speak(sentence) {
+  speak(sentence, onDone = null) {
     Speech.speak(sentence, {
-      language: "fr"
+      language: "fr",
+      onDone
     });
   }
 
@@ -250,53 +296,34 @@ export default class TestScreen extends Component {
     Speech.stop();
   }
 
-  toggleSpeak(sentence) {
+  toggleSpeak(sentence, onDone) {
     Speech.isSpeakingAsync()
-      .then(isSpeaking => (isSpeaking ? this.stop() : this.speak(sentence)))
+      .then(isSpeaking =>
+        isSpeaking ? this.stop() : this.speak(sentence, onDone)
+      )
       .catch(console.error);
-  }
-
-  // for tests
-  randomize() {
-    this.setNextLetterId = setInterval(
-      () => this.setNextLetter(),
-      timeBetweenLetters
-    );
-  }
-
-  toggleButtons() {
-    const { tests } = this.state;
-    this.setState({
-      tests: {
-        hideButtons: tests.hideButtons ? false : true
-      }
-    });
-  }
-  // !for tests
-
-  componentWillUnmount() {
-    Voice.destroy().then(Voice.removeAllListeners);
-    clearInterval(this.setNextLetterId);
-    clearInterval(this.timer);
   }
 
   nextEye() {
     this.setState({
-      letter: letters.random(),
-      lineCoefficient: 1,
-      lineSize: getLineLength(1),
       whichEye: "right"
     });
   }
 
   endTest() {
-    console.log("FIN");
-    clearInterval(this.setNextLetterId);
+    this.setState(
+      {
+        hasEnded: true
+      },
+      () => {
+        console.log("FIN DU TEST");
+        this._destroyRecognizer();
+      }
+    );
   }
 
   checkResults(newResults) {
     const { letter } = this.state;
-    // const allResults = [...results, ...partialResults];
     return intersection(newResults, letter);
   }
 
@@ -308,32 +335,46 @@ export default class TestScreen extends Component {
   }
 
   setNextLetter() {
-    const { letterCount, lineNumber, lineCoefficient } = this.state;
+    const { letterCount, lineNumber, targetLines } = this.state;
+    const { hasEnded, hasStarted, isPaused } = this.state;
     const newLetterCount = letterCount + 1;
     let newLineNumber = lineNumber; // default is current line number
-    let newLineCoefficient = lineCoefficient;
     if (letterCount % 5 === 0) {
       newLineNumber += 1; // +1 if it's a fifth letter
-      newLineCoefficient -= 0.1;
     }
-    this.setState(
-      {
-        letter: letters.random(),
-        letterCount: newLetterCount,
-        lineNumber: newLineNumber,
-        lineSize: getLineLength(newLineCoefficient),
-        lineCoefficient: newLineCoefficient
-      },
-      () => {
-        if (letterCount === 25) this.nextEye();
-        if (letterCount === 50) this.endTest();
-        this._startRecognizing();
-      }
-    );
+    const newIdx = (newLineNumber - 1) % targetLines;
+
+    if (!hasEnded && !isPaused && hasStarted) {
+      this.setState(
+        {
+          letter: letters.random(),
+          letterCount: newLetterCount,
+          lineNumber: newLineNumber,
+          lineSize: this.lineSizes[newIdx]
+        },
+        () => {
+          const {
+            letter,
+            letterCount,
+            lineNumber,
+            whichEye,
+            lineSize
+          } = this.state;
+          console.log(
+            `${letter} => ${letterCount}:${lineNumber} ${targetLines *
+              5} with height ${lineSize} and idx ${newIdx} -> ${whichEye}`
+          );
+          if (letterCount === targetLines * 5) {
+            this.nextEye();
+            this._startRecognizing();
+          } else if (letterCount === targetLines * 10) this.endTest();
+          else this._startRecognizing();
+        }
+      );
+    }
   }
 
   onSpeechStart = e => {
-    // eslint-disable-next-line
     console.log("onSpeechStart: ", e);
     this.setState({
       started: "√"
@@ -341,7 +382,6 @@ export default class TestScreen extends Component {
   };
 
   onSpeechRecognized = e => {
-    // eslint-disable-next-line
     // console.log("onSpeechRecognized: ", e);
     this.setState({
       recognized: "√"
@@ -349,16 +389,13 @@ export default class TestScreen extends Component {
   };
 
   onSpeechEnd = e => {
-    // eslint-disable-next-line
     console.log("onSpeechEnd: ", e);
-    // this._startRecognizing();
     this.setState({
       end: "√"
     });
   };
 
   onSpeechError = e => {
-    // eslint-disable-next-line
     console.log("onSpeechError: ", e);
     // no speech
     if (e.error.message === "6/No speech input") {
@@ -366,9 +403,9 @@ export default class TestScreen extends Component {
     }
     // no match
     if (e.error.message === "7/No match") {
-      this._destroyRecognizer();
-      Speech.speak("Bonjour", { language: "fr" });
-      this._startRecognizing();
+      this.toggleSpeak("Je ne vous ai pas entendu. Veuillez répéter.", () =>
+        this._startRecognizing()
+      );
     }
     this.setState({
       error: JSON.stringify(e.error)
@@ -376,34 +413,25 @@ export default class TestScreen extends Component {
   };
 
   onSpeechResults = e => {
-    // eslint-disable-next-line
-    console.log("onSpeechResults: ", e);
-    const { scores, whichEye } = this.state;
-    const newResults = e.value;
+    const { partialResults, scores, whichEye } = this.state;
+    const newResults = [...e.value, ...partialResults];
+    console.log("onSpeechResults: ", newResults);
     this.setState(
       {
         results: newResults,
         scores: { ...scores, [whichEye]: this.getNewScore(newResults) }
       },
       () => {
+        console.log(`current score: ${JSON.stringify(this.state.scores)}`);
         this.setNextLetter();
       }
     );
   };
 
   onSpeechPartialResults = e => {
-    // eslint-disable-next-line
     console.log("onSpeechPartialResults: ", e);
     this.setState({
       partialResults: e.value
-    });
-  };
-
-  onSpeechVolumeChanged = e => {
-    // eslint-disable-next-line
-    // console.log("onSpeechVolumeChanged: ", e);
-    this.setState({
-      pitch: e.value
     });
   };
 
@@ -462,34 +490,167 @@ export default class TestScreen extends Component {
     });
   };
 
+  handleStartPressed() {
+    this.setState(
+      {
+        hasStarted: true
+      },
+      () => this.setNextLetter()
+    );
+  }
+
+  handlePause() {
+    this.setState(
+      prevState => ({
+        isPaused: !prevState.isPaused
+      }),
+      () => {
+        const { isPaused } = this.state;
+        if (isPaused) this._destroyRecognizer();
+        if (!isPaused) this._startRecognizing();
+      }
+    );
+  }
+
   render() {
-    const { letter, lineSize, tests, indication } = this.state;
-    const { navigate } = this.props.navigation;
+    const {
+      letter,
+      lineSize,
+      targetLines,
+      scores,
+      indication,
+      wellPlaced
+    } = this.state;
+    const { hasPressedStart, hasStarted, hasEnded, isPaused } = this.state;
+    const { goBack } = this.props.navigation;
     return (
       <View style={styles.container}>
-        <QRCodeScanner
-          onRead={this.onSuccess}
-          vibrate={false}
-          reactivate={true}
-          containerStyle={{ position: "absolute", opacity: 0 }}
-          cameraType="front"
-        />
-        <Text style={{ fontFamily: "optician-sans", fontSize: lineSize }}>
-          {letter}
+        <HiddenQrCode onSuccess={this.onSuccess.bind(this)} />
+        {!hasStarted && hasPressedStart && (
+          <Countdown handleStart={this.handleStartPressed.bind(this)} />
+        )}
+        <Text style={{ fontSize: 30 }}>
+          {indication} {isPaused.toString()} {wellPlaced.toString()}
         </Text>
-        {!tests.hideButtons && (
+        {!hasPressedStart && (
+          <Instructions
+            wellPlaced={wellPlaced}
+            handleStartPressed={() => this.setState({ hasPressedStart: true })}
+          />
+        )}
+        {hasStarted && !hasEnded && (
           <>
-            <Button title="Go back" onPress={() => navigate("Menu")} />
+            <Text style={{ fontFamily: "optician-sans", fontSize: lineSize }}>
+              {letter}
+            </Text>
+            <Button title="Next" onPress={() => this.setNextLetter()} />
+            <Button title="Quit" onPress={() => goBack()} />
           </>
         )}
-        <Button
-          title={tests.hideButtons ? "Show" : "Hide"}
-          onPress={() => this.toggleButtons()}
-        />
-        <Text style={{ fontSize: 30 }}>{indication}</Text>
+        {hasEnded && (
+          <Score
+            scores={scores}
+            targetLines={targetLines}
+            handleOnEnd={goBack.bind(this)}
+          />
+        )}
       </View>
     );
   }
+}
+
+function Lines({ lineSizes }) {
+  return lineSizes.map(lineSize => (
+    <Text
+      key={Math.random().toString()}
+      style={{ fontFamily: "optician-sans", fontSize: lineSize }}
+    >
+      n c k z o r h s d v
+    </Text>
+  ));
+}
+
+function HiddenQrCode({ onSuccess }) {
+  return (
+    <QRCodeScanner
+      onRead={onSuccess}
+      vibrate={false}
+      reactivate={true}
+      containerStyle={{ position: "absolute", opacity: 0 }}
+      cameraType="front"
+    />
+  );
+}
+
+function Instructions({ handleStartPressed, wellPlaced }) {
+  return (
+    <>
+      <Text style={common.headers}>Test de vision</Text>
+      <Text style={common.important}>
+        Nous allons évaluer votre œil gauche. Veuillez enfiler les lunettes
+        cachant votre œil droit.
+      </Text>
+      <Text style={common.important}>
+        Placez-vous confortablement et appuyez sur le bouton lorsque vous êtes
+        prêt.
+      </Text>
+      {wellPlaced && (
+        <TouchableOpacity
+          style={styles.actionButtons}
+          onPress={() => handleStartPressed()}
+        >
+          <Text style={common.actionButtonsText}>PRÊT</Text>
+        </TouchableOpacity>
+      )}
+    </>
+  );
+}
+
+function Countdown({ handleStart }) {
+  const [counter, setCounter] = useState(3);
+  let intervalId;
+  useEffect(() => {
+    intervalId = setInterval(() => {
+      setCounter(counter - 1);
+    }, 1000);
+    if (counter === 0) {
+      clearInterval(intervalId);
+      handleStart();
+    }
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [counter]);
+  return counter > 0 ? <Text style={styles.countdown}>{counter}</Text> : null;
+}
+
+function Score({ scores, targetLines, handleOnEnd }) {
+  const { right, left } = scores;
+  const target = targetLines * 5;
+  return (
+    <>
+      <Text style={common.headers}>Fin du test</Text>
+      <Text style={common.important}>Le test est maintenant terminé.</Text>
+      <Text style={common.important}>
+        Score œil droit:{" "}
+        <Text style={{ fontWeight: "bold" }}>
+          {right} / {target}
+        </Text>
+      </Text>
+      <Text style={common.important}>
+        Score œil gauche:{" "}
+        <Text style={{ fontWeight: "bold" }}>
+          {left} / {target}
+        </Text>
+      </Text>
+      <TouchableOpacity
+        style={styles.actionButtons}
+        onPress={() => handleOnEnd()}
+      >
+        <Text style={common.actionButtonsText}>TERMINER</Text>
+      </TouchableOpacity>
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -498,5 +659,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center"
+  },
+  actionButtons: {
+    ...common.actionButtons,
+    marginTop: 8,
+    maxWidth: Dimensions.get("window").width / 3
+  },
+  countdown: {
+    fontSize: 46,
+    fontWeight: "bold"
   }
 });

@@ -36,7 +36,7 @@ export const styles = StyleSheet.create({
     textAlign: "center"
   },
   important: {
-    fontSize: 20
+    fontSize: 18
   },
   inputs: {
     borderColor: "#CCCCCC",

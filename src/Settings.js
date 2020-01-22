@@ -96,6 +96,7 @@ export default class Settings extends React.Component {
   async handleOnOk() {
     const { mail, volume, brightness, pin, targetLines } = this.state;
     const { goBack } = this.props.navigation;
+    goBack();
     await Promise.all([
       setDoctorEmail(mail),
       setVolume(volume.toString()),
@@ -103,7 +104,6 @@ export default class Settings extends React.Component {
       setAdminPin(pin),
       setTargetLines(targetLines)
     ]);
-    goBack();
   }
 
   render() {
