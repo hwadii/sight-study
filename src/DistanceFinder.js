@@ -84,9 +84,9 @@ export default class DistanceFinder extends Component {
   };
 
   handleOnOk() {
-    const { distance } = this.state;
+    const { lastDistance } = this.state;
     const { navigate } = this.props.navigation;
-    navigate("AddUser", { distance });
+    navigate("AddUser", { distance: lastDistance });
   }
 
   render() {

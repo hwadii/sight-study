@@ -13,6 +13,7 @@ import okhttp3.OkHttpClient;
 
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
+import com.robinpowered.react.ScreenBrightness.ScreenBrightnessPackage;
 import com.ninty.system.setting.SystemSettingPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import com.horcrux.svg.SvgPackage;
@@ -38,6 +39,7 @@ public class MainApplication extends ExpoApplication implements AppLoaderPackage
 
         // Needed for `react-native link`
         // new MainReactPackage(),
+            new ScreenBrightnessPackage(),
             new SystemSettingPackage(),
             new RNPermissionsPackage(),
             // new SvgPackage(),
