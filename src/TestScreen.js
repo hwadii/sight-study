@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import {
   Button,
   StyleSheet,
@@ -7,12 +7,19 @@ import {
   PixelRatio,
   Image,
   PermissionsAndroid,
-  Dimensions
+  Dimensions,
+  TouchableOpacity
 } from "react-native";
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
 import * as Speech from "expo-speech";
-import { intersection } from "./util";
+import {
+  intersection,
+  defaultEtdrsScale,
+  getTargetLines,
+  getAcuites
+} from "./util";
+import { styles as common } from "./styles/common";
 
 import { getDistance } from "../service/db/User";
 import { getId } from "./util";
@@ -20,14 +27,17 @@ import { getId } from "./util";
 import QRCodeScanner from "react-native-qrcode-scanner";
 
 const letters = "nckzorhsdv";
-const timeBetweenLetters = 500;
-const screenFactor = 100 * PixelRatio.get();
+const screenFactor = (160 * PixelRatio.get()) / 2.54;
 /**
  * Gets font size for current line
- * @param {number} lineCoefficient coefficient de ligne
+ * @param {number} lineCoefficient acuité visuelle
+ * @param {number} d distance en m
  */
-const getLineLength = lineCoefficient =>
-  Math.floor(screenFactor * 2.91 * Math.pow(10, -3) * 400 * lineCoefficient);
+const getLineLength = (lineCoefficient, d) =>
+  Math.floor((screenFactor * 5 * 0.291 * d) / (10 * lineCoefficient));
+// const vs = Object.values(defaultEtdrsScale);
+// const lineSizes = vs.map(v => getLineLength(v, 0.4));
+// const targetLines = 1;
 
 export default class TestScreen extends Component {
   static navigationOptions = {
@@ -42,30 +52,31 @@ export default class TestScreen extends Component {
     results: [],
     partialResults: [],
 
+    id: null,
+    distance: null,
+
+    // flow
+    hasPressedStart: false,
+    hasStarted: false,
+    hasEnded: false,
+    isPaused: false,
+
+    // test
     letter: "",
     letterCount: 0,
-    lineSize: getLineLength(1),
+    lineSize: null,
     lineNumber: 0,
-    lineCoefficient: 1,
     whichEye: "left",
+    targetLines: null,
     scores: {
       left: 0,
       right: 0
     },
 
-    // for tests
-    tests: {
-      hideButtons: false
-    },
-
     // for distance
-    id: "",
-    distance: 0,
-    indication: " ",
+    indication: "",
     wellPlaced: false,
     wrongEyeCount: 0,
-    eye: "",
-    timer: null,
     counter: 0,
     triggerTooClose: false,
     triggerTooFar: false,
@@ -92,27 +103,31 @@ export default class TestScreen extends Component {
     );
     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
 
-    const currentuser_id = await getId();
-    // this.setNextLetterId = setInterval(
-    //   () => this.setNextLetter(),
-    //   timeBetweenLetters
-    // );
-    this.setNextLetter();
-    // this._startRecognizing();
-
-    const { navigation } = this.props;
-
+    const userId = await getId();
+    const savedEtdrsScale = await getAcuites();
+    const savedDistance = await getDistance(userId);
+    const vs = Object.values(savedEtdrsScale);
+    this.lineSizes = vs.map(v => getLineLength(v, savedDistance / 100)); // distance en m
     this.setState({
-      id: currentuser_id,
-      distance: await getDistance(currentuser_id)
+      id: userId,
+      distance: savedDistance,
+      targetLines: await getTargetLines(),
+      etdrsScale: savedEtdrsScale,
+      lineSizes: this.lineSizes[0]
     });
 
     this.timer = setInterval(this.tick, 1000);
-    this.setState({ timer: this.timer, eye: navigation.getParam("eye") });
+    // this.setState({ timer: this.timer, eye: navigation.getParam("eye") });
+  }
+
+  componentWillUnmount() {
+    Voice.destroy().then(Voice.removeAllListeners);
+    clearInterval(this.setNextLetterId);
+    clearInterval(this.timer);
   }
 
   tick = () => {
-    const { counter } = this.state;
+    const { counter, wellPlaced } = this.state;
     this.setState({
       counter: counter + 1
     });
