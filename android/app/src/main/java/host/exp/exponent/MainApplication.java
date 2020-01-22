@@ -13,6 +13,7 @@ import okhttp3.OkHttpClient;
 
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 import com.robinpowered.react.ScreenBrightness.ScreenBrightnessPackage;
 import com.ninty.system.setting.SystemSettingPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
@@ -39,6 +40,7 @@ public class MainApplication extends ExpoApplication implements AppLoaderPackage
 
         // Needed for `react-native link`
         // new MainReactPackage(),
+            new SplashScreenReactPackage(),
             new ScreenBrightnessPackage(),
             new SystemSettingPackage(),
             new RNPermissionsPackage(),

@@ -14,7 +14,6 @@ import {
   setVolume,
   getAllSettings,
   setTargetLines,
-  getQrSize,
   setQrSize,
   showAlert
 } from "./util";
@@ -29,7 +28,7 @@ export default class Settings extends React.Component {
       pin: "",
       mail: "",
       targetLines: null,
-      qrSize: null,
+      qrSize: "",
       volume: null,
       brightness: null
     };
