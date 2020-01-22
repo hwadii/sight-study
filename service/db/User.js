@@ -84,7 +84,11 @@ export async function getUserById(id) {
  * @returns {Promise} Promise resolving to an array of users.
  */
 export async function getDistance(id) {
-  return _executeSql("select distance from user where id=?;", [id]);
+  const result = await _executeSql("select distance from user where id=?;", [
+    id
+  ]);
+  const { distance } = result.length > 0 ? result[0] : null;
+  return distance;
 }
 
 /**
@@ -133,10 +137,7 @@ export function getUsersLike(recherche) {
  * @returns {Promise} Promise resolving to every user.
  */
 export function getUsers() {
-  return _executeSql(
-    "select * from user order by prenom ASC;",
-    []
-  );
+  return _executeSql("select * from user order by prenom ASC;", []);
 }
 
 /**
