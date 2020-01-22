@@ -24,6 +24,10 @@ export const defaultEtdrsScale = {
   "3/4": 1.33
 };
 
+const defaultTargetLines = "5";
+
+const defaultQrSize = "3";
+
 // General
 /**
  * Returns formatted date
@@ -31,6 +35,15 @@ export const defaultEtdrsScale = {
  * @returns {string} the formatted date in the specified format
  */
 export const formatDate = date => format(date, "dd/MM/yyyy");
+
+export async function initDefault() {
+  const targetLines = await getTargetLines();
+  const qrSize = await getQrSize();
+  const etdrsScale = await getAcuites();
+  if (targetLines === null) await setTargetLines(defaultTargetLines);
+  if (qrSize === null) await setQrSize(defaultQrSize);
+  if (etdrsScale === null) await setAcuites(defaultEtdrsScale);
+}
 
 /**
  * Shows alert

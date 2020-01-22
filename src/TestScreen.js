@@ -130,7 +130,7 @@ export default class TestScreen extends Component {
   }
 
   tick = () => {
-    const { counter, wellPlaced } = this.state;
+    const { counter, wellPlaced, hasStarted, hasEnded } = this.state;
     this.setState({
       counter: counter + 1
     });
@@ -145,20 +145,15 @@ export default class TestScreen extends Component {
       });
       this.toggleSpeak("Veuillez vous placer devant l'écran");
     }
-    if (!wellPlaced) {
-      this.setState(
-        {
-          isPaused: true
-        },
-        () => this._destroyRecognizer()
-      );
+    if (wellPlaced) {
+      this.stop();
+      if (hasStarted && !hasEnded) {
+        Voice.isRecognizing().then(isRecognizing => {
+          if (!isRecognizing) this._startRecognizing();
+        });
+      }
     } else {
-      this.setState(
-        {
-          isPaused: false
-        },
-        () => this.setNextLetter()
-      );
+      this._destroyRecognizer();
     }
   };
 
@@ -338,7 +333,7 @@ export default class TestScreen extends Component {
   }
 
   setNextLetter() {
-    const { letterCount, lineNumber, targetLines } = this.state;
+    const { letterCount, lineNumber, targetLines, wellPlaced } = this.state;
     const { hasEnded, hasStarted, isPaused } = this.state;
     const newLetterCount = letterCount + 1;
     let newLineNumber = lineNumber; // default is current line number
@@ -347,7 +342,7 @@ export default class TestScreen extends Component {
     }
     const newIdx = (newLineNumber - 1) % targetLines;
 
-    if (!hasEnded && !isPaused && hasStarted) {
+    if (!hasEnded && wellPlaced && hasStarted) {
       this.setState(
         {
           letter: letters.random(),
@@ -579,7 +574,7 @@ function HiddenQrCode({ onSuccess }) {
       onRead={onSuccess}
       vibrate={false}
       reactivate={true}
-      containerStyle={{ position: "absolute", opacity: 0 }}
+      containerStyle={{ position: "absolute" }}
       cameraType="front"
     />
   );

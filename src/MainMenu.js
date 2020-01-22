@@ -9,13 +9,7 @@ import {
   ActivityIndicator
 } from "react-native";
 import { styles as common } from "./styles/common";
-import {
-  getFullName,
-  getDoctorEmail,
-  setAcuites,
-  getAcuites,
-  defaultEtdrsScale,
-} from "./util";
+import { getFullName, getDoctorEmail, initDefault, clear } from "./util";
 import Help from "./Help";
 import { scale } from "react-native-size-matters";
 
@@ -38,11 +32,7 @@ export default class MainMenu extends React.Component {
   }
 
   async componentDidMount() {
-    const tableau = await getAcuites();
-    if (tableau === null) {
-      await setAcuites(defaultEtdrsScale);
-    }
-
+    await initDefault();
     await this.getLoggedState();
     this.willFocusSub = this.props.navigation.addListener(
       "willFocus",
