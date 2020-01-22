@@ -10,7 +10,7 @@ import {
   View
 } from "react-native";
 import * as User from "../service/db/User";
-import { setId, setUserName, getId, formatDate, showAlert } from "./util";
+import { setId, setUserName, getId, formatDate, showAlert, getDoctorEmail } from "./util";
 import { styles as common, colors } from "./styles/common";
 
 export default class SetUser extends React.Component {
@@ -18,20 +18,22 @@ export default class SetUser extends React.Component {
     super(props);
     this.state = {
       currentUserId: null,
-      users: []
+      users: [],
+      mail: null
     };
     this.handleSearch = this.handleSearch.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.willFocusSub = this.props.navigation.addListener(
       "willFocus",
       async () => {
         this.setState({
           users: await User.getUsers(),
-          currentUserId: await getId()
+          currentUserId: await getId(),
+          mail: await getDoctorEmail()
         });
       }
     );
@@ -48,13 +50,19 @@ export default class SetUser extends React.Component {
   }
 
   async handleSelect(user) {
-    const id = user.id;
-    await setId(id.toString());
-    await setUserName(user);
-    showAlert(
-      `La tablette est configurée pour ${user.prenom} ${user.nom}.`,
-      () => this.setState({ currentUserId: id })
-    );
+    if (this.state.mail==null){
+      showAlert(
+        "Veuillez configurer les paramètres généraux"
+      );
+    }else{
+      const id = user.id;
+      await setId(id.toString());
+      await setUserName(user);
+      showAlert(
+        `La tablette est configurée pour ${user.prenom} ${user.nom}.`,
+        () => this.setState({ currentUserId: id })
+      );
+    }
   }
 
   handleEdit(user) {

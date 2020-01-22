@@ -40,9 +40,11 @@ export async function initDefault() {
   const targetLines = await getTargetLines();
   const qrSize = await getQrSize();
   const etdrsScale = await getAcuites();
+  const mail = await getDoctorEmail();
   if (targetLines === null) await setTargetLines(defaultTargetLines);
   if (qrSize === null) await setQrSize(defaultQrSize);
   if (etdrsScale === null) await setAcuites(defaultEtdrsScale);
+  if (mail === null) await setDoctorEmail("");
 }
 
 /**

@@ -3,6 +3,8 @@ import * as Speech from "expo-speech";
 import { View, Button } from "react-native";
 import { withNavigation } from "react-navigation";
 import { colors } from "./styles/common";
+import DialogInput from 'react-native-dialog-input';
+import { getAdminPin, showAlert } from "./util"
 
 const sentences = {
   MainMenu: "Bienvenue sur l'application Sight Study",
@@ -16,7 +18,9 @@ class Help extends React.Component {
     super(props);
     this.state = {
       isSpeakingText: "Aide 📢",
-      isSpeakingButton: colors.DANGER
+      isSpeakingButton: colors.DANGER,
+      isDialogVisible: false,
+      pin: ""
     };
   }
 
@@ -52,13 +56,16 @@ class Help extends React.Component {
     ).catch(console.error);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.didFocusSub = this.props.navigation.addListener("didFocus", () => {
       this.speak();
     });
     this.willBlurSub = this.props.navigation.addListener("willBlur", () => {
       this.stop();
     });
+    this.setState({
+      pin: await getAdminPin()
+    })
   }
 
   componentWillUnmount() {
@@ -66,10 +73,41 @@ class Help extends React.Component {
     this.willBlurSub.remove();
   }
 
+  goToSettings(value) {
+    if ( value == this.state.pin ){
+      this.hideDialog()
+      this.props.navigation.navigate("SetUser");
+    }
+    else{
+      this.hideDialog()
+      showAlert("Mauvais code PIN")
+    }
+  }
+
+  openDialog() {
+    this.setState({isDialogVisible: true});
+  }
+
+  hideDialog(){
+    this.setState({isDialogVisible: false});
+  }
+
   render() {
     const { isSpeakingText, isSpeakingButton } = this.state;
     return (
       <View style={{ marginHorizontal: 10 }}>
+        <DialogInput isDialogVisible={this.state.isDialogVisible}
+          title={"Accès aux réglages"}
+          message={"Entrer le code PIN"}
+          hintInput ={"####"}
+          submitInput={ (inputText) => {this.goToSettings(inputText)} }
+          closeDialog={ () => {this.hideDialog()}}>
+        </DialogInput>
+        <Button
+          color="red"
+          onPress={() => this.openDialog()}
+          title="⚙️"
+        />
         <Button
           color={isSpeakingButton}
           onPress={() => this.toggleSpeak()}

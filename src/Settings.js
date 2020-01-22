@@ -14,7 +14,6 @@ import {
   setVolume,
   getAllSettings,
   setTargetLines,
-  getQrSize,
   setQrSize,
   showAlert
 } from "./util";
@@ -29,7 +28,7 @@ export default class Settings extends React.Component {
       pin: "",
       mail: "",
       targetLines: null,
-      qrSize: null,
+      qrSize: "",
       volume: null,
       brightness: null
     };
@@ -115,7 +114,7 @@ export default class Settings extends React.Component {
       show("Veuillez renseigner le nombre de lignes du test");
       return false;
     }
-    if (parseFloat(qrSize) !== qrSize) {
+    if (parseFloat(qrSize) != qrSize) {
       show("La taille du QR code doit être en décimal");
       return false;
     }
