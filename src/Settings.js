@@ -58,7 +58,7 @@ export default class Settings extends React.Component {
       targetLines: targetLines ? targetLines.toString() : "",
       volume: volume || currentVolume,
       brightness: brightness || currentBrightness,
-      qrSize: qrsize ? qrsize.toString() : "",
+      qrSize: qrsize ? qrsize.toString() : ""
     });
   }
 
@@ -101,36 +101,32 @@ export default class Settings extends React.Component {
 
   verifyField() {
     const { mail, pin, targetLines, qrSize } = this.state;
-    const show = (str) => showAlert(str, null, [], "Erreur de saisie");
-    
-    if (!mail.includes("@")){
-      show("Veuillez renseigner une adresse valide")
-      return false
-    }else{
-      if (pin.length!=4){
-        show("Le code PIN doit contenir 4 caractères")
-        return false
-      }else{
-        if (targetLines.length==0){
-          show("Veuillez renseigner le nombre de lignes du test")
-          return false
-        }else{
-          if (parseFloat(qrSize)!=qrSize){
-            show("La taille du QR code doit être en décimal")
-            return false
-          }else{
-            return true
-          }
-        }
-      }
+    const show = str => showAlert(str, null, [], "Erreur de saisie");
+
+    if (!mail.includes("@")) {
+      show("Veuillez renseigner une adresse valide");
+      return false;
     }
+    if (pin.length !== 4) {
+      show("Le code PIN doit contenir 4 caractères");
+      return false;
+    }
+    if (targetLines.length === 0) {
+      show("Veuillez renseigner le nombre de lignes du test");
+      return false;
+    }
+    if (parseFloat(qrSize) !== qrSize) {
+      show("La taille du QR code doit être en décimal");
+      return false;
+    }
+    return true;
   }
 
   async handleOnOk() {
     const { mail, volume, brightness, pin, targetLines, qrSize } = this.state;
     const { goBack } = this.props.navigation;
 
-    if (this.verifyField()){
+    if (this.verifyField()) {
       goBack();
       await Promise.all([
         setDoctorEmail(mail),
@@ -188,7 +184,7 @@ export default class Settings extends React.Component {
             value={qrSize}
             maxLength={4}
             handleOnChange={e => this.handleChangeField(e, "qrSize")}
-          />          
+          />
         </View>
         <View>
           <TouchableOpacity
