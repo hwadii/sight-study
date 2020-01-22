@@ -11,4 +11,5 @@
   <color name="colorLight">#F6F6F7</color>
   <color name="splashBackground">#ffffff</color>
   <color name="iconBackground">#FFFFFF</color>
+  <color name="primary_dark">#FFFFFF</color>
 </resources>
