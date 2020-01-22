@@ -17,7 +17,8 @@ import {
   intersection,
   defaultEtdrsScale,
   getTargetLines,
-  getAcuites
+  getAcuites,
+  getQrSize
 } from "./util";
 import { styles as common } from "./styles/common";
 
@@ -75,6 +76,7 @@ export default class TestScreen extends Component {
 
     // for distance
     indication: "",
+    qrsize: 0,
     wellPlaced: false,
     wrongEyeCount: 0,
     counter: 0,
@@ -111,6 +113,7 @@ export default class TestScreen extends Component {
     this.setState({
       id: userId,
       distance: savedDistance,
+      qrsize: await getQrSize(),
       targetLines: await getTargetLines(),
       etdrsScale: savedEtdrsScale,
       lineSizes: this.lineSizes[0]
@@ -165,8 +168,8 @@ export default class TestScreen extends Component {
 
   onSuccess = e => {
     if (e.data == "sight-study") {
-      const { distance } = this.state;
-      const eps = distance * 0.05;
+      const { distance, qrsize } = this.state;
+      const eps = distance * 0.1;
       let limit = 0;
       if (this.state.whichEye === "left")
         limit = Math.min(
@@ -201,7 +204,7 @@ export default class TestScreen extends Component {
             this.square(e.bounds.origin[0].y - e.bounds.origin[2].y) +
               this.square(e.bounds.origin[0].x - e.bounds.origin[2].x)
           );
-        tmp = (3030 * e.bounds.width) / (640 * tmp);
+        tmp = (qrsize * 3030 * e.bounds.width) / (3 * 640 * tmp);
         var centre =
           e.bounds.width / 2 -
           (parseFloat(e.bounds.origin[0].x) +

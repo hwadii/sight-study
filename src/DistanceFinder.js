@@ -4,6 +4,7 @@ import { PermissionsAndroid } from "react-native";
 import { StyleSheet, Text } from "react-native";
 import QRCodeScanner from "react-native-qrcode-scanner";
 import * as Speech from "expo-speech";
+import { getQrSize } from "./util"
 
 function getTmpDistance(bounds) {
   const { origin } = bounds;
@@ -20,6 +21,7 @@ export default class DistanceFinder extends Component {
     this.state = {
       wellPlacedCount: 0,
       distance: 0,
+      qrsize: 0,
       lastDistance: 0,
       timer: null,
       counter: 0,
@@ -31,17 +33,18 @@ export default class DistanceFinder extends Component {
 
   onSuccess = e => {
     var wellPlacedInaRow = 10;
-    var eps = 1;
 
     if (this.state.wellPlacedCount < wellPlacedInaRow) {
       if (e.data === "sight-study") {
-        const tmp = getTmpDistance(e.bounds);
+        const tmp = this.state.qrsize * getTmpDistance(e.bounds) / 3;
 
         var centre = e.bounds.width/2 - (parseFloat(e.bounds.origin[0].x) + parseFloat(e.bounds.origin[1].x) + parseFloat(e.bounds.origin[2].x))/3
         var h = tmp*Math.sin(Math.PI*35.84*centre/(e.bounds.width/2*180))
         var letterToCamera = 2.54*Dimensions.get('window').height/(Dimensions.get('window').scale*160)
         var dis = Math.sqrt(letterToCamera*letterToCamera+tmp*tmp-2*12.5*h)
         this.setState({lastDistance: parseInt(10 * dis) / 10})
+
+        var eps = this.state.distance*0.1;
 
         if (Math.abs(this.state.distance - dis) < eps)
           this.setState({
@@ -65,6 +68,7 @@ export default class DistanceFinder extends Component {
     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
     this.timer = setInterval(this.tick, 1000);
     this.setState({
+      qrsize: await getQrSize(),
       timer: this.timer
     });
     this.tick();

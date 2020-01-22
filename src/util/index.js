@@ -240,6 +240,24 @@ export async function getTargetLines() {
   }
 }
 
+export async function setQrSize(qrSize) {
+  try {
+    return await AsyncStorage.setItem("qrsize", qrSize);
+  } catch {
+    console.log("Error setting QR size");
+  }
+}
+
+export async function getQrSize() {
+  try {
+    const qrSize = await AsyncStorage.getItem("qrsize");
+    if (qrSize !== null) return parseFloat(qrSize);
+    return qrSize;
+  } catch {
+    console.log("Error getting QR size");
+  }
+}
+
 export async function setVolume(volume) {
   try {
     return await AsyncStorage.setItem("volume", volume);
@@ -272,7 +290,8 @@ export async function getAllSettings() {
       brightness: await _getBrightness(),
       mail: await getDoctorEmail(),
       pin: await getAdminPin(),
-      targetLines: await getTargetLines()
+      targetLines: await getTargetLines(),
+      qrsize: await getQrSize()
     };
   } catch {
     console.log("Error getting all settings");

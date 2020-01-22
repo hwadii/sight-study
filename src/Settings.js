@@ -13,7 +13,10 @@ import {
   setAdminPin,
   setVolume,
   getAllSettings,
-  setTargetLines
+  setTargetLines,
+  getQrSize,
+  setQrSize,
+  showAlert
 } from "./util";
 import { styles as common } from "./styles/common";
 import SystemSetting from "react-native-system-setting";
@@ -26,6 +29,7 @@ export default class Settings extends React.Component {
       pin: "",
       mail: "",
       targetLines: null,
+      qrSize: null,
       volume: null,
       brightness: null
     };
@@ -45,14 +49,16 @@ export default class Settings extends React.Component {
       brightness,
       mail,
       pin,
-      targetLines
+      targetLines,
+      qrsize
     } = await getAllSettings();
     this.setState({
       pin,
       mail,
       targetLines: targetLines ? targetLines.toString() : "",
       volume: volume || currentVolume,
-      brightness: brightness || currentBrightness
+      brightness: brightness || currentBrightness,
+      qrSize: qrsize ? qrsize.toString() : "",
     });
   }
 
@@ -93,21 +99,52 @@ export default class Settings extends React.Component {
     this.toggleSpeak("Ceci est un essai du volume sonore");
   }
 
+  verifyField() {
+    const { mail, pin, targetLines, qrSize } = this.state;
+    const show = (str) => showAlert(str, null, [], "Erreur de saisie");
+    
+    if (!mail.includes("@")){
+      show("Veuillez renseigner une adresse valide")
+      return false
+    }else{
+      if (pin.length!=4){
+        show("Le code PIN doit contenir 4 caractères")
+        return false
+      }else{
+        if (targetLines.length==0){
+          show("Veuillez renseigner le nombre de lignes du test")
+          return false
+        }else{
+          if (parseFloat(qrSize)!=qrSize){
+            show("La taille du QR code doit être en décimal")
+            return false
+          }else{
+            return true
+          }
+        }
+      }
+    }
+  }
+
   async handleOnOk() {
-    const { mail, volume, brightness, pin, targetLines } = this.state;
+    const { mail, volume, brightness, pin, targetLines, qrSize } = this.state;
     const { goBack } = this.props.navigation;
-    goBack();
-    await Promise.all([
-      setDoctorEmail(mail),
-      setVolume(volume.toString()),
-      setBrightness(brightness.toString()),
-      setAdminPin(pin),
-      setTargetLines(targetLines)
-    ]);
+
+    if (this.verifyField()){
+      goBack();
+      await Promise.all([
+        setDoctorEmail(mail),
+        setVolume(volume.toString()),
+        setBrightness(brightness.toString()),
+        setAdminPin(pin),
+        setTargetLines(targetLines),
+        setQrSize(qrSize)
+      ]);
+    }
   }
 
   render() {
-    const { volume, brightness, pin, mail, targetLines } = this.state;
+    const { volume, brightness, pin, mail, targetLines, qrSize } = this.state;
     return (
       <View style={styles.container}>
         <View>
@@ -146,6 +183,12 @@ export default class Settings extends React.Component {
             type="numeric"
             handleOnChange={e => this.handleChangeField(e, "targetLines")}
           />
+          <Field
+            label="Taille du QR code (en cm)"
+            value={qrSize}
+            maxLength={4}
+            handleOnChange={e => this.handleChangeField(e, "qrSize")}
+          />          
         </View>
         <View>
           <TouchableOpacity
