@@ -281,7 +281,7 @@ export async function setVolume(volume) {
   }
 }
 
-async function _getVolume() {
+export async function _getVolume() {
   try {
     const newVolume = await AsyncStorage.getItem("volume");
     return parseFloat(newVolume);

@@ -6,7 +6,8 @@ import {
   PixelRatio,
   Dimensions,
   TouchableOpacity,
-  PermissionsAndroid 
+  PermissionsAndroid,
+  Image
 } from "react-native";
 import Voice from "react-native-voice";
 import * as Speech from "expo-speech";
@@ -15,9 +16,10 @@ import {
   getTargetLines,
   getAcuites,
   getQrSize,
-  checkScoreAndSend
+  checkScoreAndSend,
 } from "./util";
 import { styles as common } from "./styles/common";
+
 
 import { getDistance, addScore, getScore } from "../service/db/User";
 import { getId } from "./util";
@@ -34,6 +36,9 @@ const screenFactor = (160 * PixelRatio.get()) / 2.54;
 const getLineLength = (lineCoefficient, d) =>
   Math.floor((screenFactor * 5 * 0.291 * d) / (10 * lineCoefficient));
 
+const mic_on = require('../assets/mic_on.png')
+const mic_off = require('../assets/mic_off.png')
+
 export default class TestScreen extends Component {
   static navigationOptions = {
     headerShown: false
@@ -46,6 +51,8 @@ export default class TestScreen extends Component {
     started: "",
     results: [],
     partialResults: [],
+    rec: false,
+    speaking: false,
 
     id: null,
     distance: null,
@@ -136,7 +143,7 @@ export default class TestScreen extends Component {
         triggerTooFar: false,
         triggerWrongEye: false
       });
-      this.timerPlacement = setTimeout(this.timeoutFunction, 800);
+      this.timerPlacement = setTimeout(this.timeoutFunction, 200);
     }
   };
 
@@ -145,7 +152,7 @@ export default class TestScreen extends Component {
   };
 
   timeoutFunction = () => {
-    if (!this.state.detectWellPlaced) {
+    if (!this.state.detectWellPlaced && this.state.wellPlaced) {
       this.setState({ wellPlaced: false });
       this._destroyRecognizer();
     }
@@ -299,7 +306,7 @@ export default class TestScreen extends Component {
   wrapRecognizer() {
     Voice.isRecognizing().then(async isRecognizing => {
       let isSpeaking = await Speech.isSpeakingAsync();
-      if (!isRecognizing && !isSpeaking) this._startRecognizingIfTest();
+      if (!this.state.rec && !isSpeaking) this._startRecognizingIfTest();
     });
   }
 
@@ -307,6 +314,7 @@ export default class TestScreen extends Component {
     const { wellPlaced, hasEnded, hasStarted, isPaused } = this.state;
     if (wellPlaced) {
       if (hasStarted && !hasEnded && !isPaused) {
+        this.setState({rec: true})
         this._startRecognizing();
       }
     }
@@ -314,8 +322,13 @@ export default class TestScreen extends Component {
 
   speak(
     sentence,
-    onStart = () => this._destroyRecognizer(),
-    onDone = () => this._startRecognizingIfTest()
+    onStart = () => {
+      this.setState({speaking: true})
+    },
+    onDone = () => {
+      this.setState({speaking: false})
+      this._startRecognizingIfTest()
+    }
   ) {
     Speech.speak(sentence, {
       language: "fr",
@@ -330,7 +343,12 @@ export default class TestScreen extends Component {
 
   toggleSpeak(sentence) {
     Speech.isSpeakingAsync()
-      .then(isSpeaking => (isSpeaking ? this.stop() : this.speak(sentence)))
+      .then(isSpeaking => {
+        if (isSpeaking) this.stop()
+        else{
+          this.speak(sentence)
+        }
+      })
       .catch(console.error);
   }
 
@@ -376,13 +394,21 @@ export default class TestScreen extends Component {
   setNextLetter() {
     const { letterCount, lineNumber, targetLines, errorsInLine } = this.state;
     const { hasEnded, hasStarted, isPaused, wellPlaced } = this.state;
-    const newLetterCount = letterCount + 1;
     let newLineNumber = lineNumber; // default is current line number
     let newErrorsInLine = errorsInLine;
-    if (letterCount % 5 === 0) {
+    let newLetterCount = letterCount
+
+    if (newErrorsInLine==2){
+      newLetterCount = 5 * (parseInt(parseFloat(letterCount)/5) + 1) + 1
+    }else{
+      newLetterCount = letterCount + 1;
+    }
+
+    if (newLetterCount % 5 === 1) {
       newLineNumber += 1; // +1 if it's a fifth letter
       newErrorsInLine = 0;
     }
+
     const newIdx = (newLineNumber - 1) % targetLines;
 
     if (!hasEnded && hasStarted && !isPaused) {
@@ -435,7 +461,6 @@ export default class TestScreen extends Component {
 
   onSpeechResults = e => {
     const { partialResults, scores, whichEye, errorsInLine } = this.state;
-    console.log("oui")
     const newResults = [...e.value, ...partialResults];
     const [newScore, gotErrors] = this.getNewScore(newResults);
     console.log("onSpeechResults: ", newResults);
@@ -460,6 +485,7 @@ export default class TestScreen extends Component {
   };
 
   _startRecognizing = async () => {
+    this.setState({rec: true})
     this.setState({
       recognized: "",
       pitch: "",
@@ -480,6 +506,7 @@ export default class TestScreen extends Component {
 
   _stopRecognizing = async () => {
     try {
+      this.setState({rec: false})
       await Voice.stop();
     } catch (e) {
       //eslint-disable-next-line
@@ -489,6 +516,7 @@ export default class TestScreen extends Component {
 
   _cancelRecognizing = async () => {
     try {
+      this.setState({rec: false})
       await Voice.cancel();
     } catch (e) {
       //eslint-disable-next-line
@@ -498,6 +526,7 @@ export default class TestScreen extends Component {
 
   _destroyRecognizer = async () => {
     try {
+      this.setState({rec: false})
       await Voice.destroy();
     } catch (e) {
       //eslint-disable-next-line
@@ -543,12 +572,15 @@ export default class TestScreen extends Component {
       targetLines,
       scores,
       indication,
-      wellPlaced
+      wellPlaced,
+      rec,
+      speaking
     } = this.state;
     const { hasPressedStart, hasStarted, hasEnded, isPaused } = this.state;
     const { goBack } = this.props.navigation;
     return (
       <View style={styles.container}>
+        {hasStarted && !hasEnded && !isPaused && <Micro isRecognizing={rec && !speaking}></Micro>}
         {!hasEnded && <HiddenQrCode onSuccess={this.onSuccess.bind(this)} />}
         {!hasPressedStart && (
           <Instructions
@@ -583,6 +615,13 @@ export default class TestScreen extends Component {
       </View>
     );
   }
+}
+
+function Micro({isRecognizing}){
+  return <Image 
+    style={styles.micro}
+    source={isRecognizing ? mic_on : mic_off}
+  />
 }
 
 function Lines({ lineSizes }) {
@@ -734,5 +773,9 @@ const styles = StyleSheet.create({
     fontSize: 46,
     fontWeight: "bold"
   },
-  indication: { fontSize: 30 }
+  indication: { fontSize: 30 },
+  micro: {
+    position: "absolute",
+    bottom: "25%"
+  }
 });
