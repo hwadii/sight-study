@@ -35,7 +35,7 @@ const MainNavigator = createStackNavigator(
   },
   {
     // headerMode: 'none',
-    initialRouteName: "Menu",
+    initialRouteName: "TestScreen",
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour"
@@ -48,7 +48,6 @@ const Navigation = createAppContainer(MainNavigator);
 class App extends React.Component {
   state = {
     fontLoaded: false,
-    Navigation: null
   };
 
   async componentDidMount() {

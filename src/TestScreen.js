@@ -16,11 +16,14 @@ import {
   getTargetLines,
   getAcuites,
   getQrSize,
-  checkScoreAndSend
+  checkScoreAndSend,
+  testSuite,
+  mailEnum,
+  showAlert
 } from "./util";
 import { styles as common } from "./styles/common";
 
-import { getDistance, addScore, getScore } from "../service/db/User";
+import { getDistance, addScore, getScore, resetDB } from "../service/db/User";
 import { getId } from "./util";
 
 import QRCodeScanner from "react-native-qrcode-scanner";
@@ -101,6 +104,7 @@ export default class TestScreen extends Component {
       PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
     );
     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+    // this.endTest();
     const userId = await getId();
     const savedEtdrsScale = await getAcuites();
     const savedDistance = await getDistance(userId);
@@ -114,8 +118,9 @@ export default class TestScreen extends Component {
       etdrsScale: savedEtdrsScale,
       lineSizes: this.lineSizes[0]
     });
-
+    this.endTest();
     this.timer = setInterval(this.tick, 1000);
+    // this.setNextLetterId = setInterval(this.setNextLetter, 1000);
     // this.setState({ timer: this.timer, eye: navigation.getParam("eye") });
   }
 
@@ -230,7 +235,6 @@ export default class TestScreen extends Component {
             },
             badlyPlaced
           );
-          badlyPlaced();
           if (!this.state.triggerTooClose) {
             // this.toggleSpeak("Veuillez reculer");
             this.setState({
@@ -311,16 +315,16 @@ export default class TestScreen extends Component {
 
   _startRecognizingIfTest() {
     const { wellPlaced, hasEnded, hasStarted, isPaused } = this.state;
-    if (wellPlaced) {
-      if (hasStarted && !hasEnded && !isPaused) {
-        this._startRecognizing();
-      }
+    if (!wellPlaced) return;
+
+    if (hasStarted && !hasEnded && !isPaused) {
+      this._startRecognizing();
     }
   }
 
   speak(
     sentence,
-    onStart = () => this._destroyRecognizer(),
+    onStart = null,
     onDone = () => this._startRecognizingIfTest()
   ) {
     Speech.speak(sentence, {
@@ -357,10 +361,22 @@ export default class TestScreen extends Component {
         clearInterval(this.setNextLetterId);
         clearInterval(this.timer);
         console.log("FIN DU TEST");
+        const { targetLines } = this.state;
         const id = await getId();
-        const { scores } = this.state;
-        await addScore(id, scores.left, scores.right);
-        await checkScoreAndSend(id, scores);
+        // const { scores } = this.state;
+        // await addScore(id, scores.left, scores.right);
+        // const gotPerformance = await checkScoreAndSend(
+        //   id,
+        //   targetLines * 10
+        // );
+        // if (gotPerformance === mailEnum.INSUFFISCIENT) {
+        //   showAlert(
+        //     "Vous avez passé le test. Vos résultats indiquent un problème et un mail a été envoyé à votre docteur.",
+        //     null,
+        //     [],
+        //     "Attention !"
+        //   );
+        // }
       }
     );
   }
@@ -432,7 +448,7 @@ export default class TestScreen extends Component {
     }
     // no match
     if (e.error.message === "7/No match") {
-      this.toggleSpeak("Je ne vous ai pas entendu. Veuillez répéter.");
+      this.toggleSpeak("Je ne vous ai pas compris. Veuillez répéter.");
     }
     this.setState({
       error: e.error.message
@@ -562,21 +578,21 @@ export default class TestScreen extends Component {
           />
         )}
         {!hasStarted && hasPressedStart && (
-          <Countdown handleStart={this.handleStartPressed.bind(this)} />
+          <Countdown handler={this.handleStartPressed.bind(this)} />
         )}
         {hasStarted && !hasEnded && !isPaused && wellPlaced && (
           <Text style={{ fontFamily: "optician-sans", fontSize: lineSize }}>
             {letter}
           </Text>
         )}
-        {!wellPlaced && (!hasPressedStart || hasStarted) && (
-          <Text style={styles.indication}>{indication}</Text>
-        )}
         {isPaused && (
           <ChangeEye
             wellPlaced={wellPlaced}
             handlePause={this.handlePause.bind(this)}
           />
+        )}
+        {!wellPlaced && (!hasPressedStart || hasStarted) && (
+          <Text style={styles.indication}>{indication}</Text>
         )}
         {hasEnded && (
           <Score
@@ -640,32 +656,38 @@ function Instructions({ handleStartPressed, wellPlaced }) {
 }
 
 function ChangeEye({ handlePause, wellPlaced }) {
+  const [isCoutdownVisible, setIsCountdownVisible] = useState(false);
   return (
     <>
-      <Text style={common.headers}>Test de vision</Text>
-      <Text style={common.important}>
-        Nous allons évaluer votre{" "}
-        <Text style={{ fontWeight: "bold" }}>œil droit</Text>. Veuillez enfiler
-        les lunettes cachant votre{" "}
-        <Text style={{ fontWeight: "bold" }}>œil gauche</Text>.
-      </Text>
-      <Text style={common.important}>
-        Placez-vous confortablement et appuyez sur le bouton lorsque vous êtes
-        prêt.
-      </Text>
-      {wellPlaced && (
-        <TouchableOpacity
-          style={styles.actionButtons}
-          onPress={() => handlePause()}
-        >
-          <Text style={styles.actionButtonsText}>CONTINUER</Text>
-        </TouchableOpacity>
+      {!isCoutdownVisible && (
+        <>
+          <Text style={common.headers}>Test de vision</Text>
+          <Text style={common.important}>
+            Nous allons évaluer votre{" "}
+            <Text style={{ fontWeight: "bold" }}>œil droit</Text>. Veuillez
+            enfiler les lunettes cachant votre{" "}
+            <Text style={{ fontWeight: "bold" }}>œil gauche</Text>.
+          </Text>
+          <Text style={common.important}>
+            Placez-vous confortablement et appuyez sur le bouton lorsque vous
+            êtes prêt.
+          </Text>
+          {wellPlaced && (
+            <TouchableOpacity
+              style={styles.actionButtons}
+              onPress={() => setIsCountdownVisible(true)}
+            >
+              <Text style={styles.actionButtonsText}>CONTINUER</Text>
+            </TouchableOpacity>
+          )}
+        </>
       )}
+      {isCoutdownVisible && <Countdown handler={handlePause} />}
     </>
   );
 }
 
-function Countdown({ handleStart }) {
+function Countdown({ handler }) {
   const [counter, setCounter] = useState(3);
   let intervalId;
   useEffect(() => {
@@ -674,7 +696,7 @@ function Countdown({ handleStart }) {
     }, 1000);
     if (counter === 0) {
       clearInterval(intervalId);
-      handleStart();
+      handler();
     }
     return () => {
       clearInterval(intervalId);

@@ -12,7 +12,7 @@ export async function initDB() {
   );
   // table score
   await _executeSql(
-    "create table if not exists score (id_user INTEGER, date DATE, oeil_gauche INTEGER, oeil_droit INTEGER);"
+    "create table if not exists score (id_user INTEGER, date DATE, oeil_gauche INTEGER, oeil_droit INTEGER, nb_lettres INTEGER);"
   );
 }
 
@@ -171,13 +171,14 @@ export function removeUser(id) {
  * @param {number} id_user user id.
  * @param {number} oeil_gauche left eye score.
  * @param {number} oeil_droit right eye score.
+ * @param {number} nb_lettres nombre de lettres par oeil
  * @returns {Promise} Promise resolving to true if successful.
  */
-export function addScore(id_user, oeil_gauche, oeil_droit) {
+export function addScore(id_user, oeil_gauche, oeil_droit, nb_lettres) {
   const date = new Date().toISOString();
   const isSuccess = _executeSql(
-    "insert into score (id_user, date, oeil_gauche, oeil_droit) values (?,?,?,?);",
-    [id_user, date, oeil_gauche, oeil_droit]
+    "insert into score (id_user, date, oeil_gauche, oeil_droit, nb_lettres) values (?,?,?,?,?);",
+    [id_user, date, oeil_gauche, oeil_droit, nb_lettres]
   );
   return !!isSuccess;
 }
@@ -189,14 +190,21 @@ export function addScore(id_user, oeil_gauche, oeil_droit) {
  * @returns {Promise} Promise that resolves to score of user `id`.
  */
 export function getScore(id) {
-  return _executeSql(
-    "select date, oeil_gauche, oeil_droit from score where id_user=? order by date ASC",
-    [id]
+  return _executeSql("select * from score where id_user=? order by date ASC", [
+    id
+  ]);
+}
+
+export async function getScoreLimit(id, nb_lettres, limit = 3) {
+  const scores = await _executeSql(
+    "select * from score where id_user=? and nb_lettres=? order by date DESC limit ?",
+    [id, nb_lettres, limit]
   );
+  return scores;
 }
 
 export function getScores() {
   return _executeSql(
-    "select user.nom, user.prenom, score.id_user, score.date, score.oeil_gauche, score.oeil_droit from score inner join user on user.id=score.id_user"
+    "select user.nom, user.prenom, score.id_user, score.date, score.oeil_gauche, score.oeil_droit, score.nb_lettres from score inner join user on user.id=score.id_user"
   );
 }

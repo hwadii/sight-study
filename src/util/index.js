@@ -5,7 +5,8 @@ import {
   getUser as getUserFromDb,
   getScore,
   getIds,
-  getScores
+  getScores,
+  getScoreLimit
 } from "../../service/db/User";
 
 // Constants
@@ -99,7 +100,7 @@ const lettersDict = {
     "Cahors"
   ],
   z: ["z", "Z", "Zed", "Zedd", "ZI", "dead", "zèbre", "YZ"],
-  o: ["Oh", "eau", "au", "oh", "o", "O"],
+  o: ["Oh", "eau", "au", "oh", "o", "O", "on", "On", "on a", "on est"],
   r: ["air", "Air", "R", "aire", "r"],
   h: ["H", "h", "Ash", "hache", "ash", "âge"],
   s: ["s", "S", "est-ce", "Ace", "où est-ce"],
@@ -390,35 +391,39 @@ async function _createMessage(
   return JSON.stringify(message);
 }
 
-export async function sendWarningEmail(score) {
-  const name = await getFullName();
-  const message = await _createMessage(
-    `Résultats de ${name}`,
-    `Le patient ${name} vient d'obtenir le score de <b>${score}/50</b>.`
+export async function sendWarningEmail(userId) {
+  const fullName = await getFullName();
+  const scoresObtained = await getScore(userId);
+  const csvToSend = _buildCsvOne(scoresObtained);
+  const fileName = fullName.split(" ").join("");
+  const messageToSend = await _createMessage(
+    `Information importante: ${fullName} — Sight study`,
+    `Le patient ${fullName} requiert votre attention. Ses performances sont en baisses.`,
+    csvToSend,
+    fileName
   );
-  return _send(message);
+  return _send(messageToSend);
 }
 
 function _buildCsvOne(scores) {
-  let csvContent = "Date,Oeil droit,Oeil gauche\r\n";
+  let csvContent = "Date,Oeil droit,Oeil gauche,Nombre de lettres\r\n";
   for (const row of scores) {
-    const { date, oeil_droit, oeil_gauche } = row;
+    const { date, oeil_droit, oeil_gauche, nb_lettres } = row;
     csvContent += `${formatDate(
       parseISO(date)
-    )},${oeil_droit},${oeil_gauche}\r\n`;
+    )},${oeil_droit},${oeil_gauche},${nb_lettres}\r\n`;
   }
   return csvContent;
 }
 
 function _buildCsvAll(scores) {
-  let csvContent = "Patient,Oeil droit,Oeil gauche,Date\r\n";
+  let csvContent = "Patient,Oeil droit,Oeil gauche,Date,Nombre de lettres\r\n";
   for (const row of scores) {
-    const { nom, prenom, oeil_droit, oeil_gauche, date } = row;
+    const { nom, prenom, oeil_droit, oeil_gauche, date, nb_lettres } = row;
     csvContent += `${prenom} ${nom},${oeil_droit},${oeil_gauche},${formatDate(
       parseISO(date)
-    )}\r\n`;
+    )},${nb_lettres}\r\n`;
   }
-  console.log(csvContent);
   return csvContent;
 }
 
@@ -457,14 +462,63 @@ export async function sendAllUsersResults() {
   const csvToSend = _buildCsvAll(allScores);
   const messageToSend = await _createMessage(
     `Tous les résultats`,
-    `Voici les résultats de tous les utilisateurs.`,
+    `Voici les résultats de tous les patients.`,
     csvToSend,
     "tous-les-resultats"
   );
   return _send(messageToSend);
 }
 
-export async function checkScoreAndSend(userId, newScore) {
+/*
+ * Check if score is ok and send an email
+ * if it's not sufficient
+ * @param {number} userId
+ */
+export async function checkScoreAndSend(userId, nbLettres, lastScores = null) {
   // compare this score with old ones
-  const score = await getScore();
+  // 2 tests 3 erreurs -- 3 tests 4 erreurs
+  lastScores = await getScoreLimit(userId, nbLettres);
+  console.log(lastScores);
+  // if (lastScores.length < 2) {
+  //   console.log("not enough results");
+  //   return mailEnum.NOT_ENOUGH_RESULTS;
+  // }
+
+  // if (lastScores.length === 2) {
+  //   const [first, last] = lastScores;
+  //   const [leftDiff, rightDiff] = _compareTwoTests(last, first);
+  //   if (leftDiff <= -3 || rightDiff <= -3) {
+  //     await sendWarningEmail(userId);
+  //     return mailEnum.INSUFFISCIENT;
+  //   }
+  //   return mailEnum.GOOD;
+  // }
+
+  // if (lastScores.length >= 2) {
+  //   const [first, second, last] = lastScores;
+  //   let [leftDiff, rightDiff] = _compareTwoTests(last, first);
+  //   if (leftDiff <= -4 || rightDiff <= -4) {
+  //     // send mail
+  //     await sendWarningEmail(userId);
+  //     return mailEnum.INSUFFISCIENT;
+  //   }
+  //   [leftDiff, rightDiff] = _compareTwoTests(last, second);
+  //   if (leftDiff <= -3 || rightDiff <= -3) {
+  //     await sendWarningEmail();
+  //     return mailEnum.INSUFFISCIENT;
+  //   }
+  // }
+  // return mailEnum.GOOD;
+// }
+
+// function _compareTwoTests(newTest, otherTest) {
+  // const leftDiff = newTest.oeil_gauche - otherTest.oeil_gauche;
+  // const rightDiff = newTest.oeil_droit - otherTest.oeil_droit;
+  // return [leftDiff, rightDiff];
 }
+
+export const mailEnum = {
+  GOOD: 0,
+  INSUFFISCIENT: 1,
+  NOT_ENOUGH_RESULTS: 2
+};
