@@ -11,10 +11,16 @@ import {
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
 import * as Speech from "expo-speech";
-import { intersection, getTargetLines, getAcuites, getQrSize } from "./util";
+import {
+  intersection,
+  getTargetLines,
+  getAcuites,
+  getQrSize,
+  checkScoreAndSend
+} from "./util";
 import { styles as common } from "./styles/common";
 
-import { getDistance, addScore } from "../service/db/User";
+import { getDistance, addScore, getScore } from "../service/db/User";
 import { getId } from "./util";
 
 import QRCodeScanner from "react-native-qrcode-scanner";
@@ -55,6 +61,7 @@ export default class TestScreen extends Component {
     letter: "",
     letterCount: 0,
     lineSize: null,
+    errorsInLine: 0,
     lineNumber: 0,
     whichEye: "left",
     targetLines: null,
@@ -93,7 +100,6 @@ export default class TestScreen extends Component {
       PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
     );
     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
-
     const userId = await getId();
     const savedEtdrsScale = await getAcuites();
     const savedDistance = await getDistance(userId);
@@ -119,7 +125,7 @@ export default class TestScreen extends Component {
   }
 
   tick = () => {
-    const { counter } = this.state;
+    const { counter, wellPlaced } = this.state;
     this.setState({
       counter: counter + 1
     });
@@ -134,6 +140,7 @@ export default class TestScreen extends Component {
       });
     }
     this.wrapRecognizer();
+    if (!wellPlaced) this._destroyRecognizer();
   };
 
   square = x => {
@@ -318,13 +325,15 @@ export default class TestScreen extends Component {
       {
         hasEnded: true
       },
-      () => {
-        console.log("FIN DU TEST");
-        const { id, scores } = this.state;
-        addScore(id, scores.left, scores.droit);
+      async () => {
         Voice.destroy().then(Voice.removeAllListeners);
         clearInterval(this.setNextLetterId);
         clearInterval(this.timer);
+        console.log("FIN DU TEST");
+        const id = await getId();
+        const { scores } = this.state;
+        await addScore(id, scores.left, scores.right);
+        await checkScoreAndSend(id, scores);
       }
     );
   }
@@ -337,27 +346,32 @@ export default class TestScreen extends Component {
   getNewScore(newResults) {
     const { scores, whichEye } = this.state;
     const gotResult = this.checkResults(newResults);
+    const gotErrors = !gotResult;
     const newScore = gotResult ? scores[whichEye] + 1 : scores[whichEye];
-    return newScore;
+    return [newScore, gotErrors];
   }
 
+  // TODO: passe à la ligne suivante si > deux erreurs
   setNextLetter() {
-    const { letterCount, lineNumber, targetLines, wellPlaced } = this.state;
-    const { hasEnded, hasStarted, isPaused } = this.state;
+    const { letterCount, lineNumber, targetLines, errorsInLine } = this.state;
+    const { hasEnded, hasStarted, isPaused, wellPlaced } = this.state;
     const newLetterCount = letterCount + 1;
     let newLineNumber = lineNumber; // default is current line number
+    let newErrorsInLine = errorsInLine;
     if (letterCount % 5 === 0) {
       newLineNumber += 1; // +1 if it's a fifth letter
+      newErrorsInLine = 0;
     }
     const newIdx = (newLineNumber - 1) % targetLines;
 
-    if (!hasEnded && wellPlaced && hasStarted && !isPaused) {
+    if (!hasEnded && hasStarted && !isPaused && wellPlaced) {
       this.setState(
         {
           letter: letters.random(),
           letterCount: newLetterCount,
           lineNumber: newLineNumber,
-          lineSize: this.lineSizes[newIdx]
+          lineSize: this.lineSizes[newIdx],
+          errorsInLine: newErrorsInLine
         },
         () => {
           const {
@@ -365,15 +379,16 @@ export default class TestScreen extends Component {
             letterCount,
             lineNumber,
             whichEye,
-            lineSize
+            lineSize,
+            errorsInLine
           } = this.state;
           console.log(
             `${letter} => ${letterCount}:${lineNumber} ${targetLines *
-              5} with height ${lineSize} and idx ${newIdx} -> ${whichEye}`
+              5} with height ${lineSize} and errors: ${errorsInLine} -> ${whichEye}`
           );
-          if (letterCount === targetLines * 5) this.nextEye();
-          if (letterCount === targetLines * 10) this.endTest();
-          if (letterCount <= targetLines * 10) this.wrapRecognizer();
+          if (letterCount === targetLines * 5 + 1) this.nextEye();
+          if (letterCount === targetLines * 10 + 1) this.endTest();
+          if (letterCount <= targetLines * 10) this._startRecognizing();
         }
       );
     }
@@ -383,7 +398,10 @@ export default class TestScreen extends Component {
     console.log("onSpeechError: ", e);
     // no speech
     if (e.error.message === "6/No speech input") {
-      this.setNextLetter();
+      const { errorsInLine } = this.state;
+      this.setState({ errorsInLine: errorsInLine + 1 }, () =>
+        this.setNextLetter()
+      );
     }
     // no match
     if (e.error.message === "7/No match") {
@@ -395,13 +413,15 @@ export default class TestScreen extends Component {
   };
 
   onSpeechResults = e => {
-    const { partialResults, scores, whichEye } = this.state;
+    const { partialResults, scores, whichEye, errorsInLine } = this.state;
     const newResults = [...e.value, ...partialResults];
+    const [newScore, gotErrors] = this.getNewScore(newResults);
     console.log("onSpeechResults: ", newResults);
     this.setState(
       {
         results: newResults,
-        scores: { ...scores, [whichEye]: this.getNewScore(newResults) }
+        scores: { ...scores, [whichEye]: newScore },
+        errorsInLine: gotErrors ? errorsInLine + 1 : errorsInLine
       },
       () => {
         console.log(`current score: ${JSON.stringify(this.state.scores)}`);
