@@ -124,6 +124,7 @@ export default class TestScreen extends Component {
   }
 
   componentWillUnmount() {
+    this._destroyRecognizer();
     Voice.destroy().then(Voice.removeAllListeners);
     clearInterval(this.setNextLetterId);
     clearInterval(this.timer);
@@ -306,8 +307,7 @@ export default class TestScreen extends Component {
   };
 
   wrapRecognizer() {
-    Voice.isRecognizing().then(async isRecognizing => {
-      let isSpeaking = await Speech.isSpeakingAsync();
+    Speech.isSpeakingAsync().then(isSpeaking => {
       if (!this.state.rec && !isSpeaking) this._startRecognizingIfTest();
     });
   }
@@ -374,7 +374,7 @@ export default class TestScreen extends Component {
         const { targetLines } = this.state;
         const id = await getId();
         const { scores } = this.state;
-        await addScore(id, scores.left, scores.right);
+        await addScore(id, scores.left, scores.right, targetLines * 10);
         const gotPerformance = await checkScoreAndSend(id, targetLines * 10);
         if (gotPerformance === mailEnum.INSUFFISCIENT) {
           showAlert(
@@ -569,7 +569,7 @@ export default class TestScreen extends Component {
       () => {
         const { isPaused } = this.state;
         if (isPaused) this._destroyRecognizer();
-        if (!isPaused) this._startRecognizing();
+        if (!isPaused) this.wrapRecognizer();
       }
     );
   }
