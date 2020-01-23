@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, PermissionsAndroid } from "react-native";
 import SetUser from "./src/SetUser";
 import AddUser from "./src/AddUser";
 import EditUser from "./src/EditUser";
@@ -35,7 +35,7 @@ const MainNavigator = createStackNavigator(
   },
   {
     // headerMode: 'none',
-    initialRouteName: "TestScreen",
+    initialRouteName: "Menu",
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour"
@@ -47,11 +47,16 @@ const Navigation = createAppContainer(MainNavigator);
 
 class App extends React.Component {
   state = {
-    fontLoaded: false,
+    fontLoaded: false
   };
 
   async componentDidMount() {
     SplashScreen.show();
+    await PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      PermissionsAndroid.PERMISSIONS.CAMERA
+    ]);
     // await clear()
     await initDB();
     await Font.loadAsync({

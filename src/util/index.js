@@ -4,7 +4,6 @@ import { format, parseISO } from "date-fns";
 import {
   getUser as getUserFromDb,
   getScore,
-  getIds,
   getScores,
   getScoreLimit
 } from "../../service/db/User";
@@ -282,7 +281,7 @@ export async function setVolume(volume) {
   }
 }
 
-async function _getVolume() {
+export async function _getVolume() {
   try {
     const newVolume = await AsyncStorage.getItem("volume");
     return parseFloat(newVolume);
@@ -479,42 +478,42 @@ export async function checkScoreAndSend(userId, nbLettres, lastScores = null) {
   // 2 tests 3 erreurs -- 3 tests 4 erreurs
   lastScores = await getScoreLimit(userId, nbLettres);
   console.log(lastScores);
-  // if (lastScores.length < 2) {
-  //   console.log("not enough results");
-  //   return mailEnum.NOT_ENOUGH_RESULTS;
-  // }
+  if (lastScores.length < 2) {
+    console.log("not enough results");
+    return mailEnum.NOT_ENOUGH_RESULTS;
+  }
 
-  // if (lastScores.length === 2) {
-  //   const [first, last] = lastScores;
-  //   const [leftDiff, rightDiff] = _compareTwoTests(last, first);
-  //   if (leftDiff <= -3 || rightDiff <= -3) {
-  //     await sendWarningEmail(userId);
-  //     return mailEnum.INSUFFISCIENT;
-  //   }
-  //   return mailEnum.GOOD;
-  // }
+  if (lastScores.length === 2) {
+    const [first, last] = lastScores;
+    const [leftDiff, rightDiff] = _compareTwoTests(last, first);
+    if (leftDiff <= -3 || rightDiff <= -3) {
+      await sendWarningEmail(userId);
+      return mailEnum.INSUFFISCIENT;
+    }
+    return mailEnum.GOOD;
+  }
 
-  // if (lastScores.length >= 2) {
-  //   const [first, second, last] = lastScores;
-  //   let [leftDiff, rightDiff] = _compareTwoTests(last, first);
-  //   if (leftDiff <= -4 || rightDiff <= -4) {
-  //     // send mail
-  //     await sendWarningEmail(userId);
-  //     return mailEnum.INSUFFISCIENT;
-  //   }
-  //   [leftDiff, rightDiff] = _compareTwoTests(last, second);
-  //   if (leftDiff <= -3 || rightDiff <= -3) {
-  //     await sendWarningEmail();
-  //     return mailEnum.INSUFFISCIENT;
-  //   }
-  // }
-  // return mailEnum.GOOD;
-// }
+  if (lastScores.length >= 2) {
+    const [first, second, last] = lastScores;
+    let [leftDiff, rightDiff] = _compareTwoTests(last, first);
+    if (leftDiff <= -4 || rightDiff <= -4) {
+      // send mail
+      await sendWarningEmail(userId);
+      return mailEnum.INSUFFISCIENT;
+    }
+    [leftDiff, rightDiff] = _compareTwoTests(last, second);
+    if (leftDiff <= -3 || rightDiff <= -3) {
+      await sendWarningEmail();
+      return mailEnum.INSUFFISCIENT;
+    }
+  }
+  return mailEnum.GOOD;
+}
 
-// function _compareTwoTests(newTest, otherTest) {
-  // const leftDiff = newTest.oeil_gauche - otherTest.oeil_gauche;
-  // const rightDiff = newTest.oeil_droit - otherTest.oeil_droit;
-  // return [leftDiff, rightDiff];
+function _compareTwoTests(newTest, otherTest) {
+  const leftDiff = newTest.oeil_gauche - otherTest.oeil_gauche;
+  const rightDiff = newTest.oeil_droit - otherTest.oeil_droit;
+  return [leftDiff, rightDiff];
 }
 
 export const mailEnum = {
