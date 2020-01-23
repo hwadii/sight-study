@@ -464,7 +464,7 @@ export async function sendAllUsersResults() {
   return _send(messageToSend);
 }
 
-export async function checkScoreAndSend(callback) {
-  const currentUserId = await getId();
+export async function checkScoreAndSend(userId, newScore) {
+  // compare this score with old ones
   const score = await getScore();
 }

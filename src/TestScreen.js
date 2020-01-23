@@ -11,10 +11,16 @@ import {
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
 import * as Speech from "expo-speech";
-import { intersection, getTargetLines, getAcuites, getQrSize } from "./util";
+import {
+  intersection,
+  getTargetLines,
+  getAcuites,
+  getQrSize,
+  checkScoreAndSend
+} from "./util";
 import { styles as common } from "./styles/common";
 
-import { getDistance } from "../service/db/User";
+import { getDistance, addScore } from "../service/db/User";
 import { getId } from "./util";
 
 import QRCodeScanner from "react-native-qrcode-scanner";
@@ -28,14 +34,11 @@ const screenFactor = (160 * PixelRatio.get()) / 2.54;
  */
 const getLineLength = (lineCoefficient, d) =>
   Math.floor((screenFactor * 5 * 0.291 * d) / (10 * lineCoefficient));
-// const vs = Object.values(defaultEtdrsScale);
-// const lineSizes = vs.map(v => getLineLength(v, 0.4));
-// const targetLines = 1;
 
 export default class TestScreen extends Component {
-  // static navigationOptions = {
-  //   headerShown: false
-  // };
+  static navigationOptions = {
+    headerShown: false
+  };
   state = {
     recognized: "",
     pitch: "",
@@ -111,7 +114,7 @@ export default class TestScreen extends Component {
       lineSizes: this.lineSizes[0]
     });
 
-    this.timer = setInterval(this.tick, 1000);
+    // this.timer = setInterval(this.tick, 1000);
     // this.setState({ timer: this.timer, eye: navigation.getParam("eye") });
   }
 
@@ -135,7 +138,6 @@ export default class TestScreen extends Component {
         triggerTooFar: false,
         triggerWrongEye: false
       });
-      this.toggleSpeak("Veuillez vous placer devant l'écran");
     }
     this.wrapRecognizer();
   };
@@ -208,7 +210,7 @@ export default class TestScreen extends Component {
             counter: 0
           });
           if (!this.state.triggerTooClose) {
-            this.toggleSpeak("Veuillez reculer");
+            // this.toggleSpeak("Veuillez reculer");
             this.setState({
               triggerTooClose: true,
               triggerTooFar: false,
@@ -225,7 +227,7 @@ export default class TestScreen extends Component {
               counter: 0
             });
             if (!this.state.triggerTooFar) {
-              this.toggleSpeak("Veuillez vous rapprocher");
+              // this.toggleSpeak("Veuillez vous rapprocher");
               this.setState({
                 triggerTooClose: false,
                 triggerTooFar: true,
@@ -258,7 +260,7 @@ export default class TestScreen extends Component {
         wellPlaced: false
       });
       if (!this.state.triggerWrongEye) {
-        this.toggleSpeak("Veuillez mettre le cache sur le bon oeil");
+        // this.toggleSpeak("Veuillez mettre le cache sur le bon oeil");
         this.setState({
           triggerTooClose: false,
           triggerTooFar: false,
@@ -276,16 +278,17 @@ export default class TestScreen extends Component {
 
   _startRecognizingIfTest() {
     const { wellPlaced, hasEnded, hasStarted, isPaused } = this.state;
-    if (wellPlaced) {
-      if (hasStarted && !hasEnded && !isPaused) {
-        this._startRecognizing();
-      }
+    if (hasStarted && !hasEnded && !isPaused) {
+      this._startRecognizing();
+      // if (wellPlaced) {
+      //   console.log("started....");
+      // }
     }
   }
 
   speak(
     sentence,
-    onStart = () => this._destroyRecognizer(),
+    onStart = null,
     onDone = () => this._startRecognizingIfTest()
   ) {
     Speech.speak(sentence, {
@@ -319,6 +322,9 @@ export default class TestScreen extends Component {
       },
       () => {
         console.log("FIN DU TEST");
+        const { id, scores } = this.state;
+        addScore(id, scores.left, scores.droit);
+        checkScoreAndSend(id, scores);
         Voice.destroy().then(Voice.removeAllListeners);
         clearInterval(this.setNextLetterId);
         clearInterval(this.timer);
@@ -339,7 +345,7 @@ export default class TestScreen extends Component {
   }
 
   setNextLetter() {
-    const { letterCount, lineNumber, targetLines, wellPlaced } = this.state;
+    const { letterCount, lineNumber, targetLines } = this.state;
     const { hasEnded, hasStarted, isPaused } = this.state;
     const newLetterCount = letterCount + 1;
     let newLineNumber = lineNumber; // default is current line number
@@ -348,7 +354,7 @@ export default class TestScreen extends Component {
     }
     const newIdx = (newLineNumber - 1) % targetLines;
 
-    if (!hasEnded && wellPlaced && hasStarted && !isPaused) {
+    if (!hasEnded && hasStarted && !isPaused) {
       this.setState(
         {
           letter: letters.random(),
@@ -384,6 +390,7 @@ export default class TestScreen extends Component {
     }
     // no match
     if (e.error.message === "7/No match") {
+      this._destroyRecognizer();
       this.toggleSpeak("Je ne vous ai pas entendu. Veuillez répéter.");
     }
     this.setState({
@@ -504,15 +511,10 @@ export default class TestScreen extends Component {
     const { goBack } = this.props.navigation;
     return (
       <View style={styles.container}>
-        {!hasEnded && (
-          <>
-            <HiddenQrCode onSuccess={this.onSuccess.bind(this)} />
-            <Text style={styles.indication}>{indication}</Text>
-          </>
-        )}
+        {/* {!hasEnded && <HiddenQrCode onSuccess={this.onSuccess.bind(this)} />} */}
         {!hasPressedStart && (
           <Instructions
-            wellPlaced={wellPlaced}
+            wellPlaced={true}
             handleStartPressed={() => this.setState({ hasPressedStart: true })}
           />
         )}
@@ -524,9 +526,10 @@ export default class TestScreen extends Component {
             {letter}
           </Text>
         )}
+        {/* {!wellPlaced && <Text style={styles.indication}>{indication}</Text>} */}
         {isPaused && (
           <ChangeEye
-            wellPlaced={wellPlaced}
+            wellPlaced={true}
             handlePause={this.handlePause.bind(this)}
           />
         )}
@@ -691,5 +694,5 @@ const styles = StyleSheet.create({
     fontSize: 46,
     fontWeight: "bold"
   },
-  indication: { fontSize: 30, position: "absolute", top: 0, marginTop: 20 }
+  indication: { fontSize: 30 }
 });
