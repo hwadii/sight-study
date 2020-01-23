@@ -47,12 +47,12 @@ class Help extends React.Component {
   }
 
   toggleSpeak() {
-    Speech.isSpeakingAsync().then(isSpeaking =>
-      isSpeaking ? this.stop() : this.speak()
-    ).catch(console.error);
+    Speech.isSpeakingAsync()
+      .then(isSpeaking => (isSpeaking ? this.stop() : this.speak()))
+      .catch(console.error);
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this.didFocusSub = this.props.navigation.addListener("didFocus", () => {
       this.speak();
     });

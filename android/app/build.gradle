@@ -53,9 +53,9 @@ android {
     }
     release {
       storeFile file(System.getenv("ANDROID_KEYSTORE_PATH") ?: "release-key.jks")
-      storePassword System.getenv("ANDROID_KEYSTORE_PASSWORD")
-      keyAlias System.getenv("ANDROID_KEY_ALIAS")
-      keyPassword System.getenv("ANDROID_KEY_PASSWORD")
+      storePassword "7ab076cb63864106a8cf98d04bde86cf"
+      keyAlias "QGh3YWRpaS9zaWdodC1zdHVkeQ=="
+      keyPassword "5c2e886ad7254d06976cc5943ef7c560"
     }
   }
   buildTypes {
@@ -104,6 +104,7 @@ apply from: 'expo.gradle'
 apply from: "../../node_modules/react-native-unimodules/gradle.groovy"
 
 dependencies {
+    implementation project(':react-native-splash-screen')
     implementation project(':react-native-screen-brightness')
     implementation project(':react-native-system-setting')
     implementation project(':react-native-permissions')

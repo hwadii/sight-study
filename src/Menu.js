@@ -2,7 +2,7 @@ import React from "react";
 import Card from "./Card";
 import { Text, StyleSheet, View, Button } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFirstName, clear } from "./util";
+import { clear, getFullName, getDoctorEmail } from "./util";
 import Help from "./Help";
 
 const texts = [
@@ -38,30 +38,47 @@ export default class Menu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      firstName: ""
+      fullName: null,
+      doctorEmail: null
     };
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
   }
 
   async componentDidMount() {
-    const firstName = await getFirstName();
-    this.setState({ firstName });
+    await this.getLoggedState();
+    this.willFocusSub = this.props.navigation.addListener(
+      "willFocus",
+      async () => {
+        await this.getLoggedState();
+      }
+    );
+  }
+
+  componentWillUnmount() {
+    this.willFocusSub.remove();
+  }
+
+  async getLoggedState() {
+    this.setState({
+      fullName: await getFullName(),
+      doctorEmail: await getDoctorEmail()
+    });
   }
 
   render() {
-    const { firstName } = this.state;
+    const { fullName } = this.state;
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
         <View style={styles.greetings}>
           <Text style={{ ...common.headers, fontWeight: "normal" }}>
-            {firstName ? (
+            {fullName ? (
               <>
-                Bonjour,{" "}
+                Le patient{" "}
                 <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>
-                  {firstName}
+                  {fullName}
                 </Text>{" "}
-                !
+                utilise la tablette.
               </>
             ) : (
               <Text>Aucun patient n'est configuré.</Text>

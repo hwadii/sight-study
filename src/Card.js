@@ -2,27 +2,41 @@ import React from "react";
 import { StyleSheet, Text, View, Image, Alert, NetInfo } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { scale } from "react-native-size-matters";
+import Dialog from "./Dialog";
+import { getAdminPin } from "./util";
 
 export default class Card extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      isDialogVisible: false
+    };
   }
 
-  handleOnTest() {
+  async handleOnTest() {
     const { navigate, route } = this.props;
-    navigate(route);
+    const pin = await getAdminPin();
+    if (route === "SetUser" && pin !== null) {
+      this.setState({
+        isDialogVisible: true
+      });
+    } else {
+      navigate(route);
+    }
   }
 
   render() {
     const { title, description, image, style } = this.props;
+    const { isDialogVisible } = this.state;
+    const isSettings = style === "settings";
     return (
       <View
-        style={
-          style === "settings"
-            ? { ...styles.card, maxHeight: 140 }
-            : styles.card
-        }
+        style={isSettings ? { ...styles.card, maxHeight: 140 } : styles.card}
       >
+        <Dialog
+          onClose={() => this.setState({ isDialogVisible: false })}
+          isDialogVisible={isDialogVisible}
+        />
         <TouchableOpacity
           onPress={() => this.handleOnTest()}
           style={styles.inner}
@@ -31,7 +45,7 @@ export default class Card extends React.Component {
             title={title}
             description={description}
             image={image}
-            style={style}
+            isSettings={isSettings}
           />
         </TouchableOpacity>
       </View>
@@ -39,8 +53,7 @@ export default class Card extends React.Component {
   }
 }
 
-function Content({ title, description, image, style }) {
-  const isSettings = style === "settings";
+function Content({ title, description, image, isSettings }) {
   return (
     <View style={styles.content}>
       <ScaledImage image={image} isSettings={isSettings} />
