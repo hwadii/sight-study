@@ -141,6 +141,11 @@ export default class TestScreen extends Component {
   };
 
   onSuccess = e => {
+    const { hasPressedStart, hasStarted } = this.state;
+    if (hasPressedStart && !hasStarted) {
+      this.setState({ wellPlaced: true });
+      return;
+    }
     if (e.data == "sight-study") {
       const { distance, qrsize } = this.state;
       const eps = distance * 0.1;
