@@ -73,6 +73,7 @@ export default class TestScreen extends Component {
     // for distance
     indication: "",
     qrsize: 0,
+    detectWellPlaced: false,
     wellPlaced: false,
     wrongEyeCount: 0,
     counter: 0,
@@ -122,10 +123,12 @@ export default class TestScreen extends Component {
     Voice.destroy().then(Voice.removeAllListeners);
     clearInterval(this.setNextLetterId);
     clearInterval(this.timer);
+    clearInterval(this.timerPlacement);
   }
 
   tick = () => {
-    const { counter, wellPlaced } = this.state;
+    const { counter } = this.state;
+    this.wrapRecognizer();
     this.setState({
       counter: counter + 1
     });
@@ -133,29 +136,38 @@ export default class TestScreen extends Component {
       this.setState({
         indication: "Veuillez vous placer devant l'écran",
         color: "black",
-        wellPlaced: false,
+        detectWellPlaced: false,
         triggerTooClose: false,
         triggerTooFar: false,
         triggerWrongEye: false
       });
+      this.timerPlacement = setTimeout(this.timeoutFunction, 800);
     }
-    this.wrapRecognizer();
-    if (!wellPlaced) this._destroyRecognizer();
   };
 
   square = x => {
     return x * x;
   };
 
+  timeoutFunction = () => {
+    if (!this.state.detectWellPlaced) {
+      this.setState({ wellPlaced: false });
+      this._destroyRecognizer();
+    }
+  };
+
   onSuccess = e => {
     const { hasPressedStart, hasStarted } = this.state;
+    const badlyPlaced = () => {
+      this.timerPlacement = setTimeout(this.timeoutFunction, 200);
+    };
     if (hasPressedStart && !hasStarted) {
       this.setState({ wellPlaced: true });
       return;
     }
     if (e.data == "sight-study") {
       const { distance, qrsize } = this.state;
-      const eps = distance * 0.1;
+      const eps = distance * 0.05;
       let limit = 0;
       if (this.state.whichEye === "left")
         limit = Math.min(
@@ -209,12 +221,16 @@ export default class TestScreen extends Component {
 
         if (dis - distance + eps < 0) {
           const amount = parseInt(10 * Math.abs(distance - dis)) / 10;
-          this.setState({
-            indication: `Eloignez vous de\n${amount} cm`,
-            wellPlaced: false,
-            wrongEyeCount: 0,
-            counter: 0
-          });
+          this.setState(
+            {
+              indication: `Eloignez vous de\n${amount} cm`,
+              detectWellPlaced: false,
+              wrongEyeCount: 0,
+              counter: 0
+            },
+            badlyPlaced
+          );
+          badlyPlaced();
           if (!this.state.triggerTooClose) {
             // this.toggleSpeak("Veuillez reculer");
             this.setState({
@@ -226,12 +242,15 @@ export default class TestScreen extends Component {
         } else {
           if (dis - distance - eps > 0) {
             const amount = parseInt(10 * Math.abs(distance - dis)) / 10;
-            this.setState({
-              indication: `Rapprochez vous de\n${amount} cm`,
-              wellPlaced: false,
-              wrongEyeCount: 0,
-              counter: 0
-            });
+            this.setState(
+              {
+                indication: `Rapprochez vous de\n${amount} cm`,
+                detectWellPlaced: false,
+                wrongEyeCount: 0,
+                counter: 0
+              },
+              badlyPlaced
+            );
             if (!this.state.triggerTooFar) {
               // this.toggleSpeak("Veuillez vous rapprocher");
               this.setState({
@@ -241,15 +260,19 @@ export default class TestScreen extends Component {
               });
             }
           } else {
-            this.setState({
-              indication: "Parfait, ne bougez plus",
-              wellPlaced: true,
-              wrongEyeCount: 0,
-              counter: 0,
-              triggerTooClose: false,
-              triggerTooFar: false,
-              triggerWrongEye: false
-            });
+            this.setState(
+              {
+                indication: "Parfait, ne bougez plus",
+                wellPlaced: true,
+                detectWellPlaced: true,
+                wrongEyeCount: 0,
+                counter: 0,
+                triggerTooClose: false,
+                triggerTooFar: false,
+                triggerWrongEye: false
+              },
+              () => clearTimeout(this.timerPlacement)
+            );
           }
         }
       } else {
@@ -261,10 +284,13 @@ export default class TestScreen extends Component {
     } else console.log("pas bon qr code");
 
     if (this.state.wrongEyeCount >= 4) {
-      this.setState({
-        indication: "Veuillez tester le bon oeil",
-        wellPlaced: false
-      });
+      this.setState(
+        {
+          indication: "Veuillez tester le bon oeil",
+          detectWellPlaced: false
+        },
+        badlyPlaced
+      );
       if (!this.state.triggerWrongEye) {
         // this.toggleSpeak("Veuillez mettre le cache sur le bon oeil");
         this.setState({
@@ -277,8 +303,9 @@ export default class TestScreen extends Component {
   };
 
   wrapRecognizer() {
-    Voice.isRecognizing().then(isRecognizing => {
-      if (!isRecognizing) this._startRecognizingIfTest();
+    Voice.isRecognizing().then(async isRecognizing => {
+      let isSpeaking = await Speech.isSpeakingAsync();
+      if (!isRecognizing && !isSpeaking) this._startRecognizingIfTest();
     });
   }
 
@@ -364,7 +391,7 @@ export default class TestScreen extends Component {
     }
     const newIdx = (newLineNumber - 1) % targetLines;
 
-    if (!hasEnded && hasStarted && !isPaused && wellPlaced) {
+    if (!hasEnded && hasStarted && !isPaused) {
       this.setState(
         {
           letter: letters.random(),
@@ -542,7 +569,9 @@ export default class TestScreen extends Component {
             {letter}
           </Text>
         )}
-        {!wellPlaced && <Text style={styles.indication}>{indication}</Text>}
+        {!wellPlaced && (!hasPressedStart || hasStarted) && (
+          <Text style={styles.indication}>{indication}</Text>
+        )}
         {isPaused && (
           <ChangeEye
             wellPlaced={wellPlaced}
