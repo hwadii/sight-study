@@ -26,7 +26,7 @@ export default class SetUser extends React.Component {
     this.handleSelect = this.handleSelect.bind(this);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.willFocusSub = this.props.navigation.addListener(
       "willFocus",
       async () => {
@@ -60,9 +60,12 @@ export default class SetUser extends React.Component {
       await setUserName(user);
       showAlert(
         `La tablette est configurée pour ${user.prenom} ${user.nom}.`,
-        () => this.setState({ currentUserId: id })
+        () => {
+          this.setState({ currentUserId: id })
+          this.props.navigation.replace("Menu")
+        }
       );
-    }
+    } 
   }
 
   handleEdit(user) {
