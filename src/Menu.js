@@ -1,6 +1,6 @@
 import React from "react";
 import Card from "./Card";
-import { Text, StyleSheet, View, Button } from "react-native";
+import { Text, StyleSheet, View, ActivityIndicator } from "react-native";
 import { styles as common } from "./styles/common";
 import { clear, getFullName, getDoctorEmail } from "./util";
 import Help from "./Help";
@@ -39,7 +39,8 @@ export default class Menu extends React.Component {
     super(props);
     this.state = {
       fullName: null,
-      doctorEmail: null
+      doctorEmail: null,
+      isLoaded: false
     };
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
   }
@@ -61,29 +62,25 @@ export default class Menu extends React.Component {
   async getLoggedState() {
     this.setState({
       fullName: await getFullName(),
-      doctorEmail: await getDoctorEmail()
+      doctorEmail: await getDoctorEmail(),
+      isLoaded: true
     });
   }
 
   render() {
-    const { fullName } = this.state;
+    const { fullName, doctorEmail, isLoaded } = this.state;
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
         <View style={styles.greetings}>
-          <Text style={{ ...common.headers, fontWeight: "normal" }}>
-            {fullName ? (
-              <>
-                Le patient{" "}
-                <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>
-                  {fullName}
-                </Text>{" "}
-                utilise la tablette.
-              </>
-            ) : (
-              <Text>Aucun patient n'est configuré.</Text>
-            )}
-          </Text>
+          {isLoaded ? (
+            <>
+              <UserConnected fullName={fullName} />
+              <DoctorMail email={doctorEmail} />
+            </>
+          ) : (
+            <ActivityIndicator size="large" color="#0000ff" />
+          )}
         </View>
         <View style={styles.cards}>
           <Cards navigate={navigate} />
@@ -127,13 +124,46 @@ function Cards({ navigate }) {
   );
 }
 
+function UserConnected({ fullName }) {
+  return (
+    <View>
+      {fullName === null ? (
+        <Text style={common.important}>La tablette n'est pas configurée.</Text>
+      ) : (
+        <Text style={common.important}>
+          Le patient <Text style={{ fontWeight: "bold" }}>{fullName}</Text>{" "}
+          utilise la tablette.
+        </Text>
+      )}
+    </View>
+  );
+}
+
+function DoctorMail({ email }) {
+  return (
+    <View>
+      {email ? (
+        <Text style={common.important}>
+          L'email du médecin est{" "}
+          <Text style={{ fontWeight: "bold" }}>{email}</Text>.
+        </Text>
+      ) : (
+        <Text style={common.important}>
+          Le mail du médecin n'est pas configurée.
+        </Text>
+      )}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column"
   },
   greetings: {
-    alignItems: "center"
+    alignItems: "center",
+    marginVertical: 5
   },
   cards: {
     flex: 1,

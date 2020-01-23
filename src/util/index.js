@@ -1,6 +1,6 @@
 import { AsyncStorage, Alert } from "react-native";
 import base64 from "./base64";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import {
   getUser as getUserFromDb,
   getScore,
@@ -403,7 +403,9 @@ function _buildCsvOne(scores) {
   let csvContent = "Date,Oeil droit,Oeil gauche\r\n";
   for (const row of scores) {
     const { date, oeil_droit, oeil_gauche } = row;
-    csvContent += `${date},${oeil_droit},${oeil_gauche}\r\n`;
+    csvContent += `${formatDate(
+      parseISO(date)
+    )},${oeil_droit},${oeil_gauche}\r\n`;
   }
   return csvContent;
 }
@@ -412,7 +414,9 @@ function _buildCsvAll(scores) {
   let csvContent = "Patient,Oeil droit,Oeil gauche,Date\r\n";
   for (const row of scores) {
     const { nom, prenom, oeil_droit, oeil_gauche, date } = row;
-    csvContent += `${prenom} ${nom},${oeil_droit},${oeil_gauche},${date}\r\n`;
+    csvContent += `${prenom} ${nom},${oeil_droit},${oeil_gauche},${formatDate(
+      parseISO(date)
+    )}\r\n`;
   }
   console.log(csvContent);
   return csvContent;
@@ -458,4 +462,9 @@ export async function sendAllUsersResults() {
     "tous-les-resultats"
   );
   return _send(messageToSend);
+}
+
+export async function checkScoreAndSend(callback) {
+  const currentUserId = await getId();
+  const score = await getScore();
 }

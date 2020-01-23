@@ -174,7 +174,7 @@ export function removeUser(id) {
  * @returns {Promise} Promise resolving to true if successful.
  */
 export function addScore(id_user, oeil_gauche, oeil_droit) {
-  const date = new Date().toLocaleDateString("fr-FR");
+  const date = new Date().toISOString();
   const isSuccess = _executeSql(
     "insert into score (id_user, date, oeil_gauche, oeil_droit) values (?,?,?,?);",
     [id_user, date, oeil_gauche, oeil_droit]

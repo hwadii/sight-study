@@ -1,11 +1,9 @@
 import React, { Component, useState, useEffect } from "react";
 import {
-  Button,
   StyleSheet,
   Text,
   View,
   PixelRatio,
-  Image,
   PermissionsAndroid,
   Dimensions,
   TouchableOpacity
@@ -13,13 +11,7 @@ import {
 import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
 import * as Speech from "expo-speech";
-import {
-  intersection,
-  defaultEtdrsScale,
-  getTargetLines,
-  getAcuites,
-  getQrSize
-} from "./util";
+import { intersection, getTargetLines, getAcuites, getQrSize } from "./util";
 import { styles as common } from "./styles/common";
 
 import { getDistance } from "../service/db/User";

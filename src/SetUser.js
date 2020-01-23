@@ -16,7 +16,8 @@ import {
   getId,
   formatDate,
   showAlert,
-  getDoctorEmail
+  getDoctorEmail,
+  sendSelectedUserResults
 } from "./util";
 import { styles as common, colors } from "./styles/common";
 
@@ -31,6 +32,7 @@ export default class SetUser extends React.Component {
     this.handleSearch = this.handleSearch.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleSelect = this.handleSelect.bind(this);
+    this.handleExport = this.handleExport.bind(this);
   }
 
   componentDidMount() {
@@ -79,6 +81,18 @@ export default class SetUser extends React.Component {
     });
   }
 
+  async handleExport(user) {
+    const { mail } = this.state;
+    const fullName = `${user.prenom} ${user.nom}`;
+    await sendSelectedUserResults(user.id, fullName);
+    showAlert(
+      `Un email contenant les informations de ${fullName} a été envoyé à ${mail}`,
+      null,
+      [],
+      `Information`
+    );
+  }
+
   render() {
     const { users, currentUserId } = this.state;
     const { navigate } = this.props.navigation;
@@ -109,7 +123,12 @@ export default class SetUser extends React.Component {
         <UsersList
           users={users}
           currentUserId={currentUserId}
-          handlers={[this.handleSearch, this.handleSelect, this.handleEdit]}
+          handlers={[
+            this.handleSearch,
+            this.handleSelect,
+            this.handleEdit,
+            this.handleExport
+          ]}
         />
       </View>
     );
@@ -142,7 +161,7 @@ function SearchBar({ handleSearch }) {
  * List of users
  */
 function UsersList({ users, currentUserId, handlers }) {
-  const [handleSearch, handleSelect, handleEdit] = handlers;
+  const [handleSearch, handleSelect, handleEdit, handleExport] = handlers;
   return (
     <View style={styles.usersList}>
       <FlatList
@@ -155,6 +174,7 @@ function UsersList({ users, currentUserId, handlers }) {
             currentUserId={currentUserId}
             handleEdit={handleEdit}
             handleSelect={handleSelect}
+            handleExport={handleExport}
           />
         )}
       />
@@ -165,7 +185,13 @@ function UsersList({ users, currentUserId, handlers }) {
 /**
  * A row of the users list
  */
-function UserElement({ user, currentUserId, handleEdit, handleSelect }) {
+function UserElement({
+  user,
+  currentUserId,
+  handleEdit,
+  handleSelect,
+  handleExport
+}) {
   const isSelected = user.id === currentUserId;
   return (
     <TouchableHighlight
@@ -190,7 +216,11 @@ function UserElement({ user, currentUserId, handleEdit, handleSelect }) {
             color={colors.SUCESS}
             onPress={() => handleEdit(user)}
           />
-          <Button title="Exporter" color={colors.PRIMARY} />
+          <Button
+            title="Exporter"
+            onPress={() => handleExport(user)}
+            color={colors.PRIMARY}
+          />
         </View>
       </View>
     </TouchableHighlight>

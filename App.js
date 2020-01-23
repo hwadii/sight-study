@@ -35,7 +35,7 @@ const MainNavigator = createStackNavigator(
   },
   {
     // headerMode: 'none',
-    initialRouteName: "Menu",
+    initialRouteName: "SetUser",
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour"
@@ -69,7 +69,7 @@ class App extends React.Component {
     const { fontLoaded } = this.state;
     return fontLoaded ? (
       <View style={styles.container}>
-        <Navigation init={"SetUser"} />
+        <Navigation />
       </View>
     ) : null;
   }
