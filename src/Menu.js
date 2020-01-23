@@ -2,7 +2,7 @@ import React from "react";
 import Card from "./Card";
 import { Text, StyleSheet, View, Button } from "react-native";
 import { styles as common } from "./styles/common";
-import { getFirstName } from "./util";
+import { getFirstName, clear } from "./util";
 import Help from "./Help";
 
 const texts = [
@@ -21,6 +21,13 @@ const texts = [
     description:
       "Vous pouvez suivre l’évolution de vos résultats au fil du temps ici.",
     image: require("../assets/diagram.png")
+  },
+  {
+    id: 3,
+    route: "SetUser",
+    title: "",
+    description: "",
+    image: require("../assets/settings.png")
   }
 ];
 
@@ -48,11 +55,17 @@ export default class Menu extends React.Component {
       <View style={styles.container}>
         <View style={styles.greetings}>
           <Text style={{ ...common.headers, fontWeight: "normal" }}>
-            Bonjour,{" "}
-            <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>
-              {firstName}
-            </Text>{" "}
-            !
+            {firstName ? (
+              <>
+                Bonjour,{" "}
+                <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>
+                  {firstName}
+                </Text>{" "}
+                !
+              </>
+            ) : (
+              <Text>Aucun patient n'est configuré.</Text>
+            )}
           </Text>
         </View>
         <View style={styles.cards}>
@@ -64,16 +77,37 @@ export default class Menu extends React.Component {
 }
 
 function Cards({ navigate }) {
-  return texts.map(text => (
-    <Card
-      key={text.id}
-      title={text.title}
-      description={text.description}
-      route={text.route}
-      navigate={navigate}
-      image={text.image}
-    />
-  ));
+  const [start, scores, params] = texts;
+  return (
+    <>
+      <>
+        <Card
+          title={start.title}
+          description={start.description}
+          route={start.route}
+          navigate={navigate}
+          image={start.image}
+        />
+      </>
+      <View style={styles.rightSide}>
+        <Card
+          title={scores.title}
+          description={scores.description}
+          route={scores.route}
+          navigate={navigate}
+          image={scores.image}
+        />
+        <Card
+          title={params.title}
+          description={params.description}
+          route={params.route}
+          navigate={navigate}
+          image={params.image}
+          style="settings"
+        />
+      </View>
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -87,7 +121,9 @@ const styles = StyleSheet.create({
   cards: {
     flex: 1,
     flexDirection: "row",
-    justifyContent: "center",
-    margin: 10
+    justifyContent: "center"
+  },
+  rightSide: {
+    maxWidth: 250
   }
 });

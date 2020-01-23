@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View, Image, Alert, NetInfo } from "react-native";
-import { TouchableHighlight } from "react-native-gesture-handler";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { scale } from "react-native-size-matters";
 
 export default class Card extends React.Component {
@@ -10,34 +10,65 @@ export default class Card extends React.Component {
 
   handleOnTest() {
     const { navigate, route } = this.props;
-    navigate(route, { eye: "right" });
+    navigate(route);
   }
 
   render() {
-    const { title, description, image } = this.props;
+    const { title, description, image, style } = this.props;
     return (
-      <View style={styles.card}>
-        <TouchableHighlight
-          underlayColor="#fff"
+      <View
+        style={
+          style === "settings"
+            ? { ...styles.card, maxHeight: 140 }
+            : styles.card
+        }
+      >
+        <TouchableOpacity
           onPress={() => this.handleOnTest()}
+          style={styles.inner}
         >
-          <Content title={title} description={description} image={image} />
-        </TouchableHighlight>
+          <Content
+            title={title}
+            description={description}
+            image={image}
+            style={style}
+          />
+        </TouchableOpacity>
       </View>
     );
   }
 }
 
-function Content({ title, description, image }) {
+function Content({ title, description, image, style }) {
+  const isSettings = style === "settings";
   return (
     <View style={styles.content}>
-      <Image
-        style={{ width: scale(80), height: scale(80), alignSelf: "center" }}
-        source={image}
-      />
-      <Text style={styles.header}>{title}</Text>
-      <Text style={styles.description}>{description}</Text>
+      <ScaledImage image={image} isSettings={isSettings} />
+      {isSettings ? null : (
+        <>
+          <Text style={styles.header}>{title}</Text>
+          <Text style={styles.description}>{description}</Text>
+        </>
+      )}
     </View>
+  );
+}
+
+function ScaledImage({ image, isSettings }) {
+  return (
+    <>
+      {isSettings ? (
+        <Image
+          style={{ width: scale(30), height: scale(30), alignSelf: "center" }}
+          source={image}
+        />
+      ) : (
+        <Image
+          style={{ width: scale(80), height: scale(80), alignSelf: "center" }}
+          source={image}
+        />
+      )}
+    </>
   );
 }
 
@@ -45,7 +76,7 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     justifyContent: "center",
-    marginHorizontal: 5
+    margin: 5
   },
   header: {
     fontSize: 22,
@@ -53,9 +84,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center"
   },
+  headerSmall: {
+    fontSize: 12,
+    paddingVertical: 5,
+    fontWeight: "bold",
+    textAlign: "center"
+  },
   content: {
     height: "100%",
-    justifyContent: "center",
+    justifyContent: "center"
+  },
+  inner: {
     backgroundColor: "#f5f5f5",
     borderRadius: 5,
     paddingVertical: 20
