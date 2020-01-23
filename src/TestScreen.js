@@ -4,11 +4,10 @@ import {
   Text,
   View,
   PixelRatio,
-  PermissionsAndroid,
   Dimensions,
-  TouchableOpacity
+  TouchableOpacity,
+  PermissionsAndroid 
 } from "react-native";
-import { Permissions } from "react-native-unimodules";
 import Voice from "react-native-voice";
 import * as Speech from "expo-speech";
 import {
@@ -94,13 +93,9 @@ export default class TestScreen extends Component {
   }
 
   async componentDidMount() {
-    const { status, expires, permissions } = await Permissions.askAsync(
-      Permissions.AUDIO_RECORDING
-    );
-    PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
-    );
-    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO);
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
     const userId = await getId();
     const savedEtdrsScale = await getAcuites();
     const savedDistance = await getDistance(userId);
@@ -230,7 +225,6 @@ export default class TestScreen extends Component {
             },
             badlyPlaced
           );
-          badlyPlaced();
           if (!this.state.triggerTooClose) {
             // this.toggleSpeak("Veuillez reculer");
             this.setState({
@@ -441,6 +435,7 @@ export default class TestScreen extends Component {
 
   onSpeechResults = e => {
     const { partialResults, scores, whichEye, errorsInLine } = this.state;
+    console.log("oui")
     const newResults = [...e.value, ...partialResults];
     const [newScore, gotErrors] = this.getNewScore(newResults);
     console.log("onSpeechResults: ", newResults);

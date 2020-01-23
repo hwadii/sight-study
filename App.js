@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, PermissionsAndroid } from "react-native";
 import SetUser from "./src/SetUser";
 import AddUser from "./src/AddUser";
 import EditUser from "./src/EditUser";
@@ -15,6 +15,7 @@ import * as Font from "expo-font";
 import { initDB } from "./service/db/User";
 import SplashScreen from "react-native-splash-screen";
 import { getAdminPin, getId, clear, initDefault } from "./src/util";
+
 
 const Routes = {
   SetUser,
@@ -53,6 +54,12 @@ class App extends React.Component {
 
   async componentDidMount() {
     SplashScreen.show();
+    // const { status, expires, permissions } = await Permissions.askAsync(
+    //   Permissions.AUDIO_RECORDING
+    // );
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO);
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
     // await clear()
     await initDB();
     await Font.loadAsync({

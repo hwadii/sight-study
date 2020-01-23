@@ -62,10 +62,8 @@ export default class DistanceFinder extends Component {
   };
 
   async componentDidMount() {
-    PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
-    );
-    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
     this.timer = setInterval(this.tick, 1000);
     this.setState({
       qrsize: await getQrSize(),
