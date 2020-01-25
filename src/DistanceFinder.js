@@ -12,7 +12,8 @@ function getTmpDistance(bounds) {
   let tmp = Math.sqrt(d(origin[1].x - origin[0].x, origin[1].y - origin[0].y));
   tmp += Math.sqrt(d(origin[2].x - origin[1].x, origin[2].y - origin[1].y));
   tmp += Math.sqrt(d(origin[0].x - origin[2].x, origin[0].y - origin[2].y));
-  return 3030/tmp;
+  console.log(bounds.width)
+  return (3030 * bounds.width)/(640*tmp);
 }
 
 export default class DistanceFinder extends Component {
@@ -99,10 +100,10 @@ export default class DistanceFinder extends Component {
           onRead={this.onSuccess}
           vibrate={false}
           reactivate={true}
-          // containerStyle={{ width:"10%", height:"10%" }}
-          cameraStyle={
-            counter - lastTime >= 2 ? styles.qr("red") : styles.qr("green")
-          }
+          containerStyle={{ position: "absolute", opacity: 0 }}
+          // cameraStyle={
+          //   counter - lastTime >= 2 ? styles.qr("red") : styles.qr("green")
+          // }
           cameraType="front"
         />
         <ImageTest img={img} />
