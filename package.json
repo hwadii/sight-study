@@ -11,6 +11,7 @@
     "date-fns": "^2.9.0",
     "expo": "^35.0.1",
     "expo-font": "8.0.0",
+    "expo-keep-awake": "^8.0.0",
     "expo-speech": "~7.0.0",
     "expo-sqlite": "~7.0.0",
     "expokit": "^35.0.4",
