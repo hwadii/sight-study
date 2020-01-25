@@ -14,10 +14,9 @@ import okhttp3.OkHttpClient;
 // Needed for `react-native link`
 // import com.facebook.react.ReactApplication;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
-import com.robinpowered.react.ScreenBrightness.ScreenBrightnessPackage;
 import com.ninty.system.setting.SystemSettingPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
-import com.horcrux.svg.SvgPackage;
+// import com.horcrux.svg.SvgPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.wenkesj.voice.VoicePackage;
@@ -41,7 +40,6 @@ public class MainApplication extends ExpoApplication implements AppLoaderPackage
         // Needed for `react-native link`
         // new MainReactPackage(),
             new SplashScreenReactPackage(),
-            new ScreenBrightnessPackage(),
             new SystemSettingPackage(),
             new RNPermissionsPackage(),
             // new SvgPackage(),

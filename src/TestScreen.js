@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import Voice from "react-native-voice";
 import * as Speech from "expo-speech";
+import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
 import {
   intersection,
   getTargetLines,
@@ -102,6 +103,7 @@ export default class TestScreen extends Component {
   }
 
   async componentDidMount() {
+    activateKeepAwake();
     await PermissionsAndroid.requestMultiple([
       PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
       PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
@@ -129,6 +131,7 @@ export default class TestScreen extends Component {
     clearInterval(this.setNextLetterId);
     clearInterval(this.timer);
     clearInterval(this.timerPlacement);
+    deactivateKeepAwake();
   }
 
   tick = () => {

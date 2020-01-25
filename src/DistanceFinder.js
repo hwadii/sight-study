@@ -4,7 +4,8 @@ import { PermissionsAndroid } from "react-native";
 import { StyleSheet, Text } from "react-native";
 import QRCodeScanner from "react-native-qrcode-scanner";
 import * as Speech from "expo-speech";
-import { getQrSize } from "./util"
+import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
+import { getQrSize } from "./util";
 
 function getTmpDistance(bounds) {
   const { origin } = bounds;
@@ -12,7 +13,7 @@ function getTmpDistance(bounds) {
   let tmp = Math.sqrt(d(origin[1].x - origin[0].x, origin[1].y - origin[0].y));
   tmp += Math.sqrt(d(origin[2].x - origin[1].x, origin[2].y - origin[1].y));
   tmp += Math.sqrt(d(origin[0].x - origin[2].x, origin[0].y - origin[2].y));
-  return 3030/tmp;
+  return 3030 / tmp;
 }
 
 export default class DistanceFinder extends Component {
@@ -36,15 +37,26 @@ export default class DistanceFinder extends Component {
 
     if (this.state.wellPlacedCount < wellPlacedInaRow) {
       if (e.data === "sight-study") {
-        const tmp = this.state.qrsize * getTmpDistance(e.bounds) / 3;
+        const tmp = (this.state.qrsize * getTmpDistance(e.bounds)) / 3;
 
-        var centre = e.bounds.width/2 - (parseFloat(e.bounds.origin[0].x) + parseFloat(e.bounds.origin[1].x) + parseFloat(e.bounds.origin[2].x))/3
-        var h = tmp*Math.sin(Math.PI*35.84*centre/(e.bounds.width/2*180))
-        var letterToCamera = 2.54*Dimensions.get('window').height/(Dimensions.get('window').scale*160)
-        var dis = Math.sqrt(letterToCamera*letterToCamera+tmp*tmp-2*12.5*h)
-        this.setState({lastDistance: parseInt(10 * dis) / 10})
+        var centre =
+          e.bounds.width / 2 -
+          (parseFloat(e.bounds.origin[0].x) +
+            parseFloat(e.bounds.origin[1].x) +
+            parseFloat(e.bounds.origin[2].x)) /
+            3;
+        var h =
+          tmp *
+          Math.sin((Math.PI * 35.84 * centre) / ((e.bounds.width / 2) * 180));
+        var letterToCamera =
+          (2.54 * Dimensions.get("window").height) /
+          (Dimensions.get("window").scale * 160);
+        var dis = Math.sqrt(
+          letterToCamera * letterToCamera + tmp * tmp - 2 * 12.5 * h
+        );
+        this.setState({ lastDistance: parseInt(10 * dis) / 10 });
 
-        var eps = this.state.distance*0.1;
+        var eps = this.state.distance * 0.1;
 
         if (Math.abs(this.state.distance - dis) < eps)
           this.setState({
@@ -62,15 +74,20 @@ export default class DistanceFinder extends Component {
   };
 
   async componentDidMount() {
-    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
-    await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
+    await PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      PermissionsAndroid.PERMISSIONS.CAMERA
+    ]);
+    activateKeepAwake();
     this.timer = setInterval(this.tick, 1000);
     this.setState({
       qrsize: await getQrSize(),
       timer: this.timer
     });
     this.tick();
-    Speech.speak("Veuillez vous placer confortablement devant l'écran.", { language: "fr" });
+    Speech.speak("Veuillez vous placer confortablement devant l'écran.", {
+      language: "fr"
+    });
   }
 
   componentWillUnmount() {
@@ -88,11 +105,18 @@ export default class DistanceFinder extends Component {
   handleOnOk() {
     const { lastDistance } = this.state;
     const { navigate } = this.props.navigation;
+    deactivateKeepAwake();
     navigate("AddUser", { distance: lastDistance });
   }
 
   render() {
-    const { img, lastDistance, wellPlacedCount, counter, lastTime } = this.state;
+    const {
+      img,
+      lastDistance,
+      wellPlacedCount,
+      counter,
+      lastTime
+    } = this.state;
     return (
       <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
         <QRCodeScanner
