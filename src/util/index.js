@@ -477,14 +477,12 @@ export async function checkScoreAndSend(userId, nbLettres, lastScores = null) {
   // compare this score with old ones
   // 2 tests 3 erreurs -- 3 tests 4 erreurs
   lastScores = await getScoreLimit(userId, nbLettres);
-  console.log(lastScores);
   if (lastScores.length < 2) {
-    console.log("not enough results");
     return mailEnum.NOT_ENOUGH_RESULTS;
   }
 
   if (lastScores.length === 2) {
-    const [first, last] = lastScores;
+    const [last, first] = lastScores;
     const [leftDiff, rightDiff] = _compareTwoTests(last, first);
     if (leftDiff <= -3 || rightDiff <= -3) {
       await sendWarningEmail(userId);
@@ -493,8 +491,8 @@ export async function checkScoreAndSend(userId, nbLettres, lastScores = null) {
     return mailEnum.GOOD;
   }
 
-  if (lastScores.length >= 2) {
-    const [first, second, last] = lastScores;
+  if (lastScores.length > 2) {
+    const [last, second, first] = lastScores;
     let [leftDiff, rightDiff] = _compareTwoTests(last, first);
     if (leftDiff <= -4 || rightDiff <= -4) {
       // send mail
