@@ -72,8 +72,8 @@ export function showAlert(
 
 // AsyncStorage
 const lettersDict = {
-  n: ["n", "N", "Aisne", "haine", "and", "elle", "m", "M"],
-  c: ["c'est", "C'est", "C", "c", "se", "s'est", "seth"],
+  n: ["n", "N", "Aisne", "haine", "and", "elle", "m", "M", "Anne"],
+  c: ["c'est", "C'est", "C", "c", "se", "s'est", "seth", "c' est"],
   k: [
     "cas",
     "K",
@@ -96,15 +96,44 @@ const lettersDict = {
     "cars",
     "Car",
     "Cars",
-    "Cahors"
+    "Cahors",
+    "Caen",
+    "quant",
+    "Quant",
+    "cœur",
+    "camp"
   ],
-  z: ["z", "Z", "Zed", "Zedd", "ZI", "dead", "zèbre", "YZ"],
-  o: ["Oh", "eau", "au", "oh", "o", "O", "on", "On", "on a", "on est"],
-  r: ["air", "Air", "R", "aire", "r"],
+  z: [
+    "z",
+    "Z",
+    "Zed",
+    "Zedd",
+    "ZI",
+    "dead",
+    "zèbre",
+    "YZ",
+    "Seb",
+    "zette",
+    "vous êtes",
+    "êtes"
+  ],
+  o: ["Oh", "eau", "au", "oh", "o", "O", "on", "On"],
+  r: [
+    "heure",
+    "Heure",
+    "heures",
+    "her",
+    "air",
+    "Air",
+    "R",
+    "Eure",
+    "aire",
+    "r"
+  ],
   h: ["H", "h", "Ash", "hache", "ash", "âge"],
-  s: ["s", "S", "est-ce", "Ace", "où est-ce"],
+  s: ["s", "S", "est-ce", "Ace", "où est-ce", "et ce", "SA"],
   d: ["2", "de", "dès", "D", "d", "Dès", "b", "B", "bébé", "des", "the", "The"],
-  v: ["v", "V", "vais", "je vais", "VV"]
+  v: ["v", "V", "vais", "je vais", "VV", "vay", "j'ai", "G"]
 };
 
 // TODO: le faire en bon js...
