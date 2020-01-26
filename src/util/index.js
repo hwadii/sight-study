@@ -133,7 +133,7 @@ const lettersDict = {
   h: ["H", "h", "Ash", "hache", "ash", "âge"],
   s: ["s", "S", "est-ce", "Ace", "où est-ce", "et ce", "SA"],
   d: ["2", "de", "dès", "D", "d", "Dès", "b", "B", "bébé", "des", "the", "The"],
-  v: ["v", "V", "vais", "je vais", "VV", "vay", "j'ai", "G"]
+  v: ["v", "V", "vais", "je vais", "VV", "vay", "j'ai", "G", "g"]
 };
 
 // TODO: le faire en bon js...
