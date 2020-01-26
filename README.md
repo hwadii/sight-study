@@ -2,7 +2,7 @@
 
 1. `git clone https://github.com/hwadii/sight-study.git && cd sight-study`
 2. `npm install`
-3. `cd android && ./gradlew installDebug`
+3. `cd android && ./gradlew installDebug` (si un module natif a été ajouté)
 
 # Install app (deploy)
 
