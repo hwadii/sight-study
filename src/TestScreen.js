@@ -130,7 +130,7 @@ export default class TestScreen extends Component {
     Voice.destroy().then(Voice.removeAllListeners);
     clearInterval(this.setNextLetterId);
     clearInterval(this.timer);
-    clearInterval(this.timerPlacement);
+    clearTimeout(this.timerPlacement);
     deactivateKeepAwake();
   }
 
