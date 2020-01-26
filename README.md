@@ -1,14 +1,19 @@
+# Prérequis
+1. installer [sdk tools](https://developer.android.com/studio) pour Android
+2. suivre la partie “Android Development Envrionement” à ce [lien](https://facebook.github.io/react-native/docs/getting-started)
+
 # Install app (debug)
 
 1. `git clone https://github.com/hwadii/sight-study.git && cd sight-study`
 2. `npm install`
-3. `cd android && ./gradlew installDebug` (si un module natif a été ajouté)
+3. `cd android && ./gradlew installDebug` (si un module natif a été ajouté ou si l'application est installée pour la première fois)
 
 # Install app (deploy)
 
 1. `expo publish`
 2. `cd android && ./gradlew assembleRelease`
-3. `adb install -r app/build/outputs/apk/release/app-release.apk`
+3. supprimer l'application en mode debug si elle est installée sur la tablette
+4. `adb install -r app/build/outputs/apk/release/app-release.apk`
 
 # Offline speech recognition
 
