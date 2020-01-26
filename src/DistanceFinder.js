@@ -6,6 +6,7 @@ import QRCodeScanner from "react-native-qrcode-scanner";
 import * as Speech from "expo-speech";
 import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
 import { getQrSize } from "./util";
+import * as Progress from 'react-native-progress';
 
 function getTmpDistance(bounds) {
   const { origin } = bounds;
@@ -13,7 +14,6 @@ function getTmpDistance(bounds) {
   let tmp = Math.sqrt(d(origin[1].x - origin[0].x, origin[1].y - origin[0].y));
   tmp += Math.sqrt(d(origin[2].x - origin[1].x, origin[2].y - origin[1].y));
   tmp += Math.sqrt(d(origin[0].x - origin[2].x, origin[0].y - origin[2].y));
-  console.log(bounds.width)
   return (3030 * bounds.width)/(640*tmp);
 }
 
@@ -130,6 +130,7 @@ export default class DistanceFinder extends Component {
           // }
           cameraType="front"
         />
+        <Progress.Bar style={{position: "absolute", top: "20%"}} progress={this.state.wellPlacedCount/10} width={400} height={20} borderRadius={8} />
         <ImageTest img={img} />
         {wellPlacedCount < 10 ? (
           <>

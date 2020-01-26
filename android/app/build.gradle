@@ -104,6 +104,8 @@ apply from: 'expo.gradle'
 apply from: "../../node_modules/react-native-unimodules/gradle.groovy"
 
 dependencies {
+    implementation project(':react-native-svg')
+    implementation project(':react-native-screen-brightness')
     implementation project(':react-native-splash-screen')
     implementation project(':react-native-system-setting')
     implementation project(':react-native-permissions')
