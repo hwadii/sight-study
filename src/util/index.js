@@ -6,7 +6,7 @@ import {
   getScore,
   getScores,
   getScoreLimit
-} from "../../service/db/User";
+} from "../../db";
 
 // Constants
 export const defaultEtdrsScale = {

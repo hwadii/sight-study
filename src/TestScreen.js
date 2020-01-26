@@ -24,7 +24,7 @@ import {
 } from "./util";
 import { styles as common } from "./styles/common";
 
-import { getDistance, addScore, getScore, resetDB } from "../service/db/User";
+import { getDistance, addScore, getScore, resetDB } from "../db";
 import { getId } from "./util";
 
 import QRCodeScanner from "react-native-qrcode-scanner";

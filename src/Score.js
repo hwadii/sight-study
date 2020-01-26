@@ -8,7 +8,7 @@ import {
   ActivityIndicator
 } from "react-native";
 import { LineChart } from "react-native-chart-kit";
-import * as User from "../service/db/User";
+import * as User from "../db";
 import { getId } from "./util";
 
 // TODO: Breakup this component into a lot more.
@@ -28,39 +28,32 @@ export default class Score extends React.Component {
   componentDidMount() {
     getId(AsyncStorage).then(id => {
       User.getScore(id, score => {
-         this.setState({
-           id,
-           dates: score.map(d => d.date),
-           scoresOeilDroit: score.map(d => d.oeil_droit),
-           scoresOeilGauche: score.map(d => d.oeil_gauche),
-           isLoading: false
-         });
-    setTimeout(() => {
-      this.setState({ isLoading: false });
-    }, 0);
-    getId().then(id => {
-      User.getScore(id, score => {
-        this.setState({ id });
-        // this.setState({
-        //   id,
-        //   dates: score.map(d => d.date),
-        //   scoresOeilDroit: score.map(d => d.oeil_droit),
-        //   scoresOeilGauche: score.map(d => d.oeil_gauche),
-        //   isLoading: false
-        // });
+        this.setState({
+          id,
+          dates: score.map(d => d.date),
+          scoresOeilDroit: score.map(d => d.oeil_droit),
+          scoresOeilGauche: score.map(d => d.oeil_gauche),
+          isLoading: false
+        });
+        setTimeout(() => {
+          this.setState({ isLoading: false });
+        }, 0);
+        getId().then(id => {
+          User.getScore(id, score => {
+            this.setState({ id });
+          });
+        });
       });
     });
   }
-)})
-  }
   render() {
     const { isLoading, dates } = this.state;
-    if(isLoading || dates.length==0){
-      return(
+    if (isLoading || dates.length == 0) {
+      return (
         <View>
           <Text>pas de données</Text>
         </View>
-      )
+      );
     }
     return (
       <View style={{ flex: 1, height: "100%", ...styles.container }}>
@@ -78,8 +71,8 @@ export default class Score extends React.Component {
                 datasets: [
                   {
                     data: this.state.scoresOeilGauche,
-                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                  },
+                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`
+                  }
                 ]
               }}
               width={Dimensions.get("window").width - 50} // from react-native
@@ -141,4 +134,4 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center"
   }
-})
+});

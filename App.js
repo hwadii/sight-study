@@ -12,7 +12,7 @@ import Etdrs from "./src/Etdrs";
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import * as Font from "expo-font";
-import { initDB } from "./service/db/User";
+import { initDB } from "./db";
 import SplashScreen from "react-native-splash-screen";
 import { getAdminPin, getId, clear, initDefault } from "./src/util";
 

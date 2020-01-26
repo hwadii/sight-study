@@ -9,7 +9,7 @@ import {
   Text,
   View
 } from "react-native";
-import * as User from "../service/db/User";
+import * as User from "../db";
 import {
   setId,
   setUserName,
