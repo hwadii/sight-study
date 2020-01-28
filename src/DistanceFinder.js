@@ -8,6 +8,8 @@ import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
 import { getQrSize } from "./util";
 import * as Progress from 'react-native-progress';
 
+// Fonction de calcul pour la distance oeil-camera
+// utile pour trouver la distance oeil-lettre
 function getTmpDistance(bounds) {
   const { origin } = bounds;
   const d = (x, y) => x * x + y * y;
@@ -33,11 +35,18 @@ export default class DistanceFinder extends Component {
     this.handleOnOk = this.handleOnOk.bind(this);
   }
 
+  // Fonction appele lors d'une detection de QR Code.
+  // Calcule la distance du QR Code,
+  // s'il est detecte 10 fois d'affile a eps cm pres,
+  // alors la distance de l'utilisateur est celle-ci.
   onSuccess = e => {
     var wellPlacedInaRow = 10;
 
+    
     if (this.state.wellPlacedCount < wellPlacedInaRow) {
       if (e.data === "sight-study") {
+
+        // Calcul de la distance oeil-lettre
         const tmp = (this.state.qrsize * getTmpDistance(e.bounds)) / 3;
 
         var centre =
@@ -57,8 +66,9 @@ export default class DistanceFinder extends Component {
         );
         this.setState({ lastDistance: parseInt(10 * dis) / 10 });
 
+        // Si la distance est à 10% pres de la distance premierement detectee,
+        // on lui rajoute une detection, sinon elle devient la nouvelle distance a detecter
         var eps = this.state.distance * 0.1;
-
         if (Math.abs(this.state.distance - dis) < eps)
           this.setState({
             wellPlacedCount: this.state.wellPlacedCount + 1,
@@ -75,17 +85,23 @@ export default class DistanceFinder extends Component {
   };
 
   async componentDidMount() {
+    // Verification des authorisations
     await PermissionsAndroid.requestMultiple([
       PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
       PermissionsAndroid.PERMISSIONS.CAMERA
     ]);
+
+    // Desactive la mise en veille de l'ecran
     activateKeepAwake();
+
+    // Compteur pour le diaporama d'images et la detection de l'utilisateur dans le champs
     this.timer = setInterval(this.tick, 1000);
     this.setState({
       qrsize: await getQrSize(),
       timer: this.timer
     });
     this.tick();
+
     Speech.speak("Veuillez vous placer confortablement devant l'écran.", {
       language: "fr"
     });
@@ -95,6 +111,8 @@ export default class DistanceFinder extends Component {
     clearInterval(this.timer);
   }
 
+  // Change l'image affichee toutes les 10 secondes
+  // Le compteur permet aussi de determiner si l'ulisateur n'est pas dans le champs de la camera
   tick = () => {
     var c = (parseInt(this.state.counter / 10) % 4) + 1;
     this.setState({
@@ -103,10 +121,15 @@ export default class DistanceFinder extends Component {
     });
   };
 
+
   handleOnOk() {
     const { lastDistance } = this.state;
     const { navigate } = this.props.navigation;
+
+    // Reactive la mise en veille de l'ecran
     deactivateKeepAwake();
+
+    // Transmet la distance a la page de creation du patient
     navigate("AddUser", { distance: lastDistance });
   }
 
@@ -120,18 +143,24 @@ export default class DistanceFinder extends Component {
     } = this.state;
     return (
       <View style={{ justifyContent: "center", alignItems: "center", flex: 1 }}>
+
+        {/* Scanner pour le QR Code  */}
         <QRCodeScanner
           onRead={this.onSuccess}
           vibrate={false}
           reactivate={true}
           containerStyle={{ position: "absolute", opacity: 0 }}
-          // cameraStyle={
-          //   counter - lastTime >= 2 ? styles.qr("red") : styles.qr("green")
-          // }
           cameraType="front"
         />
+
+        {/* Barre de progression */}
         <Progress.Bar style={{position: "absolute", top: "20%"}} progress={this.state.wellPlacedCount/10} width={400} height={20} borderRadius={8} />
+        
+        {/* Image pour tester la distance naturelle */}
         <ImageTest img={img} />
+
+        {/* Si la distance est determinee, on l'affiche
+        Si ca fait au moins 2sec que le QR Code n'a pas ete trouvé, on affiche un message */}
         {wellPlacedCount < 10 ? (
           <>
             <Text style={styles.indication}>
@@ -148,6 +177,7 @@ export default class DistanceFinder extends Component {
   }
 }
 
+// Adresses des differentes images
 const images = {
   1: require("../assets/asterix1.png"),
   2: require("../assets/asterix2.png"),
@@ -155,6 +185,8 @@ const images = {
   4: require("../assets/asterix4.png")
 };
 
+// Affichage de l'image courante,
+// img: image courante
 function ImageTest({ img }) {
   return (
     <Image
@@ -164,6 +196,9 @@ function ImageTest({ img }) {
   );
 }
 
+// Affichage de la distance une fois determinee
+// distance : distance determinee
+// handleOnOk : fonction appelee lors de l'appuie sur "OK"
 function OnCalculated({ distance, handleOnOk }) {
   return (
     <View style={styles.indication}>

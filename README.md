@@ -1,6 +1,6 @@
 # Prérequis
 1. installer [sdk tools](https://developer.android.com/studio) pour Android
-2. suivre la partie “Android Development Envrionement” à ce [lien](https://facebook.github.io/react-native/docs/getting-started)
+2. suivre la partie “Android Development Environement” à ce [lien](https://facebook.github.io/react-native/docs/getting-started)
 
 # Install app (debug)
 
