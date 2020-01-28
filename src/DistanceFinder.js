@@ -35,7 +35,7 @@ export default class DistanceFinder extends Component {
     this.handleOnOk = this.handleOnOk.bind(this);
   }
 
-  // Fonction appele lors d'une detection de QR Code.
+  // Fonction appelee lors d'une detection de QR Code.
   // Calcule la distance du QR Code,
   // s'il est detecte 10 fois d'affile a eps cm pres,
   // alors la distance de l'utilisateur est celle-ci.
@@ -94,7 +94,7 @@ export default class DistanceFinder extends Component {
     // Desactive la mise en veille de l'ecran
     activateKeepAwake();
 
-    // Compteur pour le diaporama d'images et la detection de l'utilisateur dans le champs
+    // Timer pour le diaporama d'images et le contrôle de la detection de l'utilisateur dans le champs
     this.timer = setInterval(this.tick, 1000);
     this.setState({
       qrsize: await getQrSize(),

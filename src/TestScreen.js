@@ -103,12 +103,15 @@ export default class TestScreen extends Component {
   }
 
   async componentDidMount() {
+
+    // Desactive la mise en veille de l'ecran
     activateKeepAwake();
     await PermissionsAndroid.requestMultiple([
       PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
       PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
       PermissionsAndroid.PERMISSIONS.CAMERA
     ]);
+
     const userId = await getId();
     const savedEtdrsScale = await getAcuites();
     const savedDistance = await getDistance(userId);
@@ -122,6 +125,8 @@ export default class TestScreen extends Component {
       etdrsScale: savedEtdrsScale,
       lineSizes: this.lineSizes[0]
     });
+
+    // Timer pour contrôler la detection de l'utilisateur dans le champs
     this.timer = setInterval(this.tick, 1000);
   }
 
@@ -131,9 +136,15 @@ export default class TestScreen extends Component {
     clearInterval(this.setNextLetterId);
     clearInterval(this.timer);
     clearTimeout(this.timerPlacement);
+
+    // Reactive la mise en veille de l'ecran
     deactivateKeepAwake();
   }
 
+  // Contrôler la detection de l'utilisateur dans le champs
+  // Le compteur est incremente toutes les secondes
+  // Si le QR COde et détecté, le compteur est remis à 0
+  // Si le compteur atteint les 2 sec, on considere que l'utilisateur est hors du champs
   tick = () => {
     const { counter } = this.state;
     this.wrapRecognizer();
@@ -157,6 +168,8 @@ export default class TestScreen extends Component {
     return x * x;
   };
 
+  // Controle si une sortie de l'ecran ou une mauvaise position du QR Code
+  // a eu lieu et n'a pas été corrigé en 200ms
   timeoutFunction = () => {
     if (!this.state.detectWellPlaced && this.state.wellPlaced) {
       this.setState({ wellPlaced: false });
@@ -164,6 +177,13 @@ export default class TestScreen extends Component {
     }
   };
 
+  // Fonction appelee lors d'une detection de QR Code.
+  // 
+  // Calcule la distance du QR Code,
+  // si elle est a plus ou moins 5% de la distance de l'utilisateur, la distance est validee
+  // si la distance est en dehors on demarre un timer pour controler s'il est toujours mal positionné apres 200ms
+  // dans ce cas, on affiche s'il est trop loin ou trop pres
+  // Controle aussi si le QR Code est du bon coté de l'image
   onSuccess = e => {
     const { hasPressedStart, hasStarted } = this.state;
     const badlyPlaced = () => {
@@ -190,10 +210,13 @@ export default class TestScreen extends Component {
           e.bounds.origin[0].y
         );
 
+      // Verifie si le QR Code est du bon cote de l'image
       if (
         (limit < e.bounds.height / 2 && this.state.whichEye === "left") ||
         (limit > e.bounds.height / 2 && this.state.whichEye === "right")
       ) {
+
+        // Calcul de la distance oeil-lettre
         var tmp = Math.sqrt(
           this.square(e.bounds.origin[1].y - e.bounds.origin[0].y) +
             this.square(e.bounds.origin[1].x - e.bounds.origin[0].x)
@@ -227,6 +250,7 @@ export default class TestScreen extends Component {
           letterToCamera * letterToCamera + tmp * tmp - 2 * 12.5 * h
         );
 
+        // Si on est trop proche de la lettre (a 5%)
         if (dis - distance + eps < 0) {
           const amount = parseInt(10 * Math.abs(distance - dis)) / 10;
           this.setState(
@@ -247,6 +271,8 @@ export default class TestScreen extends Component {
             });
           }
         } else {
+
+        // Si on est trop loin de la lettre (a 5%)
           if (dis - distance - eps > 0) {
             const amount = parseInt(10 * Math.abs(distance - dis)) / 10;
             this.setState(
@@ -267,6 +293,8 @@ export default class TestScreen extends Component {
               });
             }
           } else {
+
+            // Si on est bien placé (a 5%)
             this.setState(
               {
                 indication: "Parfait, ne bougez plus",
@@ -283,6 +311,7 @@ export default class TestScreen extends Component {
           }
         }
       } else {
+        // Si le QR Code est du mauvais cote de l'image donc sur le mauvais oeil
         this.setState({
           wrongEyeCount: this.state.wrongEyeCount + 1,
           counter: 0
@@ -290,6 +319,7 @@ export default class TestScreen extends Component {
       }
     } else console.log("pas bon qr code");
 
+    // Si le QR Code est detecté sur le mauvais oeil 4 fois consecutivement
     if (this.state.wrongEyeCount >= 4) {
       this.setState(
         {
@@ -309,12 +339,14 @@ export default class TestScreen extends Component {
     }
   };
 
+  // Demarre la reconnaissance vocale s'il n'est pas deja demarre
   wrapRecognizer() {
     Speech.isSpeakingAsync().then(isSpeaking => {
       if (!this.state.rec && !isSpeaking) this._startRecognizingIfTest();
     });
   }
 
+  // Demarre la reconnaissance si le test est en cours
   _startRecognizingIfTest() {
     const { wellPlaced, hasEnded, hasStarted, isPaused } = this.state;
     if (!wellPlaced) return;
@@ -325,6 +357,8 @@ export default class TestScreen extends Component {
     }
   }
 
+  // Synthese vocale
+  // sentence : phrase a prononcer
   speak(
     sentence,
     onStart = () => {
@@ -342,10 +376,12 @@ export default class TestScreen extends Component {
     });
   }
 
+  // Stoppe la voix
   stop() {
     Speech.stop();
   }
 
+  // Declnche la synthese vocale
   toggleSpeak(sentence) {
     Speech.isSpeakingAsync()
       .then(isSpeaking => {
@@ -357,6 +393,7 @@ export default class TestScreen extends Component {
       .catch(console.error);
   }
 
+  // Change l'oeil a tester
   nextEye() {
     this.setState({
       whichEye: "right",
@@ -364,6 +401,10 @@ export default class TestScreen extends Component {
     });
   }
 
+  // Fonction executee a la fin du test
+  // Compare le score avec l'historique des scores
+  // Si sur un oeil l'utilisateur trouve au moins 3 lettres de moins par rapport au dernier test, un mail est envoye
+  // Si sur un oeil l'utilisateur trouve au moins 4 lettres de moins par rapport a l'avant dernier test, un mail est envoye
   endTest() {
     this.setState(
       {
@@ -454,6 +495,9 @@ export default class TestScreen extends Component {
     }
   }
 
+  // Fonction lors de detection d'une erreur de reconnaissance vocale
+  // Si rien n'a ete dit, c'est une erreur et on passe a la lettre suivante
+  // Si aucun mot n'a ete reconnu, on demande de repeter
   onSpeechError = e => {
     console.log("onSpeechError: ", e);
     // no speech
@@ -472,6 +516,8 @@ export default class TestScreen extends Component {
     });
   };
 
+  // Fonction si on a trouve un resultat avec la reconnaissance vocale
+  // ?
   onSpeechResults = e => {
     const { partialResults, scores, whichEye, errorsInLine } = this.state;
     const newResults = [...e.value, ...partialResults];
@@ -555,6 +601,7 @@ export default class TestScreen extends Component {
     });
   };
 
+  // Demarre le premier test
   handleStartPressed() {
     this.setState(
       {
@@ -564,6 +611,7 @@ export default class TestScreen extends Component {
     );
   }
 
+  // Demarre le deuxieme test
   handlePause() {
     this.setState(
       prevState => ({
@@ -592,33 +640,49 @@ export default class TestScreen extends Component {
     const { goBack } = this.props.navigation;
     return (
       <View style={styles.container}>
+
+        {/* Affiche le micro d'ecoute ou non selon la reconnaissance vocale pendant le test */}
         {hasStarted && !hasEnded && !isPaused && (
           <Micro isRecognizing={rec && !speaking}></Micro>
         )}
+
+        {/* Scanner a QR Code si le test n'est pas termine */}
         {!hasEnded && <HiddenQrCode onSuccess={this.onSuccess.bind(this)} />}
+
+        {/* Affichage des instructions avant le premier test */}
         {!hasPressedStart && (
           <Instructions
             wellPlaced={wellPlaced}
             handleStartPressed={() => this.setState({ hasPressedStart: true })}
           />
         )}
+
+        {/* Affichage du decompte avant le debut du test */}
         {!hasStarted && hasPressedStart && (
           <Countdown handler={this.handleStartPressed.bind(this)} />
         )}
+
+        {/* Affichage des lettres lors du texte */}
         {hasStarted && !hasEnded && !isPaused && wellPlaced && (
           <Text style={{ fontFamily: "optician-sans", fontSize: lineSize }}>
             {letter}
           </Text>
         )}
+
+        {/* Affichage des instructions avant le deuxieme test */}
         {isPaused && (
           <ChangeEye
             wellPlaced={wellPlaced}
             handlePause={this.handlePause.bind(this)}
           />
         )}
+
+        {/* Affichage des indications de placement de l'utilisateur */}
         {!wellPlaced && (!hasPressedStart || hasStarted) && (
           <Text style={styles.indication}>{indication}</Text>
         )}
+
+        {/* Affichage de fin du test */}
         {hasEnded && (
           <Score
             scores={scores}
@@ -631,12 +695,16 @@ export default class TestScreen extends Component {
   }
 }
 
+// Affichage du symbole du micro en écoute ou non selon la reconnaissance vocale
+// isRecognizing : true si la reconnaissance ecoute
 function Micro({ isRecognizing }) {
   return (
     <Image style={styles.micro} source={isRecognizing ? mic_on : mic_off} />
   );
 }
 
+// Lettres du test
+// lineSizes : liste des tailles de police pour le test
 function Lines({ lineSizes }) {
   return lineSizes.map(lineSize => (
     <Text
@@ -648,6 +716,8 @@ function Lines({ lineSizes }) {
   ));
 }
 
+// Scanner a QR Code cache
+// onSuccess : fonction appelee si un QR Code est detecte
 function HiddenQrCode({ onSuccess }) {
   return (
     <QRCodeScanner
@@ -660,6 +730,9 @@ function HiddenQrCode({ onSuccess }) {
   );
 }
 
+// Instructions precedent le test du premier oeil
+// handleStartPressed : fonction appelee lors de l'appuie du bouton
+// wellPlaced : true si l'utilisateur est bien place
 function Instructions({ handleStartPressed, wellPlaced }) {
   return (
     <>
@@ -686,6 +759,9 @@ function Instructions({ handleStartPressed, wellPlaced }) {
   );
 }
 
+// Instructions precedent le test du premier oeil
+// handlePause : fonction appelee lors de l'appuie du bouton
+// wellPlaced : true si l'utilisateur est bien place
 function ChangeEye({ handlePause, wellPlaced }) {
   const [isCoutdownVisible, setIsCountdownVisible] = useState(false);
   return (
@@ -718,6 +794,8 @@ function ChangeEye({ handlePause, wellPlaced }) {
   );
 }
 
+// Decompte avant le test
+// handler : ?
 function Countdown({ handler }) {
   const [counter, setCounter] = useState(3);
   let intervalId;
@@ -736,6 +814,10 @@ function Countdown({ handler }) {
   return counter > 0 ? <Text style={styles.countdown}>{counter}</Text> : null;
 }
 
+// Message de fin du test,
+// scores : scores de chaque oeil
+// targetLines : nombre de lignes du test
+// handleOnEnd : fonction appelee lors de l'appuie sur le bouton
 function Score({ scores, targetLines, handleOnEnd }) {
   const { right, left } = scores;
   const target = targetLines * 5;
