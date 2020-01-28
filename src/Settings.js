@@ -36,11 +36,14 @@ export default class Settings extends React.Component {
     this.props.navigation.navigate = this.props.navigation.navigate.bind(this);
   }
 
+  // Sauvegarde d'un parametre
   handleChangeField(e, field) {
     this.setState({ [field]: e });
   }
 
   async componentDidMount() {
+
+    // Chargement des parametres sauvegardes
     const currentVolume = await SystemSetting.getVolume();
     const currentBrightness = await SystemSetting.getAppBrightness();
     const {
@@ -59,8 +62,10 @@ export default class Settings extends React.Component {
       brightness: brightness || currentBrightness,
       qrSize: qrsize ? qrsize.toString() : ""
     });
+  
   }
 
+  // Sauvegarde de la luminosite et son application
   changeBrightness(value) {
     SystemSetting.setAppBrightness(value);
     this.setState({
@@ -68,6 +73,7 @@ export default class Settings extends React.Component {
     });
   }
 
+  // Sauvegarde du volume et son application
   changeSound(value) {
     SystemSetting.setVolume(value);
     this.setState({
@@ -75,17 +81,20 @@ export default class Settings extends React.Component {
     });
   }
 
+  // Synthese vocale
   speak(sentence) {
     Speech.speak(sentence, {
       language: "fr"
     });
   }
 
+  // Stoppe la synthese vocale et la redemarre
   stop(sentence) {
     Speech.stop();
     this.speak(sentence);
   }
 
+  // Declenche la synthese vocale
   toggleSpeak(sentence) {
     Speech.isSpeakingAsync()
       .then(isSpeaking =>
@@ -94,10 +103,16 @@ export default class Settings extends React.Component {
       .catch(console.error);
   }
 
+  // Lorsqu'on lache le slider du volume une voix de test est lancee
   volumeRelease() {
     this.toggleSpeak("Ceci est un essai du volume sonore");
   }
 
+  // Verifie les champs
+  // le mail doit inclure "@"
+  // le code PIN, s'il est remplit, doit contenir 4 caracteres
+  // le nombre de lignes du test ne doit pas etre 0
+  // la taille du QR Code doit etre un float
   verifyField() {
     const { mail, pin, targetLines, qrSize } = this.state;
     const show = str => showAlert(str, null, [], "Erreur de saisie");
@@ -120,6 +135,7 @@ export default class Settings extends React.Component {
     return true;
   }
 
+  // Si les champs on ete verifies, les parametres sont appliques
   async handleOnOk() {
     const { mail, volume, brightness, pin, targetLines, qrSize } = this.state;
     const { goBack } = this.props.navigation;
@@ -142,6 +158,8 @@ export default class Settings extends React.Component {
     return (
       <View style={styles.container}>
         <Text style={styles.header}>Paramètres généraux</Text>
+
+        {/* Parametre : luminosite (slider) */}
         <Text style={common.inputsLabels}>Luminosité</Text>
         <Slider
           step={0.1}
@@ -149,6 +167,8 @@ export default class Settings extends React.Component {
           onValueChange={this.changeBrightness.bind(this)}
           value={brightness}
         />
+
+        {/* Parametre : volume sonore (slider) */}
         <Text style={common.inputsLabels}>Volume</Text>
         <Slider
           step={0.1}
@@ -157,6 +177,8 @@ export default class Settings extends React.Component {
           onSlidingComplete={this.volumeRelease.bind(this)}
           value={volume}
         />
+
+        {/* Parametre : code PIN */}
         <Field
           label="PIN"
           maxLength={4}
@@ -164,11 +186,15 @@ export default class Settings extends React.Component {
           type="numeric"
           handleOnChange={e => this.handleChangeField(e, "pin")}
         />
+
+        {/* Parametre : email du medecin */}
         <Field
           label="Email du médecin"
           value={mail}
           handleOnChange={e => this.handleChangeField(e, "mail")}
         />
+
+        {/* Parametre : nombre de lignes du test */}
         <Field
           label="Nombre de lignes du test"
           value={targetLines}
@@ -176,6 +202,8 @@ export default class Settings extends React.Component {
           type="numeric"
           handleOnChange={e => this.handleChangeField(e, "targetLines")}
         />
+
+        {/* Parametre : taille du QR code */}
         <Field
           label="Taille du QR code (en cm)"
           value={qrSize}
@@ -193,6 +221,12 @@ export default class Settings extends React.Component {
   }
 }
 
+// Champ pour chaque parametre
+// label : nom du parametre
+// value : valeur actuellement sauvegarde
+// type : numerique ou par defaut
+// handleOnChange : fonction appelee lors de validation
+// maxLength : taille maximale du champs
 function Field({ label, value, type, handleOnChange, maxLength = 50 }) {
   return (
     <>

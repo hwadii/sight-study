@@ -381,7 +381,7 @@ export default class TestScreen extends Component {
     Speech.stop();
   }
 
-  // Declnche la synthese vocale
+  // Declenche la synthese vocale
   toggleSpeak(sentence) {
     Speech.isSpeakingAsync()
       .then(isSpeaking => {
