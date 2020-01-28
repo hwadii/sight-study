@@ -10,7 +10,9 @@ const sentences = {
     "Vous êtes sur votre compte. Pour commencer le test appuyez sur l'icône de gauche. Pour consulter vos résultats, appuyez sur l'icône de droite."
 };
 
-// TODO: Add une option mute all
+/**
+ * Composant correspondant au bouton en haut à droite, il contrôle l'état de la synthèse vocale
+ */
 class Help extends React.Component {
   constructor(props) {
     super(props);

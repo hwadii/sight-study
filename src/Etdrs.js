@@ -5,13 +5,15 @@ import {
   TouchableOpacity,
   Text,
   View,
-  Dimensions,
   ActivityIndicator
 } from "react-native";
 import { defaultEtdrsScale, setAcuites, getAcuites } from "./util";
 import { styles as common, colors } from "./styles/common";
 import { scale } from "react-native-size-matters";
 
+/**
+ * Composant présentant l'echelle ETDRS utilisée pour le test
+ */
 export default class Etdrs extends React.Component {
   constructor(props) {
     super(props);

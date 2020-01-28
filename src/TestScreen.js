@@ -490,9 +490,9 @@ export default class TestScreen extends Component {
         errorsInLine: newErrorsInLine
       },
       () => {
-        if (letterCount === targetLines * 5 + 1) this.nextEye();
-        if (letterCount === targetLines * 10 + 1) this.endTest();
         if (letterCount <= targetLines * 10) this._startRecognizing();
+        if (letterCount === targetLines * 5) this.nextEye();
+        if (letterCount === targetLines * 10) this.endTest();
       }
     );
   }

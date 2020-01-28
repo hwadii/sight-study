@@ -351,9 +351,29 @@ async function _getBrightness() {
   }
 }
 
+export async function setAcuites(acuites) {
+  try {
+    return await AsyncStorage.setItem("acuites", JSON.stringify(acuites));
+  } catch {
+    console.log("Error setting acuites");
+  }
+}
+
+export async function getAcuites() {
+  try {
+    return JSON.parse(await AsyncStorage.getItem("acuites"));
+  } catch {
+    console.log("Error getting acuites");
+  }
+}
+
 const mailApi = "https://api.mailjet.com/v3.1/send";
 const headers = _createHeaders();
 
+/**
+ * Crée les headers pour notre requête HTTP
+ * @private
+ */
 function _createHeaders() {
   const headers = new Headers();
   headers.set(
@@ -369,7 +389,11 @@ function _createHeaders() {
   return headers;
 }
 
-// TODO: check if results did not get sent.
+/**
+ * Envoi un email
+ * @private
+ * @param {String} message un objet “stringifiée”
+ */
 async function _send(message) {
   const rawResponse = await fetch(mailApi, {
     method: "POST",
@@ -379,6 +403,14 @@ async function _send(message) {
   return rawResponse.json();
 }
 
+/**
+ * Crée la pièce jointe avec le contenu souhaité
+ *
+ * @private
+ * @param {string} fileName - nom du fichier
+ * @param {string} CSVContent - contenu de la pièce jointe (ici un csv)
+ * @returns {Array} un tableau contenant une pièce jointe
+ */
 function _createAttachement(fileName, CSVContent) {
   if (!CSVContent) return [];
   return [
@@ -390,6 +422,15 @@ function _createAttachement(fileName, CSVContent) {
   ];
 }
 
+/**
+ * Crée un message avec les informations souhaités et au format attendu par le service de mail
+ *
+ * @param {string} Subject Objet du mail
+ * @param {string} HTMLPart Contenu du mail
+ * @param {string} [CSVContent] Contenu du CSV
+ * @param {string} [fileName] Nom du fichier en pièce jointe
+ * @returns {Promise} Promesse du message au format JSON sérializé
+ */
 async function _createMessage(
   Subject,
   HTMLPart,
@@ -419,6 +460,11 @@ async function _createMessage(
   return JSON.stringify(message);
 }
 
+/**
+ * Envoi un mail de notification
+ * @param {string} userId - id de l'utilisateur
+ * @returns {Promise} Promesse donnant un objet après l'envoi du mail
+ */
 export async function sendWarningEmail(userId) {
   const fullName = await getFullName();
   const scoresObtained = await getScore(userId);
@@ -455,22 +501,13 @@ function _buildCsvAll(scores) {
   return csvContent;
 }
 
-export async function setAcuites(acuites) {
-  try {
-    return await AsyncStorage.setItem("acuites", JSON.stringify(acuites));
-  } catch {
-    console.log("Error setting acuites");
-  }
-}
-
-export async function getAcuites() {
-  try {
-    return JSON.parse(await AsyncStorage.getItem("acuites"));
-  } catch {
-    console.log("Error getting acuites");
-  }
-}
-
+/**
+ * Envoie un mail contenant les scores de l'utilisateur séléctionné
+ * 
+ * @param {number} userId
+ * @param {String} fullName le nom complet de l'utilisateur
+ * @returns {Promise} Promesse qui résout en un objet
+ */
 export async function sendSelectedUserResults(userId, fullName) {
   const scoresObtained = await getScore(userId);
   const csvToSend = _buildCsvOne(scoresObtained);
@@ -484,7 +521,10 @@ export async function sendSelectedUserResults(userId, fullName) {
   return _send(messageToSend);
 }
 
-// TODO: le csv doit former autant d'entetes que necessaire
+/*
+ * Envoie un mail contenant les résultats de chaque utilisateur
+ * @todo cette méthode n'est pas utilisée
+ */
 export async function sendAllUsersResults() {
   const allScores = await getScores();
   const csvToSend = _buildCsvAll(allScores);
@@ -537,6 +577,12 @@ export async function checkScoreAndSend(userId, nbLettres, lastScores = null) {
   return mailEnum.GOOD;
 }
 
+/**
+ * Comapare deux tests et retourne la différence pour chaque oeil
+ * @param {Object} newTest nouvau test effectué
+ * @param {Object} otherTest un test antérieur
+ * @returns {Array} différence pour chaque oeil
+ */
 function _compareTwoTests(newTest, otherTest) {
   const leftDiff = newTest.oeil_gauche - otherTest.oeil_gauche;
   const rightDiff = newTest.oeil_droit - otherTest.oeil_droit;

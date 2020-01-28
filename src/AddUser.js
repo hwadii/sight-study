@@ -18,6 +18,9 @@ import * as User from "../db";
 import { styles as common, colors } from "./styles/common";
 import { formatDate } from "./util";
 
+/**
+ * Composant permettant d'ajouter un utilisateur (patient) dans la base de données
+ */
 export default class AddUser extends React.Component {
   constructor(props) {
     super(props);
@@ -45,6 +48,10 @@ export default class AddUser extends React.Component {
     this.setState({ prenom: "", nom: "", date: "", distance: null });
   }
 
+  /**
+   * Gère la modification d'un champ (lorsque l'on écrit)
+   * @param {string} field - le nom de la propriété étant modifiée
+   */
   handleChangeField(e, field) {
     this.setState({ [field]: e });
   }
@@ -54,6 +61,9 @@ export default class AddUser extends React.Component {
     navigate("DistanceFinder");
   }
 
+  /**
+   * Ajoute l'utilisateur en cours dans la BDD
+   */
   async handleAddUser() {
     const { goBack } = this.props.navigation;
     const { nom, prenom, sex, date, distance } = this.state;
@@ -61,6 +71,9 @@ export default class AddUser extends React.Component {
     goBack();
   }
 
+  /**
+   * Affiche le composant de choix de date
+   */
   async showDatePickerAndSet() {
     const { date } = this.state;
     try {
@@ -107,8 +120,13 @@ export default class AddUser extends React.Component {
   }
 }
 
-// TODO: Put this in frequently used components
-
+/**
+ * Formulaire
+ * @param {Object} props - les propriétés du formulaire
+ * @param {Function} props.handleChange - la fonction de mise à jour
+ * @param {Object} props.userInfo - toutes les données de l'utilisateur en cours
+ * @returns {JSX}
+ */
 function Form({ children, handleChange, userInfo, showDatePickerAndSet }) {
   const { prenom, nom, sex, date, distance } = userInfo;
   return (
@@ -148,6 +166,14 @@ function Form({ children, handleChange, userInfo, showDatePickerAndSet }) {
   );
 }
 
+/**
+ * Un champ
+ * @param {Object} props - les propriétés
+ * @param {string} props.value - valeur du champ
+ * @param {string} props.label - le label du champ
+ * @param {string} props.type - le type du clavier
+ * @param {Function} props.handleOnChange - fonction de mise à jour
+ */
 function Field({ label, value, type, handleOnChange }) {
   return (
     <>
