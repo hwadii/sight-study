@@ -103,7 +103,6 @@ export default class TestScreen extends Component {
   }
 
   async componentDidMount() {
-
     // Desactive la mise en veille de l'ecran
     activateKeepAwake();
     await PermissionsAndroid.requestMultiple([
@@ -133,7 +132,7 @@ export default class TestScreen extends Component {
   componentWillUnmount() {
     this._destroyRecognizer();
     Voice.destroy().then(Voice.removeAllListeners);
-    clearInterval(this.setNextLetterId);
+    Speech.stop();
     clearInterval(this.timer);
     clearTimeout(this.timerPlacement);
 
@@ -164,9 +163,7 @@ export default class TestScreen extends Component {
     }
   };
 
-  square = x => {
-    return x * x;
-  };
+  square = x => x * x;
 
   // Controle si une sortie de l'ecran ou une mauvaise position du QR Code
   // a eu lieu et n'a pas été corrigé en 200ms
@@ -178,7 +175,7 @@ export default class TestScreen extends Component {
   };
 
   // Fonction appelee lors d'une detection de QR Code.
-  // 
+  //
   // Calcule la distance du QR Code,
   // si elle est a plus ou moins 5% de la distance de l'utilisateur, la distance est validee
   // si la distance est en dehors on demarre un timer pour controler s'il est toujours mal positionné apres 200ms
@@ -215,7 +212,6 @@ export default class TestScreen extends Component {
         (limit < e.bounds.height / 2 && this.state.whichEye === "left") ||
         (limit > e.bounds.height / 2 && this.state.whichEye === "right")
       ) {
-
         // Calcul de la distance oeil-lettre
         var tmp = Math.sqrt(
           this.square(e.bounds.origin[1].y - e.bounds.origin[0].y) +
@@ -271,8 +267,7 @@ export default class TestScreen extends Component {
             });
           }
         } else {
-
-        // Si on est trop loin de la lettre (a 5%)
+          // Si on est trop loin de la lettre (a 5%)
           if (dis - distance - eps > 0) {
             const amount = parseInt(10 * Math.abs(distance - dis)) / 10;
             this.setState(
@@ -293,7 +288,6 @@ export default class TestScreen extends Component {
               });
             }
           } else {
-
             // Si on est bien placé (a 5%)
             this.setState(
               {
@@ -357,8 +351,12 @@ export default class TestScreen extends Component {
     }
   }
 
-  // Synthese vocale
-  // sentence : phrase a prononcer
+  /**
+   * Synthèse vocale
+   * @param {string} sentence phrase à prononcer
+   * @param {Function} onStart fonction executée au début de la synthèse
+   * @param {Function} onDone fonction executée à la fin de la synthèse
+   */
   speak(
     sentence,
     onStart = () => {
@@ -432,11 +430,22 @@ export default class TestScreen extends Component {
     );
   }
 
+  /**
+   * Vérifie si les résultats obtenus correspondent à la table d'equivalence
+   * @param {string[]} newResults tableau contenant les mots reconnus par la reconnaissance
+   * @returns {boolean}
+   */
   checkResults(newResults) {
     const { letter } = this.state;
     return intersection(newResults, letter);
   }
 
+  /**
+   * Calcule le nouveau score et détermine s'il y a une erreur
+   * @param {string[]} newResults tableau contenant les mots reconnus par la reconnaissance
+   * @returns {[number, boolean]} retourne le nouveau score et un booleen indiquant s'il
+   *                              y a eu une erreur
+   */
   getNewScore(newResults) {
     const { scores, whichEye } = this.state;
     const gotResult = this.checkResults(newResults);
@@ -445,9 +454,16 @@ export default class TestScreen extends Component {
     return [newScore, gotErrors];
   }
 
+  /**
+   * Met à jour la lettre lue et effectue tous les changements nécessaires
+   * ex: fin de ligne -> incrémente la ligne
+   */
   setNextLetter() {
-    const { letterCount, lineNumber, targetLines, errorsInLine } = this.state;
     const { hasEnded, hasStarted, isPaused } = this.state;
+    // quitte tôt si pas en cours de test
+    if (hasEnded || !hasStarted || isPaused) return;
+
+    const { letterCount, lineNumber, targetLines, errorsInLine } = this.state;
     let newLineNumber = lineNumber; // default is current line number
     let newErrorsInLine = errorsInLine;
     let newLetterCount = letterCount;
@@ -465,34 +481,20 @@ export default class TestScreen extends Component {
 
     const newIdx = (newLineNumber - 1) % targetLines;
 
-    if (!hasEnded && hasStarted && !isPaused) {
-      this.setState(
-        {
-          letter: letters.random(),
-          letterCount: newLetterCount,
-          lineNumber: newLineNumber,
-          lineSize: this.lineSizes[newIdx],
-          errorsInLine: newErrorsInLine
-        },
-        () => {
-          const {
-            letter,
-            letterCount,
-            lineNumber,
-            whichEye,
-            lineSize,
-            errorsInLine
-          } = this.state;
-          console.log(
-            `${letter} => ${letterCount}:${lineNumber} ${targetLines *
-              5} with height ${lineSize} and errors: ${errorsInLine} -> ${whichEye}`
-          );
-          if (letterCount === targetLines * 5 + 1) this.nextEye();
-          if (letterCount === targetLines * 10 + 1) this.endTest();
-          if (letterCount <= targetLines * 10) this._startRecognizing();
-        }
-      );
-    }
+    this.setState(
+      {
+        letter: letters.random(),
+        letterCount: newLetterCount,
+        lineNumber: newLineNumber,
+        lineSize: this.lineSizes[newIdx],
+        errorsInLine: newErrorsInLine
+      },
+      () => {
+        if (letterCount === targetLines * 5 + 1) this.nextEye();
+        if (letterCount === targetLines * 10 + 1) this.endTest();
+        if (letterCount <= targetLines * 10) this._startRecognizing();
+      }
+    );
   }
 
   // Fonction lors de detection d'une erreur de reconnaissance vocale
@@ -516,8 +518,11 @@ export default class TestScreen extends Component {
     });
   };
 
-  // Fonction si on a trouve un resultat avec la reconnaissance vocale
-  // ?
+  /**
+   * Méthode executée lorsque la reconnaissance retourne un résultat
+   * - on met à jour le score
+   * - on vérifie s'il n'y a pas eu d'erreur
+   */
   onSpeechResults = e => {
     const { partialResults, scores, whichEye, errorsInLine } = this.state;
     const newResults = [...e.value, ...partialResults];
@@ -640,7 +645,6 @@ export default class TestScreen extends Component {
     const { goBack } = this.props.navigation;
     return (
       <View style={styles.container}>
-
         {/* Affiche le micro d'ecoute ou non selon la reconnaissance vocale pendant le test */}
         {hasStarted && !hasEnded && !isPaused && (
           <Micro isRecognizing={rec && !speaking}></Micro>
@@ -701,19 +705,6 @@ function Micro({ isRecognizing }) {
   return (
     <Image style={styles.micro} source={isRecognizing ? mic_on : mic_off} />
   );
-}
-
-// Lettres du test
-// lineSizes : liste des tailles de police pour le test
-function Lines({ lineSizes }) {
-  return lineSizes.map(lineSize => (
-    <Text
-      key={Math.random().toString()}
-      style={{ fontFamily: "optician-sans", fontSize: lineSize }}
-    >
-      n c k z o r h s d v
-    </Text>
-  ));
 }
 
 // Scanner a QR Code cache
@@ -794,8 +785,11 @@ function ChangeEye({ handlePause, wellPlaced }) {
   );
 }
 
-// Decompte avant le test
-// handler : ?
+/**
+ * Décompte avant le début du test et après la pause
+ *
+ * @param {Function} handler la fonction executée après la fin du décompte
+ */
 function Countdown({ handler }) {
   const [counter, setCounter] = useState(3);
   let intervalId;
