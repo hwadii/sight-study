@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Text,
-  View
+  View,
+  ScrollView 
 } from "react-native";
 import * as User from "../db";
 import {
@@ -63,12 +64,16 @@ export default class SetUser extends React.Component {
       showAlert("Veuillez configurer les paramètres généraux");
     } else {
       const id = user.id;
+      var first
+      if (this.state.currentUserId == null) first=true
+      else first=false
       await setId(id.toString());
       await setUserName(user);
       showAlert(
         `La tablette est configurée pour ${user.prenom} ${user.nom}.`,
         () => {
           this.setState({ currentUserId: id });
+          if (first)this.props.navigation.replace("Menu")
         }
       );
     }
@@ -120,6 +125,7 @@ export default class SetUser extends React.Component {
             </Text>
           </TouchableOpacity>
         </View>
+        <SearchBar handleSearch={this.handleSearch} />
         <UsersList
           users={users}
           currentUserId={currentUserId}
@@ -163,11 +169,11 @@ function SearchBar({ handleSearch }) {
 function UsersList({ users, currentUserId, handlers }) {
   const [handleSearch, handleSelect, handleEdit, handleExport] = handlers;
   return (
-    <View style={styles.usersList}>
+    <ScrollView  style={styles.usersList}>
       <FlatList
         data={users}
         keyExtractor={item => item.id.toString()}
-        ListHeaderComponent={<SearchBar handleSearch={handleSearch} />}
+        ListHeaderComponent={<View />}
         renderItem={({ item }) => (
           <UserElement
             user={item}
@@ -178,7 +184,7 @@ function UsersList({ users, currentUserId, handlers }) {
           />
         )}
       />
-    </View>
+    </ScrollView >
   );
 }
 

@@ -29,13 +29,13 @@ const Routes = {
   Etdrs
 };
 
-const MainNavigator = createStackNavigator(
+const MainNavigator = (init) => createStackNavigator(
   {
     ...Routes
   },
   {
     // headerMode: 'none',
-    initialRouteName: "Menu",
+    initialRouteName: init,
     defaultNavigationOptions: {
       title: "Sight Study",
       headerBackTitle: "Retour"
@@ -43,11 +43,10 @@ const MainNavigator = createStackNavigator(
   }
 );
 
-const Navigation = createAppContainer(MainNavigator);
-
 class App extends React.Component {
   state = {
-    fontLoaded: false
+    fontLoaded: false,
+    Navigation: createAppContainer(MainNavigator('SetUser'))
   };
 
   async componentDidMount() {
@@ -66,11 +65,14 @@ class App extends React.Component {
       fontLoaded: true
     });
     await initDefault();
+    var route
+    await getId() != null ? route="Menu" : route="SetUser"
+    this.setState({Navigation: createAppContainer(MainNavigator(route))})
     SplashScreen.hide();
   }
 
   render() {
-    const { fontLoaded } = this.state;
+    const { fontLoaded, Navigation } = this.state;
     return fontLoaded ? (
       <View style={styles.container}>
         <Navigation />
