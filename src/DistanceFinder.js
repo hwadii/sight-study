@@ -22,6 +22,7 @@ function getTmpDistance(bounds) {
 export default class DistanceFinder extends Component {
   constructor(props) {
     super(props);
+    const backRoute = props.navigation.getParam("backRoute", undefined);
     this.state = {
       wellPlacedCount: 0,
       distance: 0,
@@ -30,7 +31,8 @@ export default class DistanceFinder extends Component {
       timer: null,
       counter: 0,
       lastTime: -2,
-      img: require("../assets/asterix1.png")
+      img: require("../assets/asterix1.png"),
+      backRoute : backRoute.toString()
     };
     this.handleOnOk = this.handleOnOk.bind(this);
   }
@@ -123,14 +125,14 @@ export default class DistanceFinder extends Component {
 
 
   handleOnOk() {
-    const { lastDistance } = this.state;
+    const { lastDistance, backRoute } = this.state;
     const { navigate } = this.props.navigation;
 
     // Reactive la mise en veille de l'ecran
     deactivateKeepAwake();
 
     // Transmet la distance a la page de creation du patient
-    navigate("AddUser", { distance: lastDistance });
+    navigate(backRoute, { distance: lastDistance });
   }
 
   render() {

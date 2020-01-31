@@ -51,6 +51,9 @@ class App extends React.Component {
 
   async componentDidMount() {
     SplashScreen.show();
+    var route
+    await getId() != null ? route="Menu" : route="SetUser"
+    this.setState({Navigation: createAppContainer(MainNavigator(route))})
     await PermissionsAndroid.requestMultiple([
       PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
       PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
@@ -65,9 +68,6 @@ class App extends React.Component {
       fontLoaded: true
     });
     await initDefault();
-    var route
-    await getId() != null ? route="Menu" : route="SetUser"
-    this.setState({Navigation: createAppContainer(MainNavigator(route))})
     SplashScreen.hide();
   }
 

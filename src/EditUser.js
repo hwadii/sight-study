@@ -29,10 +29,19 @@ export default class AddUser extends React.Component {
       nom,
       date: new Date(date_de_naissance),
       distance: distance.toString(),
-      sex
+      sex,
+      newDistance : "&"
     };
     this.handleChangeField = this.handleChangeField.bind(this);
     this.showDatePickerAndSet = this.showDatePickerAndSet.bind(this);
+  }
+
+  async componentDidMount() {
+    this.willFocusSub = this.props.navigation.addListener("willFocus", () => {
+      const { getParam } = this.props.navigation;
+      const distance = getParam("distance", "&");
+      this.setState({ newDistance: distance.toString() });
+    });
   }
 
   handleChangeField(e, field) {
@@ -54,9 +63,14 @@ export default class AddUser extends React.Component {
 
   async handleEdit() {
     const { goBack } = this.props.navigation;
-    const { id, distance } = this.state;
-    await User.setDistance(id, distance);
-    goBack();
+    const { id, distance, newDistance } = this.state;
+    var d = newDistance=="&" ? distance : newDistance
+    if (d!=""){
+      await User.setDistance(id, d);
+      goBack();
+    }else{
+      showAlert("Veuillez renseigner la distance", null, [], "Erreur lors de la modfication du patient")
+    }
   }
 
   async showDatePickerAndSet() {
@@ -73,15 +87,31 @@ export default class AddUser extends React.Component {
     }
   }
 
+  handleDistanceTest() {
+    const { navigate } = this.props.navigation;
+    navigate("DistanceFinder", { backRoute: "EditUser" });
+  }  
+
   render() {
-    const { prenom, nom, sex, date, distance } = this.state;
+    const { prenom, nom, sex, date, distance, newDistance } = this.state;
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.header}>Éditer un patient</Text>
         <Form
           userInfo={{ prenom, nom, date, sex, distance }}
           handleChange={this.handleChangeField}
+          newDistance={newDistance}
         />
+        <TouchableOpacity
+            style={{
+              ...styles.form, ...styles.confirmButton ,
+              backgroundColor: colors.SECONDARY,
+              borderColor: colors.SECONDARY
+            }}
+            onPress={() => this.handleDistanceTest()}
+          >
+          <Text style={common.actionButtonsText}>🔎 TEST DE DISTANCE 🔎</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={{ ...styles.form, ...styles.confirmButton }}
           onPress={() => this.handleEdit()}
@@ -101,7 +131,7 @@ export default class AddUser extends React.Component {
 
 // TODO: Put this in frequently used components
 
-function Form({ handleChange, userInfo, showDatePickerAndSet }) {
+function Form({ handleChange, userInfo, showDatePickerAndSet, newDistance }) {
   const { prenom, nom, sex, date, distance } = userInfo;
   return (
     <View style={styles.form}>
@@ -116,10 +146,10 @@ function Form({ handleChange, userInfo, showDatePickerAndSet }) {
         <Text style={common.inputsDisabled}>{date && formatDate(date)}</Text>
       </TouchableHighlight>
       <Field
-        value={distance}
+        value={newDistance=="&" ? distance : newDistance}
         type="numeric"
         label="Distance"
-        handleOnChange={e => handleChange(e, "distance")}
+        handleOnChange={e => handleChange(e, "newDistance")}
         editable={true}
       />
       <Select label="Sexe" value={sex}>

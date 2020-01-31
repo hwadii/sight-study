@@ -16,7 +16,7 @@ import {
 } from "react-native-gesture-handler";
 import * as User from "../db";
 import { styles as common, colors } from "./styles/common";
-import { formatDate } from "./util";
+import { formatDate, showAlert } from "./util";
 
 /**
  * Composant permettant d'ajouter un utilisateur (patient) dans la base de données
@@ -58,7 +58,7 @@ export default class AddUser extends React.Component {
 
   handleDistanceTest() {
     const { navigate } = this.props.navigation;
-    navigate("DistanceFinder");
+    navigate("DistanceFinder", { backRoute: "AddUser" });
   }
 
   /**
@@ -67,8 +67,12 @@ export default class AddUser extends React.Component {
   async handleAddUser() {
     const { goBack } = this.props.navigation;
     const { nom, prenom, sex, date, distance } = this.state;
-    await User.addUser(nom, prenom, sex, date.toISOString(), distance);
-    goBack();
+    if (nom!="" && prenom!="" && date!="" && distance!=""){
+      await User.addUser(nom, prenom, sex, date.toISOString(), distance);
+      goBack();
+    }else{
+      showAlert("Veuillez remplir tous les champs", null, [], "Erreur lors de l'ajout du patient")
+    }
   }
 
   /**
@@ -151,6 +155,7 @@ function Form({ children, handleChange, userInfo, showDatePickerAndSet }) {
       <Field
         value={distance}
         label="Distance"
+        type={"numeric"}
         handleOnChange={e => handleChange(e, "distance")}
       />
       <Select

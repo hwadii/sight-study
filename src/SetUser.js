@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     flexDirection: "row"
   },
   userBox: {
-    flex: 1,
+    // flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -254,7 +254,8 @@ const styles = StyleSheet.create({
     paddingTop: 26,
     paddingBottom: 26,
     borderBottomWidth: 2,
-    borderBottomColor: "#e8e8e8"
+    borderBottomColor: "#e8e8e8",
+    height : 100
   },
   userText: {
     fontSize: 18,
