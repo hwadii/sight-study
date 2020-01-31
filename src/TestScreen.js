@@ -192,7 +192,7 @@ export default class TestScreen extends Component {
     }
     if (e.data == "sight-study") {
       const { distance, qrsize } = this.state;
-      const eps = distance * 0.05;
+      const eps = distance * 0.1;
       let limit = 0;
       if (this.state.whichEye === "left")
         limit = Math.min(
